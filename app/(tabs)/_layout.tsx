@@ -41,6 +41,10 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="HomePage"
+        options={{ title: "Home", headerShown: false }}
+      />
+      <Tabs.Screen
         name="CreatePage"
         options={{ title: "Create", headerShown: false }}
       />

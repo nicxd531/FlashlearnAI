@@ -31,9 +31,9 @@ const TabBarButton: FC<Props> = ({
   color,
 }) => {
   const icon: {
-    [key in "LibraryPage" | "CreatePage"]: (props: any) => JSX.Element;
+    [key in "LibraryPage" | "CreatePage" | "HomePage" ]: (props: any) => JSX.Element;
   } = {
-    // Home: (props: any) => <Feather name="home" size={24} color="black" />,
+    HomePage: (props: any) => <Feather name="home" size={24} color="black" />,
     LibraryPage: (props: any) => (
       <Feather name="book-open" size={24} color={props.color} />
     ),
@@ -67,7 +67,7 @@ const TabBarButton: FC<Props> = ({
       style={styles.tabBarItem}
     >
       <Animated.View style={animatedIconStyle}>
-        {icon[route?.name as "LibraryPage" | "CreatePage"]({
+        {icon[route?.name as "LibraryPage" | "CreatePage"| "HomePage"]({
           color: isFocused ? "#fff" : "#222",
         })}
       </Animated.View>
