@@ -11,7 +11,6 @@ import tw from "twrnc";
 import { Image } from "react-native-elements";
 import { Chip, IconButton, Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import SkeletonContent from "react-native-skeleton-content";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
 

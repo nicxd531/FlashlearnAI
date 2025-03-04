@@ -12,4 +12,6 @@ export const clearAsyncStorage = async () => {
 
 export enum Keys {
   AUTH_TOKEN = "auth-token",
+  USER_INFO = "userInfo",
+  TOP_CREATORS = "topCreators", // Add this line
 }

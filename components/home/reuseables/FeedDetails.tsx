@@ -1,29 +1,41 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import FeedsBtn from "./FeedsBtn";
 import { Text } from "react-native-paper";
 import tw from "twrnc";
 import { GestureResponderEvent } from "react-native";
+import { formatLikes } from "@/components/api/request";
 
 interface Props {
   name: string;
+  collectionId: string;
   likes: number;
   description: string;
   onOpen: (event: GestureResponderEvent) => void;
 }
 
 const FeedDetails: FC<Props> = (props) => {
-  const { name, likes, description, onOpen } = props;
+  const { name, likes, description, onOpen, collectionId } = props;
+  console.log({ likes });
+  const [newLikes, setNewLikes] = useState(likes);
+
+  const formattedLikes = formatLikes(newLikes);
   return (
     <View style={styles.container}>
-      <FeedsBtn onOpen={onOpen} />
+      <FeedsBtn
+        collectionId={collectionId}
+        onOpen={onOpen}
+        likes={newLikes}
+        setLikes={setNewLikes}
+      />
       <View>
-        <Text variant="titleMedium">{likes} likes</Text>
+        <Text variant="titleMedium">
+          {newLikes > 0 ? formattedLikes : 0}
+          {""}
+          {newLikes > 1 ? " likes" : " like"}
+        </Text>
       </View>
       <View style={[tw`flex-row`]}>
-        <Text variant="titleMedium" style={[tw`font-bold mr-2`]}>
-          {name}:
-        </Text>
         <Text variant="titleMedium">{description}</Text>
       </View>
     </View>

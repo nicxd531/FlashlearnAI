@@ -8,22 +8,33 @@ import { GestureResponderEvent, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Modalize } from "react-native-modalize";
+import FeedsModal from "@/components/home/reuseables/FeedsModal";
+import { Toasts } from "@backpackapp-io/react-native-toast";
 
 interface Props {}
 
 const HomePage: FC<Props> = (props) => {
   const modalizeRef = useRef<Modalize>(null);
   const onOpen = (event: GestureResponderEvent) => {
-    event.persist(); // Prevent React from reusing the event object
+    // event.persist(); // Prevent React from reusing the event object
     modalizeRef.current?.open();
   };
   const [activeScreen, setActiveScreen] = useState<"Explore" | "Discover">(
     "Explore"
   );
   return (
-    <SafeAreaView style={styles.container}>
-      <TopAppBar />
+    <View style={styles.container}>
+      <Toasts
+        overrideDarkMode={true}
+        globalAnimationType="spring"
+        globalAnimationConfig={{
+          duration: 3000,
+          flingPositionReturnDuration: 200,
+          stiffness: 50,
+        }}
+      />
       <ScrollView>
+        <TopAppBar />
         <TopCreators />
         <PillToggleButton
           activeScreen={activeScreen}
@@ -35,13 +46,14 @@ const HomePage: FC<Props> = (props) => {
           <DiscoverScreen onOpen={onOpen} />
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "fff",
   },
 });
 

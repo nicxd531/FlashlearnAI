@@ -42,9 +42,9 @@ const Advert: FC<Props> = (props) => {
         renderItem={renderItem}
         sliderWidth={500}
         itemWidth={300}
-        loop={true}
-        autoplay={true}
-        autoplayInterval={9000}
+        // loop={true}
+        // autoplay={true}
+        // autoplayInterval={15000}
         keyExtractor={(item: { title: string; image: any }, index: number) =>
           `${item.title}-${index}`
         }

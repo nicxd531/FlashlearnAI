@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
-
-const categories = [
+import { categories } from "@/utils/Categories";
+import colors from "@/constants/Colors";
+import CategorySelector from "./CategorySelector";
+const categoriesSub = [
   { name: "Mathematics", icon: "calculator" },
   { name: "Physics", icon: "atom" },
   { name: "Business", icon: "chart-line" },
@@ -13,6 +15,7 @@ const categories = [
 ];
 
 const Categories = () => {
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
@@ -22,10 +25,31 @@ const Categories = () => {
           </Text>
         </View>
         <View style={styles.grid}>
-          {categories.map((category, index) => (
-            <TouchableOpacity key={index} style={styles.categoryBox}>
+          {categoriesSub.map((category, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.categoryBox}
+              onPress={() => {
+                category.name === "Others" && category.icon
+                  ? setShowCategoryModal(true)
+                  : null;
+              }}
+            >
               <FontAwesome5 name={category.icon} size={24} color="black" />
               <Text style={styles.categoryText}>{category.name}</Text>
+              {category.name === "Others" && category.icon === "ellipsis-h" ? (
+                <CategorySelector
+                  visible={showCategoryModal}
+                  onRequestClose={() => {
+                    setShowCategoryModal(false);
+                  }}
+                  title="Category"
+                  data={categories}
+                  renderItem={(item) => {
+                    return <Text style={styles.category}>{item}</Text>;
+                  }}
+                />
+              ) : null}
             </TouchableOpacity>
           ))}
         </View>
@@ -40,7 +64,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    marginBottom: 50,
+    marginBottom: 5,
   },
   grid: {
     flexDirection: "row",
@@ -75,6 +99,10 @@ const styles = StyleSheet.create({
   textContainer: {
     width: "100%",
     padding: 16,
+  },
+  category: {
+    padding: 10,
+    color: colors.PRIMARY,
   },
 });
 

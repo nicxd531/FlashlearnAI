@@ -13,16 +13,16 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
+        <Toasts
+          overrideDarkMode={true}
+          globalAnimationType="spring"
+          globalAnimationConfig={{
+            duration: 3000,
+            flingPositionReturnDuration: 200,
+            stiffness: 50,
+          }}
+        />
         <QueryClientProvider client={queryClient}>
-          <Toasts
-            overrideDarkMode={true}
-            globalAnimationType="spring"
-            globalAnimationConfig={{
-              duration: 1000,
-              flingPositionReturnDuration: 200,
-              stiffness: 50,
-            }}
-          />
           <AllNavigator />
         </QueryClientProvider>
       </Provider>

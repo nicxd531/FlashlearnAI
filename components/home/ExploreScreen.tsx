@@ -4,9 +4,9 @@ import { Text } from "react-native-paper";
 import { GestureResponderEvent } from "react-native";
 import Advert from "./reuseables/Advert";
 import RecentlyPlayed from "./reuseables/RecentlyPlayed";
-
 import Categories from "./reuseables/Categories";
 import Favorites from "./reuseables/Favorites";
+import RecommendedCollection from "./reuseables/RecommendedCollection";
 interface Props {
   onOpen: (event: GestureResponderEvent) => void;
 }
@@ -18,6 +18,7 @@ const ExploreScreen: FC<Props> = (props) => {
       <RecentlyPlayed onOpen={onOpen} />
       <Favorites />
       <Categories />
+      <RecommendedCollection />
     </View>
   );
 };

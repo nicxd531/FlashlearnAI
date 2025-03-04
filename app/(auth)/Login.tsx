@@ -39,6 +39,7 @@ import axios from "axios";
 import { signUpValidation } from "@/components/api/Validators";
 import AppLink from "@/components/AppLink";
 import { useDispatch } from "react-redux";
+import { handleError } from "@/components/api/request";
 
 const { height } = Dimensions.get("window");
 
@@ -82,7 +83,6 @@ const LogIn: FC<Props> = (props) => {
       const { data } = await client.post("/auth/sign-in", {
         ...values,
       });
-
       await saveToAsyncStorage(Keys.AUTH_TOKEN, data.token);
       dispatch(updateLoggedInState(false));
       dispatch(updateBusyState(false));
@@ -92,22 +92,7 @@ const LogIn: FC<Props> = (props) => {
       dispatch(updateBusyState(false));
       toast.success("Log in Successful ", { icon: "🎉🎊" });
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        // Server responded with a status other than 200 range
-        if (err.response?.status === 401) {
-          toast.error("Invalid email or password ❌");
-        } else if (err.response?.status === 422) {
-          toast.error("Unprocessable Entity: Please check your input data ❌");
-        } else {
-          toast.error(`Error: ${err.response?.data.message} ❌`);
-        }
-      } else if (err instanceof Error && err.message) {
-        // Something else happened while setting up the request
-        toast.error(`Error: ${err.message} ❌`);
-      } else {
-        // Unknown error
-        toast.error("An unknown error occurred ❌");
-      }
+      handleError(err);
     } finally {
       actions.setSubmitting(false);
     }

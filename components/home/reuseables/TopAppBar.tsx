@@ -1,5 +1,5 @@
-import MessageModal from "@/components/AppBar/MessagePanel";
-import NotificationModal from "@/components/AppBar/NotificationModal";
+// import MessageModal from "@/components/AppBar/MessagePanel";
+// import NotificationModal from "@/components/AppBar/NotificationModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as React from "react";
@@ -28,7 +28,7 @@ const TopAppBar = () => {
           onPress={() => setVisible(true)}
         />
       </Appbar.Header>
-      <NotificationModal
+      {/* <NotificationModal
         visible={visible}
         onClose={() => setVisible(false)}
         message={"notification panel"}
@@ -37,7 +37,7 @@ const TopAppBar = () => {
         visibleM={visibleM}
         onClose={() => setVisibleM(false)}
         message={"message panel"}
-      />
+      /> */}
     </>
   );
 };

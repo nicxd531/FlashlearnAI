@@ -10,13 +10,12 @@ const client = axios.create({
 type headers = CreateAxiosDefaults<any>["headers"];
 export const getClient = async (headers?: headers) => {
   const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
-
   if (!token)
     return axios.create({
       baseURL: androidStudio,
     });
   const defaultHeaders = {
-    Authorization: "Bearer" + token,
+    Authorization: `Bearer ${token}`,
     ...headers,
   };
 

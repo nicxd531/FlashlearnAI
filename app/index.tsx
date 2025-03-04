@@ -1,6 +1,9 @@
 import { AuthStackParamList } from "@/@types/navigation";
+import client, { getClient } from "@/components/api/client";
+import { handleError } from "@/components/api/request";
 import colors from "@/constants/Colors";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
+import { updateLoggedInState, updateProfile } from "@/utils/store/auth";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React, { FC, useEffect } from "react";
 import {
@@ -11,26 +14,36 @@ import {
   ActivityIndicator,
   Text,
 } from "react-native";
+import { useDispatch } from "react-redux";
 
 interface Props {}
 
 const Index: FC<Props> = (props) => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
 
+  const dispatch = useDispatch();
   useEffect(() => {
     const initialize = async () => {
-      const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
-      console.log(token);
-      if (token) {
-        navigation.navigate("(tabs)"); // Navigate to the main screen or auth flow
-      }
-      // Simulate loading or initialization logic
-      if (!token) {
-        const timeout = setTimeout(() => {
-          navigation.navigate("(auth)"); // Navigate to the main screen or auth flow
-        }, 2000); // 2 seconds delay
+      try {
+        const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
+        const client = await getClient();
+        const { data } = await client.get("/auth/is-auth");
 
-        return () => clearTimeout(timeout); // Cleanup timeout on unmount
+        dispatch(updateProfile(data.profile));
+        dispatch(updateLoggedInState(true));
+        if (token && data) {
+          navigation.navigate("(tabs)"); // Navigate to the main screen or auth flow
+        }
+        // Simulate loading or initialization logic
+        if (!token) {
+          const timeout = setTimeout(() => {
+            navigation.navigate("(auth)"); // Navigate to the main screen or auth flow
+          }, 2000); // 2 seconds delay
+
+          return () => clearTimeout(timeout); // Cleanup timeout on unmount
+        }
+      } catch (e) {
+        handleError(e);
       }
     };
 

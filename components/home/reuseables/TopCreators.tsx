@@ -1,9 +1,18 @@
-import client from "@/components/api/client";
+import client, { getClient } from "@/components/api/client";
+import { handleError } from "@/components/api/request";
 import { backgroundImage, faceImage } from "@/constants/Styles";
+import {
+  fetchCollectionsByProfile,
+  fetchTopCreators,
+  useFetchTopCreators,
+} from "@/hooks/query";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 import React, { useEffect, useState } from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
 import { Surface, Card, Avatar } from "react-native-paper";
+import PulseAnimationContainer from "./PulseAnimationContainer";
+import colors from "@/constants/Colors";
+import { CollectionData, topCreatorsData } from "@/@types/collection";
 
 type Creator = {
   id: string;
@@ -13,39 +22,9 @@ type Creator = {
 };
 
 const TopCreators: React.FC = () => {
-  const [creators, setCreators] = useState<Creator[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const getTopCreators = async () => {
-    try {
-      const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
-      if (!token) {
-        throw new Error("User is not authenticated. Token is missing.");
-      }
-      // formData.forEach((value, key) => {
-      //   console.log(`${key}: ${value}`);
-      // });
+  const { data, isLoading } = useFetchTopCreators();
 
-      const res = await client.get("/auth/top-creators", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setCreators(res.data.topCreators);
-      // console.log({ creators });
-    } catch (err) {
-      setError("Failed to fetch top creators. Please try again later.");
-      console.error("Error fetching top creators:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getTopCreators();
-  }, []);
-  const renderItem = ({ item }: { item: Creator }) => (
+  const renderItem = ({ item }: { item: topCreatorsData }) => (
     <Surface style={styles.surface}>
       <Card style={styles.card}>
         <Card.Cover
@@ -68,12 +47,27 @@ const TopCreators: React.FC = () => {
       </Card>
     </Surface>
   );
+  const dummyData = new Array(4).fill("");
 
+  if (isLoading) {
+    return (
+      <PulseAnimationContainer>
+        <View style={styles.container}>
+          <View style={styles.dunmmyTitleView} />
+          <View style={styles.dummyTopViewContainer}>
+            {dummyData.map((_, index) => {
+              return <View key={index} style={styles.dummyTopView} />;
+            })}
+          </View>
+        </View>
+      </PulseAnimationContainer>
+    );
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Top Creators</Text>
       <FlatList
-        data={creators}
+        data={data}
         renderItem={renderItem}
         horizontal
         keyExtractor={(item) => item.id}
@@ -121,6 +115,23 @@ const styles = StyleSheet.create({
     marginTop: 12, // Adjusted for smaller size
     fontSize: 13.5, // 25% smaller than 18
     textAlign: "center",
+  },
+  dunmmyTitleView: {
+    height: 20,
+    width: 150,
+    backgroundColor: "white",
+    marginBottom: 10,
+    borderRadius: 16,
+  },
+  dummyTopView: {
+    height: 150,
+    width: 112.5,
+    backgroundColor: "white",
+    marginRight: 10,
+    borderRadius: 16,
+  },
+  dummyTopViewContainer: {
+    flexDirection: "row",
   },
 });
 

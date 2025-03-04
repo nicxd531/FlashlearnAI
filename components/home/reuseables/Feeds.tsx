@@ -1,5 +1,5 @@
 import React, { FC, useRef } from "react";
-import { GestureResponderEvent } from "react-native";
+import { GestureResponderEvent, ImageSourcePropType } from "react-native";
 import {
   ImageBackground,
   StyleSheet,
@@ -22,15 +22,30 @@ const { width } = Dimensions.get("window");
 import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
 import FeedDetails from "./FeedDetails";
+import { backgroundImage, flashcardPlaceholder } from "@/constants/Styles";
+import { getSource } from "@/components/api/request";
 
 const Feeds: FC<{
   image: string;
   avatar: string;
   name: string;
   info: string;
+  collectionId: string;
   time: string;
+  bookmarks: number;
+  likes: number;
   onOpen: (event: GestureResponderEvent) => void;
-}> = ({ image, avatar, name, info, time, onOpen }) => {
+}> = ({
+  image,
+  avatar,
+  name,
+  info,
+  time,
+  onOpen,
+  bookmarks,
+  likes,
+  collectionId,
+}) => {
   return (
     <View
       style={[
@@ -47,12 +62,18 @@ const Feeds: FC<{
       <View style={styles.item}>
         <Image
           style={{ width: 350, height: 200, borderRadius: 8 }}
-          source={{ uri: image }}
+          source={getSource(image, flashcardPlaceholder)}
           PlaceholderContent={<ActivityIndicator />}
         />
       </View>
 
-      <FeedDetails onOpen={onOpen} name={name} likes={5} description={info} />
+      <FeedDetails
+        onOpen={onOpen}
+        name={name}
+        likes={likes}
+        description={info}
+        collectionId={collectionId}
+      />
     </View>
   );
 };

@@ -1,21 +1,63 @@
-import { useFetchCollectionsByProfile } from "@/hooks/query";
-import { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  useFetchCollectionsByProfile,
+  useFetchUploadsByProfile,
+} from "@/hooks/query";
+import { FC, useState } from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import CollectionPreviewModal from "../reuseables/CollectionPreviewModal";
+import { CollectionData } from "@/@types/collection";
+import { Image } from "react-native-elements";
+import { getSource } from "../api/request";
+import { flashcardPlaceholder } from "@/constants/Styles";
+import colors from "@/constants/Colors";
+import CollectionListItem from "./components/CollectionListItem";
+import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
+import EmptyRecords from "./components/EmptyRecords";
 
 interface Props {}
 
 const Collections: FC<Props> = (props) => {
-  // const { data, isLoading } = useFetchCollectionsByProfile();
-  // console.log({ data });
+  const [modalVisible, setModalVisible] = useState(false);
+  const { data, isLoading } = useFetchUploadsByProfile();
+  if (isLoading) return <CollectionListLoadingUi />;
+  if (!data?.length) return <EmptyRecords title="There is no Collection! 😔" />;
+
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 20, color: "black" }}>Collections</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {data?.map((item: CollectionData) => {
+        return (
+          <CollectionListItem
+            key={item.id}
+            collection={item}
+            onPress={() => setModalVisible(true)}
+          />
+        );
+      })}
+
+      <CollectionPreviewModal
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+      />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    // backgroundColor: "fff",
+    flex: 1,
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+  },
 });
 
 export default Collections;
