@@ -11,10 +11,9 @@ interface Props {
 
 const AvatarField: React.FC<Props> = (props) => {
   const { source } = props;
-  console.log(source);
   const avatarSize = 70;
   return (
-    <View style={{ width: "100%" }}>
+    <View>
       <Image
         style={styles.avatarImage}
         PlaceholderContent={<ActivityIndicator />}

@@ -47,3 +47,7 @@ export const getAuthState = createSelector(
 );
 
 export default slice.reducer;
+export const selectUserProfile = createSelector(
+  (state: RootState) => (state as any).auth,
+  (authState) => authState.profile
+);

@@ -1,4 +1,4 @@
-import { defaultForm, FromFields } from "@/@types/reuseables";
+import { FromFields } from "@/@types/reuseables";
 import {
   handleSubmitCollection,
   handleUpdateCollection,
@@ -14,16 +14,18 @@ import RNPickerSelect from "react-native-picker-select";
 import { categories } from "@/@types/collection";
 import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
 
-interface Props {}
+interface Props {
+  setActive: (p: any) => void;
+  collectionInfo: FromFields;
+  setCollectionInfo: React.Dispatch<React.SetStateAction<FromFields>>;
+}
 
 const CreateCollectionPage: FC<Props> = (props) => {
   const { busyACollection, collectionId } = useSelector(
     (state: any) => state.collection
   );
 
-  const [collectionInfo, setCollectionInfo] = React.useState({
-    ...defaultForm,
-  });
+  const { collectionInfo, setCollectionInfo } = props;
   const [checked, setChecked] = React.useState(false);
   const formattedCategories = categories.map((category) => ({
     label: category,

@@ -15,3 +15,8 @@ export type AuthStackParamList = {
   auth: undefined;
   tabs: undefined;
 };
+
+export type libraryNavigatorStackParamList = {
+  libraryMain: undefined;
+  librarySettings: undefined;
+};

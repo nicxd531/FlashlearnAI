@@ -9,6 +9,9 @@ export const getFromAsyncStorage = async (key: string) => {
 export const clearAsyncStorage = async () => {
   await AsyncStorage.clear();
 };
+export const removeFromAsyncStorage = async (key: string) => {
+  await AsyncStorage.removeItem(key);
+};
 
 export enum Keys {
   AUTH_TOKEN = "auth-token",

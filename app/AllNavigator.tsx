@@ -19,7 +19,7 @@ const AllNavigator: FC<Props> = (props) => {
     console.log("AuthNavigator - loggedIn:", loggedIn);
     console.log("AuthNavigator - busy:", busy);
     if (loggedIn) {
-      navigation.navigate("(tabs)");
+      navigation.navigate<any>("(tabs)");
     }
   }, [loggedIn, busy]);
   return true ? <TabNavigator /> : <AuthNavigator />;

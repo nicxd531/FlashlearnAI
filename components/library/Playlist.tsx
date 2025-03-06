@@ -12,7 +12,7 @@ const Playlist: FC<Props> = (props) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {data.map((playlist: any) => {
+      {data?.map((playlist: any) => {
         return <PlaylistItem playlist={playlist} key={playlist.id} />;
       })}
       <CollectionPreviewModal
@@ -25,7 +25,7 @@ const Playlist: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "fff",
+    backgroundColor: "fff",
     flex: 1,
     flexWrap: "wrap",
     flexDirection: "row",

@@ -17,19 +17,28 @@ import ProfileComponent from "@/components/library/ProfileComponent";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 import { getClient } from "@/components/api/client";
 import { handleError } from "@/components/api/request";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LibraryMain from "@/components/library/screens/LibraryMain";
-import LibrarySettings from "@/components/library/screens/LibrarySettings";
+import { RootState } from "@/utils/store";
 
 interface Props {}
-const Stack = createNativeStackNavigator();
-const LibraryPage: FC<Props> = (props) => {
+
+const LibraryMain: FC<Props> = (props) => {
+  const Tab = createMaterialTopTabNavigator();
+  const { profile } = useSelector((state: RootState) => (state as any).auth);
   return (
     <View style={styles.container}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="libraryMain" component={LibraryMain} />
-        <Stack.Screen name="librarySettings" component={LibrarySettings} />
-      </Stack.Navigator>
+      <ProfileComponent profile={profile} />
+      <StatusBar barStyle="dark-content" hidden={false} translucent={true} />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: styles.tabBarStyles,
+          tabBarLabelStyle: styles.tabBarLabelStyles,
+        }}
+      >
+        <Tab.Screen name="Collections" component={Collections} />
+        <Tab.Screen name="Playlist" component={Playlist} />
+        <Tab.Screen name="Favorites" component={Favorites} />
+        <Tab.Screen name="History" component={History} />
+      </Tab.Navigator>
     </View>
   );
 };
@@ -37,8 +46,8 @@ const LibraryPage: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-
+    // padding: 10,
+    paddingTop: 40,
     backgroundColor: "#fff",
   },
   tabBarStyles: {
@@ -59,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LibraryPage;
+export default LibraryMain;
