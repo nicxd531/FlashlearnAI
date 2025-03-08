@@ -1,3 +1,5 @@
+import { CollectionData } from "./collection";
+
 interface NewUserResponse {
   id?: string;
   name: string;
@@ -19,4 +21,10 @@ export type AuthStackParamList = {
 export type libraryNavigatorStackParamList = {
   libraryMain: undefined;
   librarySettings: undefined;
+};
+export type createNavigatorStackParamList = {
+  CreateCollectionPage: undefined;
+  AiCardsCreator: { collectionInfo: CollectionData };
+  ManualCardsCreation: { collectionInfo: CollectionData };
+  CardsPreview: { collectionInfo: CollectionData };
 };

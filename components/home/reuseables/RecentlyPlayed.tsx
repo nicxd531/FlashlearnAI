@@ -34,6 +34,7 @@ import PlaylistModal from "./PlaylistModal";
 import PlaylistForm from "./PlaylistForm";
 import OptionsModal from "./OptionsModal";
 import { toast } from "@backpackapp-io/react-native-toast";
+import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
 
 const { width } = Dimensions.get("window");
 interface Props {
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const RecentlyPlayed: React.FC<Props> = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
   const [showPlayListForm, setShowPlayListForm] = useState(false);
@@ -60,6 +62,7 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
     mainData: RecentlyPlayedData
   ) => {
     onOpen(event);
+    setModalVisible(true);
   };
 
   const HandleOnFavoritePress = async () => {
@@ -244,6 +247,10 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
         onSubmit={(value) => {
           handlePlaylistSubmit(value);
         }}
+      />
+      <CollectionPreviewModal
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
       />
     </View>
   );

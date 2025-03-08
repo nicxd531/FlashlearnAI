@@ -1,39 +1,48 @@
-import { FromFields } from "@/@types/reuseables";
-import {
-  handleSubmitCollection,
-  handleUpdateCollection,
-} from "@/components/api/request";
+import { defaultForm, FromFields } from "@/@types/reuseables";
 import BtnRNPIcon from "@/components/reuseables/BtnRNPIcon";
 import TextHCheckBox from "@/components/reuseables/TextHCheckBox";
 import React, { FC, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
 import RNPickerSelect from "react-native-picker-select";
 import { categories } from "@/@types/collection";
 import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
+import {
+  handleSubmitCollection,
+  handleUpdateCollection,
+} from "@/components/create/hooks/request";
+import { AntDesign } from "@expo/vector-icons";
+import { updateCollectionId } from "@/utils/store/Collection";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import { createNavigatorStackParamList } from "@/@types/navigation";
+import { Toasts } from "@backpackapp-io/react-native-toast";
 
-interface Props {
-  setActive: (p: any) => void;
-  collectionInfo: FromFields;
-  setCollectionInfo: React.Dispatch<React.SetStateAction<FromFields>>;
-}
+interface Props {}
 
 const CreateCollectionPage: FC<Props> = (props) => {
-  const { busyACollection, collectionId } = useSelector(
+  const [checked, setChecked] = React.useState(false);
+  const dispatch = useDispatch();
+  const navigation =
+    useNavigation<NavigationProp<createNavigatorStackParamList>>();
+  const { createBusyState, createdCollectionId } = useSelector(
     (state: any) => state.collection
   );
-
-  const { collectionInfo, setCollectionInfo } = props;
-  const [checked, setChecked] = React.useState(false);
+  const [collectionInfo, setCollectionInfo] = React.useState({
+    ...defaultForm,
+  });
   const formattedCategories = categories.map((category) => ({
     label: category,
     value: category.replace(/ /g, " "),
   }));
 
   const visibility = checked ? "public" : "private";
-
+  const handleNew = () => {
+    setCollectionInfo({ ...defaultForm });
+    dispatch(updateCollectionId(null));
+  };
   useEffect(() => {
     setCollectionInfo({ ...collectionInfo, visibility });
   }, [checked]);
@@ -45,6 +54,9 @@ const CreateCollectionPage: FC<Props> = (props) => {
           <Text style={[tw`font-bold  w-full `]} variant="headlineMedium">
             Create Collection
           </Text>
+          <Pressable onPress={handleNew} style={tw`mr-2`}>
+            <AntDesign name="plus" size={24} />
+          </Pressable>
         </View>
         <TextInput
           label="Title"
@@ -75,31 +87,32 @@ const CreateCollectionPage: FC<Props> = (props) => {
           placeholder={{ label: "categories", value: null }}
         />
         <TextHCheckBox checked={checked} setChecked={setChecked} />
-        <View style={{ width: 380, alignItems: "center" }}>
-          {/* <PosterPreview
-          collectionInfo={collectionInfo}
-          setCollectionInfo={setCollectionInfo}
-        /> */}
-        </View>
+        <View style={{ width: 380, alignItems: "center" }}></View>
         <View style={[{ width: "60%", marginHorizontal: "auto" }, tw`mt-5`]}>
           <BtnRNPIcon
-            busyACollection={busyACollection}
+            busyACollection={createBusyState}
             handleSubmit={
-              collectionId
+              createdCollectionId
                 ? () =>
                     handleUpdateCollection(
                       visibility,
                       collectionInfo,
-                      collectionId
+                      createdCollectionId,
+                      dispatch,
+                      navigation
                     )
                 : () =>
                     handleSubmitCollection(
                       visibility,
                       collectionInfo,
-                      collectionId
+                      createdCollectionId,
+                      dispatch,
+                      navigation
                     )
             }
-            title={collectionId ? "update collection" : "Save Collection"}
+            title={
+              createdCollectionId ? "update collection" : "Save Collection"
+            }
             iconName="save"
           />
         </View>
@@ -119,7 +132,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-
+    flexDirection: "row",
     marginBottom: 20,
   },
 });

@@ -40,6 +40,7 @@ const Collections: FC<Props> = (props) => {
           />
         );
       })}
+      {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
 
       <CollectionPreviewModal
         setModalVisible={setModalVisible}
@@ -51,11 +52,10 @@ const Collections: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "fff",
-    flex: 1,
     flexWrap: "wrap",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "flex-start", // Changed to flex-start
+    alignItems: "flex-start", // Add this line
     marginTop: 15,
   },
 });

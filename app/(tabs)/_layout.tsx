@@ -16,6 +16,7 @@ import { getClient } from "@/components/api/client";
 import { NavigationProp } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
 import { RootState } from "@/utils/store";
+import { Toasts } from "@backpackapp-io/react-native-toast";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -38,49 +39,46 @@ export default function TabLayout() {
         handleError(e);
       }
     };
-
     initialize();
-    const backAction = () => {
-      if (navigation.isFocused()) {
-        BackHandler.exitApp(); // Close app if on Home
-        return true;
-      }
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove(); // Cleanup
   }, [navigation]);
 
   return (
-    <Tabs
-      tabBar={(props) => <TabBar {...props} />}
-      screenOptions={{
-        animation: "shift",
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {},
-        }),
-      }}
-    >
-      <Tabs.Screen
-        name="HomePage"
-        options={{ title: "Home", headerShown: false }}
+    <>
+      <Tabs
+        tabBar={(props) => <TabBar {...props} />}
+        screenOptions={{
+          animation: "shift",
+          tabBarStyle: Platform.select({
+            ios: {
+              // Use a transparent background on iOS to show the blur effect
+              position: "absolute",
+            },
+            default: {},
+          }),
+        }}
+      >
+        <Tabs.Screen
+          name="HomePage"
+          options={{ title: "Home", headerShown: false }}
+        />
+        <Tabs.Screen
+          name="CreatePage"
+          options={{ title: "Create", headerShown: false }}
+        />
+        <Tabs.Screen
+          name="LibraryPage"
+          options={{ title: "Library", headerShown: false }}
+        />
+      </Tabs>
+      <Toasts
+        overrideDarkMode={true}
+        globalAnimationType="spring"
+        globalAnimationConfig={{
+          duration: 1000,
+          flingPositionReturnDuration: 200,
+          stiffness: 50,
+        }}
       />
-      <Tabs.Screen
-        name="CreatePage"
-        options={{ title: "Create", headerShown: false }}
-      />
-      <Tabs.Screen
-        name="LibraryPage"
-        options={{ title: "Library", headerShown: false }}
-      />
-    </Tabs>
+    </>
   );
 }

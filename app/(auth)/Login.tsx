@@ -78,24 +78,22 @@ const LogIn: FC<Props> = (props) => {
     values: SignInUserInfo,
     actions: FormikHelpers<SignInUserInfo>
   ) => {
+    dispatch(updateBusyState(true));
     try {
       actions.setSubmitting(true);
       const { data } = await client.post("/auth/sign-in", {
         ...values,
       });
       await saveToAsyncStorage(Keys.AUTH_TOKEN, data.token);
-      dispatch(updateLoggedInState(false));
-      dispatch(updateBusyState(false));
       dispatch(updateProfile(data.profile));
-      dispatch(updateBusyState(true));
       dispatch(updateLoggedInState(true));
-      dispatch(updateBusyState(false));
       toast.success("Log in Successful ", { icon: "🎉🎊" });
     } catch (err) {
       handleError(err);
     } finally {
       actions.setSubmitting(false);
     }
+    dispatch(updateBusyState(false));
   };
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>

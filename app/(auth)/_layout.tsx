@@ -7,6 +7,7 @@ import Login from "./Login";
 import LostPassword from "./LostPassword";
 import Verification from "./Verification";
 import Index from "./Index";
+import { Toasts } from "@backpackapp-io/react-native-toast";
 
 interface Props {}
 
@@ -26,6 +27,15 @@ const AuthPage: FC<Props> = (props) => {
         <Stack.Screen name="Verification" component={Verification} />
         <Stack.Screen name="LostPassword" component={LostPassword} />
       </Stack.Navigator>
+      <Toasts
+        overrideDarkMode={true}
+        globalAnimationType="spring"
+        globalAnimationConfig={{
+          duration: 1000,
+          flingPositionReturnDuration: 200,
+          stiffness: 50,
+        }}
+      />
     </>
   );
 };

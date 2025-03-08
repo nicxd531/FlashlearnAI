@@ -36,15 +36,6 @@ const CollectionListItem: FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // backgroundColor: "fff",
-    flex: 1,
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 15,
-  },
-
   titleContainer: {
     padding: 5,
   },
@@ -66,6 +57,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
     width: "45%",
+    marginLeft: 15,
   },
 });
 

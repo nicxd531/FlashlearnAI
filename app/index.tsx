@@ -42,7 +42,7 @@ const Index: FC<Props> = (props) => {
     };
 
     initialize();
-  }, []);
+  });
 
   return (
     <View style={styles.container}>

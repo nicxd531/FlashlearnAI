@@ -24,6 +24,7 @@ import client from "@/components/api/client";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { AuthStackParamList } from "@/@types/navigation";
+import { handleAuthErrors } from "@/components/Auth/request";
 
 const signUpValidation = yup.object({
   name: yup
@@ -83,29 +84,7 @@ const SignUp: FC<Props> = ({ navigation }) => {
       });
       actions.setSubmitting(false);
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        // Server responded with a status other than 200 range
-        if (err.response.status === 400) {
-          toast.error("Invalid input, please check your details ", {
-            icon: "❌",
-          });
-        } else if (err.response.status === 409) {
-          toast.error("Email already exists ", { icon: "❌" });
-        } else if (err.response.status === 422) {
-          toast.error("Unprocessable Entity: Please check your input data ", {
-            icon: "❌",
-          });
-        } else {
-          toast.error(`Error: ${err.response.data.message} `, { icon: "❌" });
-        }
-      } else if (axios.isAxiosError(err) && err.request) {
-        // Request was made but no response received
-        toast.error("Network error, please try again later ", { icon: "❌" });
-      } else {
-        // Something else happened while setting up the request
-        toast.error(`Error: ${(err as Error).message} `, { icon: "❌" });
-      }
-      console.log("sign up error", err);
+      handleAuthErrors(err)
       actions.setSubmitting(false);
     } finally {
       actions.setSubmitting(false);

@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
+    minHeight: 400,
   },
   title: {
     fontSize: 25,

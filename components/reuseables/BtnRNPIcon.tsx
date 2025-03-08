@@ -6,7 +6,7 @@ import { Text } from "react-native-paper";
 import colors from "@/constants/Colors";
 
 interface BtnRNPIconProps {
-  handleSubmit: () => Promise<void>;
+  handleSubmit: () => void;
   busyACollection: boolean;
   title?: string;
   iconName?: string; // Add iconName prop

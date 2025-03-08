@@ -16,7 +16,6 @@ interface Props {
 
 const FeedDetails: FC<Props> = (props) => {
   const { name, likes, description, onOpen, collectionId } = props;
-  console.log({ likes });
   const [newLikes, setNewLikes] = useState(likes);
 
   const formattedLikes = formatLikes(newLikes);

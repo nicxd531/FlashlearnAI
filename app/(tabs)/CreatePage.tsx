@@ -1,12 +1,12 @@
 import TopAppBar from "@/components/reuseables/TopAppBar";
 import React, { FC, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import CreateCollectionPage from "../(create)/CreateCollectionPage";
 import { defaultForm } from "@/@types/reuseables";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AiCardsCreator from "@/components/create/screen/AiCardsCreator";
 import ManualCardsCreation from "@/components/create/screen/ManualCardsCreation";
 import CardsPreview from "@/components/create/screen/CardsPreview";
+import CreateCollectionPage from "@/components/create/screen/CreateCollectionPage";
 
 interface Props {}
 

@@ -5,8 +5,27 @@ import { categoriesTypes } from "../Categories";
 interface CollectionState {
   busyACollection: boolean;
   busyAQuestion: boolean;
+  createBusyState: boolean;
   collectionId?: string;
+  createdCollectionId?: string;
   collectionData?: {
+    _id: string;
+    title: string;
+    description?: string;
+    owner: string;
+    poster?: {
+      url: string;
+      publicId: string;
+    };
+    likes: string[];
+    bookmarks: string[];
+    category: categoriesTypes;
+    cards: string[];
+    correctCards: string[];
+    visibility: "private" | "public"; // This defines the accepted values for TypeScript
+    createdAt: Date;
+  };
+  createdCollectionData?: {
     _id: string;
     title: string;
     description?: string;
@@ -26,6 +45,7 @@ interface CollectionState {
 }
 const initialState: CollectionState = {
   busyACollection: false,
+  createBusyState: false,
   busyAQuestion: false,
 };
 
@@ -36,14 +56,24 @@ const slice = createSlice({
     updateBusyStateCollection(collectionState, { payload }) {
       collectionState.busyACollection = payload;
     },
+    updateCreateBusyState(collectionState, { payload }) {
+      collectionState.createBusyState = payload;
+    },
     updateBusyStateQuestion(collectionState, { payload }) {
+      console.log({ payload });
       collectionState.busyAQuestion = payload;
     },
     updateCollectionId(collectionState, { payload }) {
       collectionState.collectionId = payload;
     },
+    updateCreatedCollectionId(collectionState, { payload }) {
+      collectionState.createdCollectionId = payload;
+    },
     updateCollectionData(collectionState, { payload }) {
       collectionState.collectionData = payload;
+    },
+    updateCreatedCollectionData(collectionState, { payload }) {
+      collectionState.createdCollectionData = payload;
     },
   },
 });
@@ -52,6 +82,9 @@ export const {
   updateCollectionId,
   updateBusyStateQuestion,
   updateCollectionData,
+  updateCreatedCollectionData,
+  updateCreatedCollectionId,
+  updateCreateBusyState,
 } = slice.actions;
 
 export const getCollectionState = createSelector(
