@@ -22,6 +22,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
 import { toast } from "@backpackapp-io/react-native-toast";
 import AppLink from "@/components/AppLink";
+import { handleAuthErrors } from "@/components/Auth/request";
 
 interface Props {
   route: any;
@@ -82,28 +83,7 @@ const Verification: FC<Props> = ({ route }) => {
       navigation.navigate("Login");
       setSubmitting(false);
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        // Handle different status codes
-        if (err.response.status === 400) {
-          toast.error("Invalid input, please check your details", {
-            icon: "❌",
-          });
-        } else if (err.response.status === 401) {
-          toast.error("Unauthorized access, please try again", { icon: "❌" });
-        } else if (err.response.status === 422) {
-          toast.error("Unprocessable Entity: Please check your input data", {
-            icon: "❌",
-          });
-        } else {
-          toast.error(`Error: ${err.response.data.message}`, { icon: "❌" });
-        }
-      } else if (axios.isAxiosError(err) && err.request) {
-        // Request was made but no response received
-        toast.error("Network error, please try again later", { icon: "❌" });
-      } else {
-        // Something else happened while setting up the request
-        toast.error(`Error: ${(err as Error).message}`, { icon: "❌" });
-      }
+      handleAuthErrors(err);
       console.log("Verification error", err);
       setSubmitting(false);
     } finally {
@@ -121,29 +101,7 @@ const Verification: FC<Props> = ({ route }) => {
 
       toast.success("Request successful", { icon: "✔️" });
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        // Handle different status codes
-        if (err.response.status === 400) {
-          toast.error("Invalid input, please check your details", {
-            icon: "❌",
-          });
-        } else if (err.response.status === 401) {
-          toast.error("Unauthorized access, please try again", { icon: "❌" });
-        } else if (err.response.status === 422) {
-          toast.error("Unprocessable Entity: Please check your input data", {
-            icon: "❌",
-          });
-        } else {
-          toast.error(`Error: ${err.response.data.message}`, { icon: "❌" });
-        }
-      } else if (axios.isAxiosError(err) && err.request) {
-        // Request was made but no response received
-        toast.error("Network error, please try again later", { icon: "❌" });
-      } else {
-        // Something else happened while setting up the request
-        toast.error(`Error: ${(err as Error).message}`, { icon: "❌" });
-      }
-      console.log("Error requesting for new OTP", err);
+      handleAuthErrors(err);
     }
   };
   useEffect(() => {

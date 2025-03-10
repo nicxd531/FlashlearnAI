@@ -67,29 +67,36 @@ export type categoriesTypes =
 export interface CollectionData {
   id: string;
   title: string;
-  about: string;
+  description: string;
   category: categoriesTypes;
-  poster?: string;
-  owner: {
+  poster?: { publicId: string; url: string };
+  owner?: {
     name: string;
     id: string;
+    avatar?: string;
   };
+  cards: string[];
+  createdAt: string;
+  updatedAt: string;
+  visibility: "private" | "public";
+  likes: number;
 }
 export interface topCreatorsData {
   id: string;
   name: string;
   avatar: string;
   backgroundCover: string;
+  userId: string;
 }
 
 export interface RecentlyPlayedData {
-  id: number;
+  id: string;
   title: string;
   poster: string;
   owner: { avatar: string };
 }
 export interface FavoritesData {
-  id: number;
+  id: string;
   title: string;
   description: string;
   poster: string;

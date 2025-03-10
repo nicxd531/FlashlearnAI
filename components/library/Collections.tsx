@@ -20,14 +20,33 @@ import colors from "@/constants/Colors";
 import CollectionListItem from "./components/CollectionListItem";
 import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
 import EmptyRecords from "./components/EmptyRecords";
+import { useDispatch,  } from "react-redux";
+import { handleCreateErrors } from "../create/hooks/request";
+import AppModal from "../reuseables/AppModal";
+import CollectionModal from "./CollectionModal";
 
 interface Props {}
 
 const Collections: FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [userId, setUserId] = useState<string>("");
+  const closePlayerModal = () => {
+    setModalVisible(false);
+  };
   const { data, isLoading } = useFetchUploadsByProfile();
   if (isLoading) return <CollectionListLoadingUi />;
+
   if (!data?.length) return <EmptyRecords title="There is no Collection! 😔" />;
+  const dispatch = useDispatch();
+  const handlePress = async (id: string) => {
+    try {
+      setUserId(id);
+      setModalVisible(true);
+    } catch (err) {
+      handleCreateErrors(err);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -36,16 +55,18 @@ const Collections: FC<Props> = (props) => {
           <CollectionListItem
             key={item.id}
             collection={item}
-            onPress={() => setModalVisible(true)}
+            onPress={() => handlePress(item.id)}
           />
         );
       })}
       {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
-
-      <CollectionPreviewModal
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-      />
+      <AppModal
+        animation
+        visible={modalVisible}
+        onRequestClose={closePlayerModal}
+      >
+        {userId && <CollectionModal userId={userId} />}
+      </AppModal>
     </ScrollView>
   );
 };

@@ -21,6 +21,16 @@ export type AuthStackParamList = {
 export type libraryNavigatorStackParamList = {
   libraryMain: undefined;
   librarySettings: undefined;
+  collectionPreview: undefined;
+  ProfilePreviewPage: undefined;
+};
+export type libraryNavigatorStackParamListMini = {
+  LibraryPage:{
+    screen:string;
+    params:{
+      userId:string
+    }
+  }
 };
 export type createNavigatorStackParamList = {
   CreateCollectionPage: undefined;

@@ -35,6 +35,14 @@ import PlaylistForm from "./PlaylistForm";
 import OptionsModal from "./OptionsModal";
 import { toast } from "@backpackapp-io/react-native-toast";
 import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
+import AppModal from "@/components/reuseables/AppModal";
+import CollectionModal from "@/components/library/CollectionModal";
+import {
+  HandleOnFavoritePress,
+  HandleOnPlaylistPress,
+  handlePlaylistSubmit,
+  updatePlaylist,
+} from "../hook/request";
 
 const { width } = Dimensions.get("window");
 interface Props {
@@ -43,6 +51,10 @@ interface Props {
 
 const RecentlyPlayed: React.FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [collectionId, setCollectionId] = useState<string>("");
+  const closePlayerModal = () => {
+    setModalVisible(false);
+  };
   const [showOptions, setShowOptions] = useState(false);
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
   const [showPlayListForm, setShowPlayListForm] = useState(false);
@@ -57,37 +69,16 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
     setShowOptions(true);
     setSelectedCollection(mainData);
   };
-  const onPress = (
-    event: GestureResponderEvent,
-    mainData: RecentlyPlayedData
-  ) => {
-    onOpen(event);
+  const onPress = (userId: string) => {
     setModalVisible(true);
-  };
-
-  const HandleOnFavoritePress = async () => {
-    try {
-      if (!selectedCollection) return;
-      const client = await getClient();
-      const { data } = await client.post(
-        "/favorite?collectionId=" + selectedCollection?.id
-      );
-    } catch (e) {
-      handleError(e);
-    }
-    setShowOptions(false);
-    setSelectedCollection(undefined);
-  };
-  const HandleOnPlaylistPress = async () => {
-    setShowOptions(false);
-    setShowPlaylistModal(true);
+    setCollectionId(userId);
   };
 
   const renderItem = ({
     item,
   }: {
     item: {
-      id: number;
+      id: string;
       title: string;
       poster: string;
       owner: { avatar: string };
@@ -97,7 +88,7 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
       onLongPress={() => onLongPress(item)}
       key={item.id}
       style={styles.card}
-      onPress={(event) => onPress(event, item)}
+      onPress={() => onPress(item.id)}
     >
       <Image
         PlaceholderContent={<ActivityIndicator />}
@@ -141,46 +132,6 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
       </PulseAnimationContainer>
     );
   }
-  const handlePlaylistSubmit = async (value: {
-    title: string;
-    private: boolean;
-  }) => {
-    if (!value.title.trim()) return;
-    try {
-      if (!selectedCollection) return;
-      const client = await getClient();
-      const { data } = await client.post("/playlist/create", {
-        title: value.title,
-        visibility: value.private ? "private" : "public",
-        resId: selectedCollection?.id,
-      });
-    } catch (e) {
-      handleError(e);
-    }
-    setShowPlayListForm(false);
-    setShowPlaylistModal(false);
-    setShowOptions(false);
-    setSelectedCollection(undefined);
-  };
-  const updatePlaylist = async (item: Playlist) => {
-    try {
-      const client = await getClient();
-      const { data } = await client.patch("/playlist", {
-        id: item.id,
-        item: selectedCollection?.id,
-        title: item.title,
-        visibility: item.visibility,
-      });
-      toast.success("collection added to playlist", { icon: "🎉" });
-      console.log({ data });
-    } catch (e) {
-      handleError(e);
-    }
-    setShowPlayListForm(false);
-    setShowPlaylistModal(false);
-    setShowOptions(false);
-    setSelectedCollection(undefined);
-  };
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -207,12 +158,18 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
           {
             title: "Add to playlist",
             icon: "playlist-music",
-            onPress: HandleOnPlaylistPress,
+            onPress: () =>
+              HandleOnPlaylistPress(setShowOptions, setShowPlaylistModal),
           },
           {
             title: "Add to favorite",
             icon: "cards-heart",
-            onPress: HandleOnFavoritePress,
+            onPress: () =>
+              HandleOnFavoritePress(
+                selectedCollection,
+                setShowOptions,
+                setSelectedCollection
+              ),
           },
         ]}
         renderItem={(item) => {
@@ -236,7 +193,16 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
         }}
         visible={showPlaylistModal}
         onRequestClose={() => setShowPlaylistModal(false)}
-        onPlaylistPress={updatePlaylist}
+        onPlaylistPress={(item) =>
+          updatePlaylist(
+            item,
+            selectedCollection,
+            setShowPlayListForm,
+            setShowPlaylistModal,
+            setShowOptions,
+            setSelectedCollection
+          )
+        }
       />
 
       <PlaylistForm
@@ -245,13 +211,23 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
           setShowPlayListForm(false);
         }}
         onSubmit={(value) => {
-          handlePlaylistSubmit(value);
+          handlePlaylistSubmit(
+            value,
+            selectedCollection,
+            setShowPlayListForm,
+            setShowPlaylistModal,
+            setShowOptions,
+            setSelectedCollection
+          );
         }}
       />
-      <CollectionPreviewModal
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-      />
+      <AppModal
+        animation
+        visible={modalVisible}
+        onRequestClose={closePlayerModal}
+      >
+        {collectionId && <CollectionModal userId={collectionId} />}
+      </AppModal>
     </View>
   );
 };

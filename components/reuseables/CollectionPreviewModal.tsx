@@ -1,3 +1,4 @@
+import { CollectionData } from "@/@types/collection";
 import { AuthStackParamList } from "@/@types/navigation";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -15,16 +16,20 @@ import {
 import { Image } from "react-native-elements";
 import { Chip, IconButton, Text } from "react-native-paper";
 import tw from "twrnc";
-
+import { formatRelativeTime, getSource } from "../api/request";
+import { flashcardPlaceholder } from "@/constants/Styles";
 interface CollectionPreviewModalProps {
   setModalVisible: (visible: boolean) => void;
   modalVisible: boolean;
+  data: CollectionData | null;
 }
 
 const CollectionPreviewModal: React.FC<CollectionPreviewModalProps> = ({
   setModalVisible,
   modalVisible,
+  data,
 }) => {
+  console.log({ data });
   const [modalHeight] = useState(new Animated.Value(600)); // Initial height for preview
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const screenHeight = Dimensions.get("window").height;
@@ -56,6 +61,7 @@ const CollectionPreviewModal: React.FC<CollectionPreviewModalProps> = ({
       }
     },
   });
+  const createdAt = formatRelativeTime(data?.createdAt ?? "");
 
   useEffect(() => {
     if (typeof setModalVisible !== "function") {
@@ -81,57 +87,63 @@ const CollectionPreviewModal: React.FC<CollectionPreviewModalProps> = ({
             {...panResponder.panHandlers}
           >
             <View style={styles.pullBar} />
-            <Image
-              style={{ width: 370, height: 200, borderRadius: 15 }}
-              source={image}
-              PlaceholderContent={<ActivityIndicator />}
-            />
+            {data ? (
+              <>
+                <Image
+                  style={{ width: 370, height: 200, borderRadius: 15 }}
+                  source={getSource(
+                    data?.poster?.url ?? "",
+                    flashcardPlaceholder
+                  )}
+                  PlaceholderContent={<ActivityIndicator />}
+                />
 
-            <View>
-              <Text style={[tw`font-bold mt-4`]} variant="headlineLarge">
-                Card name
-              </Text>
-              <View style={[tw`justify-between flex-row mt-2 align-center`]}>
-                <Chip style={tw`self-start`} textStyle={styles.chipContent}>
-                  Category
-                </Chip>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("CollectionPlay")}
-                >
-                  <IconButton
-                    icon={() => (
-                      <MaterialIcons
-                        name="play-circle-outline"
-                        size={35}
-                        color="#00000"
+                <View>
+                  <Text style={[tw`font-bold mt-4`]} variant="headlineLarge">
+                    {data.title}
+                  </Text>
+                  <View style={[tw`justify-between flex-row mt-2 `]}>
+                    <Chip style={tw`self-start`} textStyle={styles.chipContent}>
+                      {data.category}
+                    </Chip>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("CollectionPlay")}
+                    >
+                      <IconButton
+                        icon={() => (
+                          <MaterialIcons
+                            name="play-circle-outline"
+                            size={35}
+                            color="#00000"
+                          />
+                        )}
+                        iconColor={"#0000"}
+                        size={20}
                       />
-                    )}
-                    iconColor={"#0000"}
-                    size={20}
-                  />
-                </TouchableOpacity>
-              </View>
-              <Text>2 months ago</Text>
-              <Text style={[tw`mt-4`]}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text>{createdAt}</Text>
+                  <Text style={[tw`mt-4`]}>{data.description}</Text>
 
-              <View style={[tw`  flex-row mt-4`]}>
-                <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
-                  Number of Cards:
-                </Text>
-                <Text variant="titleMedium">13</Text>
-              </View>
-              <View style={[tw`  flex-row mt-4`]}>
-                <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
-                  Author:
-                </Text>
-                <Text variant="titleMedium">Nicx</Text>
-              </View>
-            </View>
+                  <View style={[tw`  flex-row mt-4`]}>
+                    <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
+                      Number of Cards:
+                    </Text>
+                    <Text variant="titleMedium">{data?.cards?.length}</Text>
+                  </View>
+                  <View style={[tw`  flex-row mt-4`]}>
+                    <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
+                      Author:
+                    </Text>
+                    <Text variant="titleMedium">
+                      {data?.owner?.name ?? "Unknown"}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <ActivityIndicator />
+            )}
           </Animated.View>
         </TouchableOpacity>
       </Modal>

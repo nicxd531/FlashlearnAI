@@ -10,25 +10,34 @@ import { Image } from "react-native-elements";
 
 interface Props {
   collection: CollectionData;
-  onPress?(): void;
+  onPress(id: string): void;
+  onLongPress?(collection: CollectionData): void;
 }
 
 const CollectionListItem: FC<Props> = (props) => {
-  const { collection, onPress } = props;
-
+  const { collection, onPress, onLongPress } = props;
+  const poster =
+    typeof collection?.poster === "string"
+      ? collection?.poster
+      : collection?.poster?.url;
   return (
-    <Pressable onPress={onPress} style={styles.listItem} key={collection.id}>
+    <Pressable
+      onPress={() => onPress(collection.id)}
+      onLongPress={onLongPress ? () => onLongPress(collection) : undefined}
+      style={styles.listItem}
+      key={collection.id}
+    >
       <Image
         style={styles.poster}
         PlaceholderContent={<ActivityIndicator />}
-        source={getSource(collection.poster, flashcardPlaceholder)}
+        source={getSource(poster, flashcardPlaceholder)}
       />
       <View style={styles.titleContainer}>
         <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
           {collection.title}
         </Text>
         <Text style={styles.owner} ellipsizeMode="tail" numberOfLines={1}>
-          {collection.owner.name}
+          {collection.owner?.name}
         </Text>
       </View>
     </Pressable>

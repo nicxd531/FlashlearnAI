@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: "bold",
-    // color: colors.INACTIVE_CONTRAST,
+    color: "#ccc",
   },
 });
 

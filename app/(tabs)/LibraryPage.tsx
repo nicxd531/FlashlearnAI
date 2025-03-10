@@ -20,15 +20,37 @@ import { handleError } from "@/components/api/request";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LibraryMain from "@/components/library/screens/LibraryMain";
 import LibrarySettings from "@/components/library/screens/LibrarySettings";
+import CollectionPreview from "@/components/library/CollectionPreview";
+import ProfilePreviewPage from "@/components/library/screens/ProfilePreviewPage";
+import { NavigationProp, useIsFocused } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 
 interface Props {}
 const Stack = createNativeStackNavigator();
 const LibraryPage: FC<Props> = (props) => {
+  const isFocused = useIsFocused();
+  const navigation = useNavigation<NavigationProp<any>>();
+
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     navigation.navigate("LibraryPage", {
+  //       screen: "libraryMain", // Pass any necessary parameters
+  //     });
+  //   }
+  // }, [isFocused, navigation]);
   return (
     <View style={styles.container}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        initialRouteName="libraryMain"
+        screenOptions={{ headerShown: false }}
+      >
         <Stack.Screen name="libraryMain" component={LibraryMain} />
         <Stack.Screen name="librarySettings" component={LibrarySettings} />
+        <Stack.Screen name="collectionPreview" component={CollectionPreview} />
+        <Stack.Screen
+          name="ProfilePreviewPage"
+          component={ProfilePreviewPage}
+        />
       </Stack.Navigator>
     </View>
   );

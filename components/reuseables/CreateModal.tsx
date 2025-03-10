@@ -12,10 +12,7 @@ import {
 import { Text } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import tw from "twrnc";
-import {
-  updateBusyStateQuestion,
-  updateCreatedCollectionData,
-} from "@/utils/store/Collection";
+import { updateBusyStateQuestion } from "@/utils/store/Collection";
 import { cardsInfoSchema } from "@/@types/reuseables";
 import { toast, Toasts } from "@backpackapp-io/react-native-toast";
 import axios from "axios";
@@ -24,27 +21,33 @@ import * as yup from "yup";
 import colors from "@/constants/Colors";
 import AddQuestionInput from "./AddQuestionInput";
 import ListOfCards from "./ListOfCards";
+import { CollectionData } from "@/@types/collection";
 
 interface NotificationModalProps {
   visible: boolean;
   onClose: () => void;
   message: string;
+  createdCollectionId: string;
+  busyAQuestion: boolean;
+  createdCollectionData: CollectionData;
+  updateCollectionData: (data: CollectionData) => void;
 }
 
 const CreateModal: React.FC<NotificationModalProps> = ({
   visible,
   onClose,
   message,
+  createdCollectionId,
+  busyAQuestion,
+  createdCollectionData,
+  updateCollectionData,
 }) => {
-  const { createdCollectionId, busyAQuestion, createdCollectionData } =
-    useSelector((state: RootState) => (state as any).collection);
-  // console.log("collectionId", collectionId);
   const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");
   const [errorM, setError] = useState<string | null>(null);
   const [qaList, setQaList] = useState<
     { question: string; answer: string; _id: string; collectionId: string }[]
-  >([]);
+  >(Array.isArray(createdCollectionData?.cards) && createdCollectionData?.cards.every(card => typeof card === 'object') ? createdCollectionData.cards : []);
   const dispatch = useDispatch();
   const addQaItem = async () => {
     dispatch(updateBusyStateQuestion(true));
@@ -73,7 +76,7 @@ const CreateModal: React.FC<NotificationModalProps> = ({
           ...card,
           _id: card._id,
         }));
-        dispatch(updateCreatedCollectionData(data.collection));
+        updateCollectionData(data.collection);
         setQaList([...newData]);
         setQuestion("");
         setAnswer("");

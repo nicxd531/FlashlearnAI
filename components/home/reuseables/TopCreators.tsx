@@ -8,11 +8,17 @@ import {
 } from "@/hooks/query";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Text, StyleSheet } from "react-native";
+import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
 import { Surface, Card, Avatar } from "react-native-paper";
 import PulseAnimationContainer from "./PulseAnimationContainer";
 import colors from "@/constants/Colors";
 import { CollectionData, topCreatorsData } from "@/@types/collection";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import {
+  libraryNavigatorStackParamList,
+  libraryNavigatorStackParamListMini,
+} from "@/@types/navigation";
 
 type Creator = {
   id: string;
@@ -23,29 +29,39 @@ type Creator = {
 
 const TopCreators: React.FC = () => {
   const { data, isLoading } = useFetchTopCreators();
+  const navigation =
+    useNavigation<NavigationProp<libraryNavigatorStackParamListMini>>();
+  const handlePress = (id: string) => {
+    navigation.navigate("LibraryPage", {
+      screen: "ProfilePreviewPage",
+      params: { userId: id }, // Pass any necessary parameters
+    });
+  };
 
   const renderItem = ({ item }: { item: topCreatorsData }) => (
-    <Surface style={styles.surface}>
-      <Card style={styles.card}>
-        <Card.Cover
-          style={styles.backgroundOverlay}
-          source={{
-            uri: item.backgroundCover,
-          }}
-        />
-        <View style={styles.avatarContainer}>
-          <Avatar.Image
-            size={60}
+    <Pressable onPress={() => handlePress(item.userId)}>
+      <Surface style={styles.surface}>
+        <Card style={styles.card}>
+          <Card.Cover
+            style={styles.backgroundOverlay}
             source={{
-              uri: item.avatar,
+              uri: item.backgroundCover,
             }}
           />
-        </View>
-        <Card.Content style={{ marginTop: 10 }}>
-          <Text style={styles.name}>{item.name}</Text>
-        </Card.Content>
-      </Card>
-    </Surface>
+          <View style={styles.avatarContainer}>
+            <Avatar.Image
+              size={60}
+              source={{
+                uri: item.avatar,
+              }}
+            />
+          </View>
+          <Card.Content style={{ marginTop: 10 }}>
+            <Text style={styles.name}>{item.name}</Text>
+          </Card.Content>
+        </Card>
+      </Surface>
+    </Pressable>
   );
   const dummyData = new Array(4).fill("");
 
