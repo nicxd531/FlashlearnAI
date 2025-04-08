@@ -14,7 +14,10 @@ const TabNavigator: FC<Props> = (props) => {
   );
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: "#fff",
+    flex: 1,
+  },
 });
 
 export default TabNavigator;

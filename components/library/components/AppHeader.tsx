@@ -28,11 +28,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-    height: 45,
+    height: 60,
     paddingHorizontal: 10,
+    paddingVertical: 15,
   },
   title: {
     fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

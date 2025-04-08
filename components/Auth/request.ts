@@ -15,6 +15,8 @@ export const handleAuthErrors = (err: any) => {
       });
     } else if (err.response.status === 401) {
       toast.error("Unauthorized access, please try again", { icon: "❌" });
+    } else if (err.response.status === 403) {
+      toast.error("Wrong email or password ", { icon: "❌" });
     } else if (err.response.status === 409) {
       toast.error("Email already exists ", { icon: "❌" });
     } else if (err.response.status === 422) {
@@ -32,4 +34,3 @@ export const handleAuthErrors = (err: any) => {
     toast.error(`Error: ${(err as Error).message}`, { icon: "❌" });
   }
 };
-

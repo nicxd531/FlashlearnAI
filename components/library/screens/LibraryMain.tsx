@@ -5,7 +5,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import Collections from "@/components/library/Collections";
 import Playlist from "@/components/library/Playlist";
 import Favorites from "@/components/library/Favorites";
-import History from "@/components/library/History";
+import HistoryT from "@/components/library/History";
 import colors from "@/constants/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,11 +23,10 @@ interface Props {}
 
 const LibraryMain: FC<Props> = (props) => {
   const Tab = createMaterialTopTabNavigator();
-  const { profile } = useSelector((state: RootState) => (state as any).auth);
   return (
     <View style={styles.container}>
-      <ProfileComponent profile={profile} />
       <StatusBar barStyle="dark-content" hidden={false} translucent={true} />
+      <ProfileComponent />
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: styles.tabBarStyles,
@@ -37,7 +36,7 @@ const LibraryMain: FC<Props> = (props) => {
         <Tab.Screen name="Collections" component={Collections} />
         <Tab.Screen name="Playlist" component={Playlist} />
         <Tab.Screen name="Favorites" component={Favorites} />
-        <Tab.Screen name="History" component={History} />
+        <Tab.Screen name="History" component={HistoryT} />
       </Tab.Navigator>
     </View>
   );
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   tabBarStyles: {
-    backgroundColor: "transparent",
     elevation: 0,
     shadowRadius: 0,
     shadowColor: "transparent",

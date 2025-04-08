@@ -18,7 +18,7 @@ const FullCardComp: FC<Props> = (props) => {
   const { stackStyle, currentIndex, setCurrentIndex, data, progress } = props;
   return data ? (
     <>
-      <CardsSlider 
+      <CardsSlider
         stackStyle={stackStyle}
         currentIndex={currentIndex}
         setCurrentIndex={setCurrentIndex}

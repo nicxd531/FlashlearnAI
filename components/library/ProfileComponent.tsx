@@ -13,11 +13,12 @@ import {
   libraryNavigatorStackParamList,
 } from "@/@types/navigation";
 import { formatFollowers } from "../api/request";
+import { useFetchLogInUser } from "./hooks/query";
 
-interface Props {
-  profile?: UserProfile | null;
-}
-const ProfileComponent: FC<Props> = ({ profile }) => {
+interface Props {}
+const ProfileComponent: FC<Props> = ( props) => {
+  const {data:profile}=useFetchLogInUser()
+  
   const { navigate } =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
   if (!profile) return null;
@@ -30,6 +31,11 @@ const ProfileComponent: FC<Props> = ({ profile }) => {
         <View style={styles.flexRow}>
           <Text style={styles.email}>{profile.email}</Text>
           <MaterialIcons name="verified" size={15} color={colors.SECONDARY} />
+          {/* {profile?.verified ? (
+            <MaterialIcon name="verified" size={15} color={colors.SECONDARY} />
+          ) : (
+            <ReVerificationLink linkTitle="verify" activeAtFirst />
+          )} */}
         </View>
 
         <View style={styles.flexRow}>

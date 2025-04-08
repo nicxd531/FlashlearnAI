@@ -1,3 +1,5 @@
+import { string } from "yup";
+
 export type categoriesTypes =
   | "Mathematics"
   | "Science"
@@ -81,6 +83,23 @@ export interface CollectionData {
   visibility: "private" | "public";
   likes: number;
 }
+export interface CollectionData2 {
+  id: string;
+  title: string;
+  description: string;
+  category: categoriesTypes;
+  poster?: string;
+  owner?: {
+    name: string;
+    id: string;
+    avatar?: string;
+  };
+  cards: string[];
+  createdAt: string;
+  updatedAt: string;
+  visibility: "private" | "public";
+  likes: number;
+}
 export interface topCreatorsData {
   id: string;
   name: string;
@@ -92,8 +111,21 @@ export interface topCreatorsData {
 export interface RecentlyPlayedData {
   id: string;
   title: string;
-  poster: string;
-  owner: { avatar: string };
+  description: string;
+  category: categoriesTypes;
+  poster?: {
+    url: string;
+  };
+  owner?: {
+    name: string;
+    id: string;
+    avatar?: string;
+  };
+  cards: string[];
+  createdAt: string;
+  updatedAt: string;
+  visibility: "private" | "public";
+  likes: number;
 }
 export interface FavoritesData {
   id: string;
@@ -108,7 +140,21 @@ export interface Playlist {
   itemsCount: number;
   visibility: "public" | "private";
 }
-
+export interface HistoryT {
+  date: string;
+  cardsCollection: {
+    cardsCollectionId: string;
+    date: string;
+    id: string;
+    title: string;
+  }[];
+}
+export type historyCollection = {
+  cardsCollectionId: string;
+  date: string;
+  id: string;
+  title: string;
+};
 export const categories = [
   "Mathematics",
   "Science",

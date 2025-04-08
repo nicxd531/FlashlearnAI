@@ -19,58 +19,32 @@ import { Toasts } from "@backpackapp-io/react-native-toast";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeMain from "@/components/library/screens/HomeMain";
+import ProfilePreviewPage from "@/components/library/screens/ProfilePreviewPage";
+import CategoriesPreviewPage from "@/components/library/screens/CategoriesPreviewPage";
+import CollectionPreview from "@/components/library/CollectionPreview";
 
 interface Props {}
-
+const Stack = createNativeStackNavigator();
 const HomePage: FC<Props> = (props) => {
-  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
-  const modalizeRef = useRef<Modalize>(null);
-  const onOpen = (event: GestureResponderEvent) => {
-    modalizeRef.current?.open();
-  };
-  const [activeScreen, setActiveScreen] = useState<"Explore" | "Discover">(
-    "Explore"
-  );
-
-  useEffect(() => {
-    const backAction = () => {
-      if (navigation.isFocused()) {
-        BackHandler.exitApp(); // Close app if on Home
-        return true;
-      }
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove(); // Cleanup
-  });
   return (
     <View style={styles.container}>
-      <Toasts
-        overrideDarkMode={true}
-        globalAnimationType="spring"
-        globalAnimationConfig={{
-          duration: 3000,
-          flingPositionReturnDuration: 200,
-          stiffness: 50,
-        }}
-      />
-      <ScrollView>
-        <TopAppBar />
-        <TopCreators />
-        <PillToggleButton
-          activeScreen={activeScreen}
-          setActiveScreen={setActiveScreen}
+      <Stack.Navigator
+        initialRouteName="HomeMain"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="HomeMain" component={HomeMain} />
+        <Stack.Screen name="collectionPreview" component={CollectionPreview} />
+        <Stack.Screen
+          name="ProfilePreviewPage"
+          component={ProfilePreviewPage}
         />
-        {activeScreen === "Explore" ? (
-          <ExploreScreen onOpen={onOpen} />
-        ) : (
-          <DiscoverScreen onOpen={onOpen} />
-        )}
-      </ScrollView>
+        <Stack.Screen
+          name="CategoriesPreviewPage"
+          component={CategoriesPreviewPage}
+        />
+      </Stack.Navigator>
     </View>
   );
 };
@@ -78,7 +52,6 @@ const HomePage: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "fff",
   },
 });
 

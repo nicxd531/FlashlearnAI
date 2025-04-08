@@ -19,22 +19,24 @@ import EmptyRecords from "@/components/library/components/EmptyRecords";
 import CardsPreviewList from "../reuseables/CardsPreviewList";
 import { formatRelativeTime } from "@/components/api/request";
 import { updateCreatedCollectionData } from "@/utils/store/Collection";
+import { useFetchCollectionData } from "@/components/library/hooks/query";
 
 interface Props {}
 
 const CardsPreview: FC<Props> = (props) => {
-  const { createdCollectionId, busyAQuestion, createdCollectionData } =
-    useSelector(
-      (state: {
-        collection: {
-          createdCollectionId: string;
-          busyAQuestion: boolean;
-          createdCollectionData: any;
-        };
-      }) => state.collection
-    );
-  const createdAt = formatRelativeTime(createdCollectionData.createdAt);
-  const updatedAt = formatRelativeTime(createdCollectionData.updatedAt);
+  const { createdCollectionId, busyAQuestion } = useSelector(
+    (state: {
+      collection: {
+        createdCollectionId: string;
+        busyAQuestion: boolean;
+        createdCollectionData: any;
+      };
+    }) => state.collection
+  );
+
+  const { data, isLoading } = useFetchCollectionData(createdCollectionId);
+  const createdAt = formatRelativeTime(data?.createdAt);
+  const updatedAt = formatRelativeTime(data?.updatedAt);
   const [stackStyle, setStackStyle] = React.useState("default");
   const [visible, setVisible] = React.useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -45,10 +47,7 @@ const CardsPreview: FC<Props> = (props) => {
     if (totalCards === 0) return 0; // Avoid division by zero
     return currentCardIndex / totalCards;
   };
-  const progress = calculateProgress(
-    currentIndex + 1,
-    createdCollectionData?.cards?.length
-  );
+  const progress = calculateProgress(currentIndex + 1, data?.cards?.length);
   // console.log(collectionData.cards.length);
   return (
     <ScrollView style={styles.container}>
@@ -78,45 +77,39 @@ const CardsPreview: FC<Props> = (props) => {
         message={" Add Cards panel"}
         createdCollectionId={createdCollectionId}
         busyAQuestion={busyAQuestion}
-        createdCollectionData={createdCollectionData}
+        createdCollectionData={data}
         updateCollectionData={updateCreatedCollectionData}
       />
       <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
-      {(createdCollectionData?.cards?.length ?? 0) > 0 ? (
+      {(data?.cards?.length ?? 0) > 0 ? (
         <FullCardComp
           stackStyle={stackStyle}
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}
-          data={
-            Array.isArray(createdCollectionData?.cards)
-              ? createdCollectionData.cards
-              : []
-          }
+          data={Array.isArray(data?.cards) ? data.cards : []}
           progress={progress}
         />
       ) : (
         <EmptyRecords title={"no card available for display 😔"} />
       )}
-      {(createdCollectionData?.cards?.length ?? 0) > 0 && (
+      {(data?.cards?.length ?? 0) > 0 && (
         <View>
           <View style={tw`p-4 bg-white shadow-md rounded-md mb-4`}>
-            <Text style={tw`text-xl font-bold`}>
-              {createdCollectionData?.title}
+            <Text style={tw`text-xl font-bold`}>{data?.title}</Text>
+            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+              description: {data?.description}
             </Text>
             <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              description: {createdCollectionData?.description}
+              category: {data?.category}
             </Text>
             <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              category: {createdCollectionData?.category}
+              visibility: {data?.visibility}
             </Text>
             <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              visibility: {createdCollectionData?.visibility}
+              Number of Cards: {data?.cards.length}
             </Text>
             <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              Number of Cards: {createdCollectionData?.cards.length}
-            </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              Number of likes: {createdCollectionData?.likes.length}
+              Number of likes: {data?.likes.length}
             </Text>
             <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
               Created Time: {createdAt}
@@ -127,7 +120,7 @@ const CardsPreview: FC<Props> = (props) => {
           </View>
         </View>
       )}
-      <CardsPreviewList cards={createdCollectionData.cards} />
+      {data?.cards && <CardsPreviewList cards={data?.cards} />}
       <View style={{ marginBottom: 40 }} />
     </ScrollView>
   );

@@ -1,6 +1,6 @@
 import { Tabs, useNavigation } from "expo-router";
 import React, { useEffect } from "react";
-import { BackHandler, Platform } from "react-native";
+import { BackHandler, Platform, View } from "react-native";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TabBar } from "@/components/reuseables/TabBar";
@@ -28,13 +28,13 @@ export default function TabLayout() {
     const initialize = async () => {
       try {
         const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
-        const client = await getClient();
-        const { data } = await client.get("/auth/is-auth");
-        dispatch(updateProfile(data.profile));
         // Simulate loading or initialization logic
         if (!token) {
           navigation.navigate<any>("(auth)"); // Navigate to the main screen or auth flow
         }
+        const client = await getClient();
+        const { data } = await client.get("/auth/is-auth");
+        dispatch(updateProfile(data.profile));
       } catch (e) {
         handleError(e);
       }
@@ -43,7 +43,7 @@ export default function TabLayout() {
   }, [navigation]);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <Tabs
         tabBar={(props) => <TabBar {...props} />}
         screenOptions={{
@@ -79,6 +79,6 @@ export default function TabLayout() {
           stiffness: 50,
         }}
       />
-    </>
+    </View>
   );
 }

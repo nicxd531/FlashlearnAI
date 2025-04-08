@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
     minHeight: 400,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 25,

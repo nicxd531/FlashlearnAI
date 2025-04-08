@@ -29,7 +29,6 @@ const CollectionPreviewModal: React.FC<CollectionPreviewModalProps> = ({
   modalVisible,
   data,
 }) => {
-  console.log({ data });
   const [modalHeight] = useState(new Animated.Value(600)); // Initial height for preview
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const screenHeight = Dimensions.get("window").height;

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -11,6 +11,9 @@ import { Text, Button } from "react-native-paper";
 import Carousel from "react-native-snap-carousel";
 import tw from "twrnc";
 import TypeWriter from "react-native-typewriter";
+import { getClient } from "../api/client";
+import { useQueryClient } from "react-query";
+import CorrectBtn from "./CorrectBtn";
 
 interface Props {
   stackStyle: string;
@@ -23,8 +26,8 @@ interface Props {
     collectionId: string;
   }[];
 }
-
 const CardsSlider: FC<Props> = (props) => {
+  const queryClient = useQueryClient();
   const advert1 = require("../../assets/images/cardCover.jpg");
   const advert2 = require("../../assets/images/cardCover2.jpg");
 
@@ -38,7 +41,54 @@ const CardsSlider: FC<Props> = (props) => {
       setIsFlipped(id);
     }
   };
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
+  // Function to handle card click
+  const handleCardClick = (index: number) => {
+    setSelectedIndex(index); // Update selected index
+
+    // Clear any existing timer
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    // Set a new timer to send progress after 5 seconds
+    const newTimer = setTimeout(() => {
+      sendProgressToBackend(index);
+    }, 5000);
+
+    setTimer(newTimer);
+  };
+
+  // Function to send progress to the backend
+  const sendProgressToBackend = async (index: number) => {
+    try {
+      const client = await getClient();
+      const { data: data1 } = await client.post("/history", {
+        cardsCollection: data[0].collectionId,
+        progress: index,
+        date: new Date(Date.now()),
+        points: 0,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["histories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["recentlyPlayed"],
+      });
+      console.log(data1);
+    } catch (error) {
+      console.error("❌ Network error:", error);
+    }
+  };
+
+  // Cleanup on unmount to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timer]);
   const renderItem = ({
     item,
   }: {
@@ -93,6 +143,7 @@ const CardsSlider: FC<Props> = (props) => {
                   {item.answer}
                 </Text>
               )}
+              <CorrectBtn id={item._id} collectionId={item.collectionId} />
             </View>
           </View>
         </FlipCard>
@@ -117,7 +168,7 @@ const CardsSlider: FC<Props> = (props) => {
         itemWidth={300}
         loop={true}
         autoplayInterval={3000}
-        onSnapToItem={(index) => setCurrentIndex(index)}
+        onSnapToItem={(index) => handleCardClick(index)}
       />
     </View>
   );

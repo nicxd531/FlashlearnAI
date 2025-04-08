@@ -25,7 +25,7 @@ const CollectionPreview: FC<Props> = (props) => {
       };
     }) => state.collection
   );
-  console.log({ collectionData });
+  // console.log({ collectionData });
   const createdAt = formatRelativeTime(collectionData?.createdAt);
   const updatedAt = formatRelativeTime(collectionData?.updatedAt);
   const [stackStyle, setStackStyle] = useState("default");
@@ -48,31 +48,7 @@ const CollectionPreview: FC<Props> = (props) => {
         <Text style={[tw`font-bold `]} variant="titleLarge">
           FlashCards
         </Text>
-        <TouchableOpacity
-          style={{
-            borderRadius: 50,
-            backgroundColor: colors.PRIMARY,
-            padding: 3,
-            marginLeft: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={() => {
-            setVisible(true);
-          }}
-        >
-          <AntDesign name="plus" color={"#fff"} size={20} />
-        </TouchableOpacity>
       </View>
-      <CreateModal
-        visible={visible}
-        onClose={() => setVisible(false)}
-        message={" Add Cards panel"}
-        createdCollectionId={collectionId}
-        busyAQuestion={busyAQuestion}
-        createdCollectionData={collectionData}
-        updateCollectionData={updateCollectionData}
-      />
       <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
       {(collectionData?.cards?.length ?? 0) > 0 ? (
         <FullCardComp
@@ -90,31 +66,35 @@ const CollectionPreview: FC<Props> = (props) => {
       {collectionData && (
         <View>
           <View style={tw`p-4 bg-white shadow-md rounded-md mb-4`}>
-            <Text style={tw`text-xl font-bold`}>{collectionData?.title}</Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text style={tw`text-xl font-bold capitalize`}>
+              {collectionData?.title}
+            </Text>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               description: {collectionData?.description}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               category: {collectionData?.category}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               visibility: {collectionData?.visibility}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               Number of Cards: {collectionData?.cards.length}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
-              Number of likes: {collectionData?.likes}
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
+              Number of likes:{" "}
+              {collectionData?.likes > 0 ? collectionData?.likes : 0}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               Created Time: {createdAt}
             </Text>
-            <Text variant={"bodyLarge"} style={tw`text-base text-gray-600`}>
+            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               updated Time: {updatedAt}
             </Text>
           </View>
         </View>
       )}
+      <View style={{ marginBottom: 100 }} />
     </ScrollView>
   );
 };

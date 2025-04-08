@@ -18,6 +18,7 @@ interface Props<T> {
   renderItem(item: T): JSX.Element;
   // onSelect(item: T, index: number): void;
   onRequestClose?(): void;
+  handleOthers?(category: string): void;
 }
 
 const CategorySelector = <T extends any>({
@@ -27,6 +28,7 @@ const CategorySelector = <T extends any>({
   renderItem,
   // onSelect,
   onRequestClose,
+  handleOthers,
 }: Props<T>) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -34,12 +36,12 @@ const CategorySelector = <T extends any>({
     setSelectedIndex(index);
     // onSelect(item, index);
     onRequestClose && onRequestClose();
+    if (handleOthers) handleOthers(item as string);
   };
 
   return (
     <BasicModalContainer visible={visible} onRequestClose={onRequestClose}>
       <Text style={styles.title}>{title}</Text>
-
       <ScrollView>
         {data.map((item, index) => {
           return (

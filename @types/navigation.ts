@@ -24,17 +24,41 @@ export type libraryNavigatorStackParamList = {
   collectionPreview: undefined;
   ProfilePreviewPage: undefined;
 };
+export type homeNavigatorStackParamList = {
+  HomeMain: undefined;
+  collectionPreview: undefined;
+  ProfilePreviewPage: undefined;
+};
 export type libraryNavigatorStackParamListMini = {
-  LibraryPage:{
-    screen:string;
-    params:{
-      userId:string
-    }
-  }
+  LibraryPage: {
+    screen: string;
+    params: {
+      userId?: string;
+      category?: string;
+    };
+  };
+};
+export type homeNavigatorStackParamListMini = {
+  HomePage: {
+    screen: string;
+    params: {
+      userId?: string;
+      category?: string;
+    };
+  };
 };
 export type createNavigatorStackParamList = {
   CreateCollectionPage: undefined;
   AiCardsCreator: { collectionInfo: CollectionData };
   ManualCardsCreation: { collectionInfo: CollectionData };
   CardsPreview: { collectionInfo: CollectionData };
+};
+
+export type PublicProfileTabParamsList = {
+  publicCollections: {
+    profileId: string;
+  };
+  publicPlaylist: {
+    profileId: string;
+  };
 };

@@ -5,6 +5,7 @@ import { Text } from "react-native-paper";
 import tw from "twrnc";
 import { GestureResponderEvent } from "react-native";
 import { formatLikes } from "@/components/api/request";
+import { useFetchLikes } from "../hook/query";
 
 interface Props {
   name: string;
@@ -17,8 +18,9 @@ interface Props {
 const FeedDetails: FC<Props> = (props) => {
   const { name, likes, description, onOpen, collectionId } = props;
   const [newLikes, setNewLikes] = useState(likes);
+  const { data } = useFetchLikes(collectionId);
+  const formattedLikes = formatLikes(data || 0);
 
-  const formattedLikes = formatLikes(newLikes);
   return (
     <View style={styles.container}>
       <FeedsBtn
@@ -29,7 +31,7 @@ const FeedDetails: FC<Props> = (props) => {
       />
       <View>
         <Text variant="titleMedium">
-          {newLikes > 0 ? formattedLikes : 0}
+          {formattedLikes}
           {""}
           {newLikes > 1 ? " likes" : " like"}
         </Text>

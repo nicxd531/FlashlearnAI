@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import PlaylistItem from "./components/PlaylistItem";
 import CollectionPreviewModal from "../reuseables/CollectionPreviewModal";
+import EmptyRecords from "./components/EmptyRecords";
 
 interface Props {}
 
@@ -11,26 +12,29 @@ const Playlist: FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {data?.map((playlist: any) => {
-        return <PlaylistItem playlist={playlist} key={playlist.id} />;
-      })}
-      <CollectionPreviewModal
-        setModalVisible={setModalVisible}
-        modalVisible={modalVisible}
-      />
-    </ScrollView>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {!data?.length ? <EmptyRecords title="No playlist found!" /> : null}
+        {data?.map((playlist: any) => {
+          return <PlaylistItem playlist={playlist} key={playlist.id} />;
+        })}
+        <CollectionPreviewModal
+          setModalVisible={setModalVisible}
+          modalVisible={modalVisible}
+          data={data}
+        />
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "fff",
     flex: 1,
     flexWrap: "wrap",
     flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 15,
+    justifyContent: "space-around",
+    // marginTop: 10,
   },
 });
 

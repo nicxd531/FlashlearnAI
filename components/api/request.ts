@@ -101,6 +101,7 @@ export const formatFollowers = (followers: number): string => {
   if (followers < 1000) {
     return followers.toString();
   }
+  if (!followers) return "0";
   return `${(followers / 1000).toFixed(1)}k`;
 };
 
@@ -109,9 +110,13 @@ export const handleError = (err: unknown) => {
   if (axios.isAxiosError(err)) {
     // Server responded with a status other than 200 range
     if (err.response?.status === 401 || err.response?.status === 403) {
-      toast.error("Invalid email or password ❌");
+      const errorMessage = err.response?.data?.message || err.message;
+      toast.error(`${errorMessage}` ,{ icon: "❌" });
+      console.log("handle err", err);
     } else if (err.response?.status === 422) {
-      toast.error("Unprocessable Entity: Please check your input data ❌");
+      toast.error("Unprocessable Entity: Please check your input data ", {
+        icon: "❌",
+      });
     } else {
       const errorMessage = err.response?.data?.message || err.message;
       toast.error(`Error: ${errorMessage} ❌`);

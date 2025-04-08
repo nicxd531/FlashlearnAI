@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   dummyListItem: {
     width: "45%",
     height: 200,
-    backgroundColor: "#fff",
+    backgroundColor: "#d2cfd9",
     marginBottom: 15,
     borderRadius: 10,
   },

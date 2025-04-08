@@ -21,17 +21,28 @@ import {
 import { useFetchCollectionData } from "./hooks/query";
 import PulseAnimationContainer from "../home/reuseables/PulseAnimationContainer";
 import EmptyRecords from "./components/EmptyRecords";
+import { useDispatch } from "react-redux";
+import {
+  updateCollectionData,
+  updateCollectionId,
+} from "@/utils/store/Collection";
 interface Props {
   userId: string;
 }
 
 const CollectionModal: FC<Props> = (props) => {
+  const dispatch = useDispatch();
   const { userId } = props;
   const { data, isLoading } = useFetchCollectionData(userId);
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
   const dummyData = new Array(4).fill("");
+  const handlePlay = (data: CollectionData, id: string) => {
+    dispatch(updateCollectionData(data));
+    dispatch(updateCollectionId(id));
+    navigation.navigate("collectionPreview");
+  };
   if (isLoading)
     return (
       <PulseAnimationContainer>
@@ -82,9 +93,7 @@ const CollectionModal: FC<Props> = (props) => {
           <Chip style={tw`self-start`} textStyle={styles.chipContent}>
             {data?.category}
           </Chip>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("collectionPreview")}
-          >
+          <TouchableOpacity onPress={() => handlePlay(data, data.id)}>
             <IconButton
               icon={() => (
                 <MaterialIcons

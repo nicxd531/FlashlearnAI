@@ -16,9 +16,12 @@ import { CollectionData, topCreatorsData } from "@/@types/collection";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import {
+  homeNavigatorStackParamListMini,
   libraryNavigatorStackParamList,
   libraryNavigatorStackParamListMini,
 } from "@/@types/navigation";
+import { updateOtherProfileData } from "@/utils/store/Collection";
+import { useDispatch } from "react-redux";
 
 type Creator = {
   id: string;
@@ -29,10 +32,12 @@ type Creator = {
 
 const TopCreators: React.FC = () => {
   const { data, isLoading } = useFetchTopCreators();
+  const dispatch = useDispatch();
   const navigation =
-    useNavigation<NavigationProp<libraryNavigatorStackParamListMini>>();
+    useNavigation<NavigationProp<homeNavigatorStackParamListMini>>();
   const handlePress = (id: string) => {
-    navigation.navigate("LibraryPage", {
+    dispatch(updateOtherProfileData(data));
+    navigation.navigate("HomePage", {
       screen: "ProfilePreviewPage",
       params: { userId: id }, // Pass any necessary parameters
     });
@@ -135,14 +140,14 @@ const styles = StyleSheet.create({
   dunmmyTitleView: {
     height: 20,
     width: 150,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     marginBottom: 10,
     borderRadius: 16,
   },
   dummyTopView: {
     height: 150,
     width: 112.5,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     marginRight: 10,
     borderRadius: 16,
   },

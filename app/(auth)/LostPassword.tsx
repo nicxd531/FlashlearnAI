@@ -21,6 +21,8 @@ import client from "@/components/api/client";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
 import AppLink from "@/components/AppLink";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { handleError } from "@/components/api/request";
 const lostPasswordSchema = yup.object({
   email: yup
     .string()
@@ -48,9 +50,9 @@ const LostPassword: FC<Props> = (props) => {
       const { data } = await client.post("/auth/forget-password", {
         ...values,
       });
-      console.log({ data });
+      toast.success(`${data?.message}`, { icon: "✔️" });
     } catch (err) {
-      console.log("lost password err", err);
+      handleError(err);
     }
     actions.setSubmitting(false);
 
@@ -97,7 +99,7 @@ const LostPassword: FC<Props> = (props) => {
                 <Animated.View
                   entering={FadeInDown.delay(502).duration(1500).springify()}
                 >
-                  <SubmitBtn title="Sign link" />
+                  <SubmitBtn title="Send link" />
                 </Animated.View>
                 <Animated.View
                   style={styles.linkContainer}

@@ -15,17 +15,14 @@ const AllNavigator: FC<Props> = (props) => {
   );
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
 
-  useEffect(() => {
-    console.log("AuthNavigator - loggedIn:", loggedIn);
-    console.log("AuthNavigator - busy:", busy);
-    if (loggedIn) {
-      navigation.navigate<any>("(tabs)");
-    }
-  }, [loggedIn, busy]);
-  return true ? <TabNavigator /> : <AuthNavigator />;
+  return loggedIn ? <TabNavigator /> : <AuthNavigator />;
+  // return <AuthNavigator />;
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
 });
 
 export default AllNavigator;

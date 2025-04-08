@@ -4,26 +4,24 @@ import {
   RecentlyPlayedData,
 } from "@/@types/collection";
 import { FC, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  GestureResponderEvent,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import CollectionListItem from "./components/CollectionListItem";
-import CollectionPreviewModal from "../reuseables/CollectionPreviewModal";
-import EmptyRecords from "./components/EmptyRecords";
 import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
-import { useFavorites } from "@/hooks/query";
+import { useFavorites, useFetchPlaylist } from "@/hooks/query";
 import PlaylistModal from "../home/reuseables/PlaylistModal";
 import PlaylistForm from "../home/reuseables/PlaylistForm";
-import { getClient } from "../api/client";
-import { handleError } from "../api/request";
-import { toast } from "@backpackapp-io/react-native-toast";
 import AppModal from "../reuseables/AppModal";
 import CollectionModal from "./CollectionModal";
-import { handlePlaylistSubmit, updatePlaylist } from "../home/hook/request";
+import {
+  HandleOnFavoritePress,
+  HandleOnPlaylistPress,
+  handlePlaylistSubmit,
+  updatePlaylist,
+} from "../home/hook/request";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import OptionsModal from "../home/reuseables/OptionsModal";
+import { useQueryClient } from "react-query";
+import EmptyRecords from "./components/EmptyRecords";
 
 interface Props {}
 
@@ -35,15 +33,17 @@ const Favorites: FC<Props> = (props) => {
   const [collectionId, setCollectionId] = useState<string>();
   const [selectedCollection, setSelectedCollection] =
     useState<CollectionData>();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useFavorites();
+  const { data: data2, isLoading: loading2 } = useFetchPlaylist();
   if (isLoading) return <CollectionListLoadingUi />;
-  if (!data || data == undefined)
-    return <EmptyRecords title="There is no Favorite Collection! 😔" />;
+  if (!data || data == undefined) return null;
 
   const closePlayerModal = () => {
     setModalVisible(false);
   };
   const onLongPress = (mainData: CollectionData) => {
+    console.log("here there");
     setShowOptions(true);
     setSelectedCollection(mainData);
   };
@@ -53,74 +53,117 @@ const Favorites: FC<Props> = (props) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {data?.map((item: CollectionData) => {
-        return (
-          <CollectionListItem
-            key={item.id}
-            collection={item}
-            onPress={handlePress}
-            onLongPress={() => onLongPress(item)}
-          />
-        );
-      })}
-
-      <PlaylistModal
-        list={data || []}
-        onCreateNewPress={() => {
-          setShowPlaylistModal(false);
-          setShowPlayListForm(true);
-        }}
-        visible={showPlaylistModal}
-        onRequestClose={() => setShowPlaylistModal(false)}
-        onPlaylistPress={(item) =>
-          updatePlaylist(
-            item,
-            selectedCollection,
-            setShowPlayListForm,
-            setShowPlaylistModal,
-            setShowOptions,
-            setSelectedCollection
-          )
-        }
-      />
-
-      <PlaylistForm
-        visible={showPlayListForm}
-        onRequestClose={() => {
-          setShowPlayListForm(false);
-        }}
-        onSubmit={(value) => {
-          handlePlaylistSubmit(
-            value,
-            selectedCollection,
-            setShowPlayListForm,
-            setShowPlaylistModal,
-            setShowOptions,
-            setSelectedCollection
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {!data?.length ? <EmptyRecords title="No favorites found!" /> : null}
+        {data?.map((item: CollectionData) => {
+          return (
+            <CollectionListItem
+              key={item.id}
+              collection={item}
+              onPress={handlePress}
+              onLongPress={() => onLongPress(item)}
+            />
           );
-        }}
-      />
-      <AppModal
-        animation
-        visible={modalVisible}
-        onRequestClose={closePlayerModal}
-      >
-        {collectionId && <CollectionModal userId={collectionId} />}
-      </AppModal>
-    </ScrollView>
+        })}
+        <OptionsModal
+          visible={showOptions}
+          onRequestClose={() => setShowOptions(false)}
+          options={[
+            {
+              title: "Add to playlist",
+              icon: "playlist-music",
+              onPress: () =>
+                HandleOnPlaylistPress(setShowOptions, setShowPlaylistModal),
+            },
+            {
+              title: "Add to favorite",
+              icon: "cards-heart",
+              onPress: () =>
+                HandleOnFavoritePress(
+                  selectedCollection,
+                  setShowOptions,
+                  setSelectedCollection,
+                  queryClient
+                ),
+            },
+          ]}
+          renderItem={(item) => {
+            return (
+              <Pressable onPress={item.onPress} style={styles.optionContainer}>
+                <MaterialCommunityIcons
+                  name={item.icon as any}
+                  size={24}
+                  color="black"
+                />
+                <Text style={styles.optionLabel}>{item.title}</Text>
+              </Pressable>
+            );
+          }}
+        />
+        <PlaylistModal
+          list={data2 || []}
+          onCreateNewPress={() => {
+            setShowPlaylistModal(false);
+            setShowPlayListForm(true);
+          }}
+          visible={showPlaylistModal}
+          onRequestClose={() => setShowPlaylistModal(false)}
+          onPlaylistPress={(item) =>
+            updatePlaylist(
+              item,
+              selectedCollection,
+              setShowPlayListForm,
+              setShowPlaylistModal,
+              setShowOptions,
+              setSelectedCollection
+            )
+          }
+        />
+
+        <PlaylistForm
+          visible={showPlayListForm}
+          onRequestClose={() => {
+            setShowPlayListForm(false);
+          }}
+          onSubmit={(value) => {
+            handlePlaylistSubmit(
+              value,
+              selectedCollection,
+              setShowPlayListForm,
+              setShowPlaylistModal,
+              setShowOptions,
+              setSelectedCollection
+            );
+          }}
+        />
+        <AppModal
+          animation
+          visible={modalVisible}
+          onRequestClose={closePlayerModal}
+        >
+          {collectionId && <CollectionModal userId={collectionId} />}
+        </AppModal>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "fff",
+    backgroundColor: "fff",
     flex: 1,
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-around",
     marginTop: 15,
   },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  optionLabel: { fontSize: 16, marginLeft: 5 },
 });
 
 export default Favorites;

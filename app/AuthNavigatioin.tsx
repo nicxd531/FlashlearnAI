@@ -15,7 +15,9 @@ const AuthNavigator: FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: "fff",
+  },
 });
 
 export default AuthNavigator;

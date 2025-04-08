@@ -1,11 +1,15 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Pressable, SafeAreaView, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
 import AppHeader from "../components/AppHeader";
 import colors from "@/constants/Colors";
 import AvatarField from "../components/AvatarField";
 import { TextInput } from "react-native";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import AppButton from "@/components/ui/AppButton";
 import { getClient } from "@/components/api/client";
 import { handleError } from "@/components/api/request";
@@ -23,35 +27,68 @@ import {
 } from "@/utils/store/auth";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
+import { Alert } from "react-native";
+import { useQueryClient } from "react-query";
 
 interface Props {}
 
 const LibrarySettings: FC<Props> = (props) => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
-
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
+
   const handleLogOut = async (fromAll?: boolean) => {
-    const { profile } = useSelector(getAuthState);
-    console.log(profile);
     dispatch(updateBusyState(true));
     try {
       const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
       const endpoint = `/auth/log-out${fromAll ? "?fromAll=yes" : ""}`;
-      console.log({ endpoint });
+
       const client = await getClient();
       const { data } = await client.post(endpoint);
       await removeFromAsyncStorage(Keys.AUTH_TOKEN);
       dispatch(updateProfile(null));
       toast("logout success", { icon: "🎉🎊" });
-      if (!token) {
-        navigation.navigate<any>("(auth)"); // Navigate to the main screen or auth flow
-      }
+      navigation.navigate<any>("(auth)");
     } catch (e) {
       handleError(e);
-      console.log({ e });
     }
     dispatch(updateBusyState(false));
   };
+  const clearHistory = async () => {
+    try {
+      const client = await getClient();
+      await client.delete("/history?all=yes");
+      toast.success("History Cleared", { icon: "✔️" });
+      queryClient.invalidateQueries({ queryKey: ["histories"] });
+    } catch (err) {
+      handleError(err);
+      console.log(err);
+    }
+  };
+
+  const handleOnHistoryClear = () => {
+    Alert.alert(
+      "Are you sure?",
+      "This action will clear out all the history!",
+      [
+        {
+          text: "Clear",
+          style: "destructive",
+          onPress() {
+            clearHistory();
+          },
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <AppHeader title="Settings" />
@@ -72,16 +109,31 @@ const LibrarySettings: FC<Props> = (props) => {
         </View>
       </View>
       <View style={styles.titleContainer}>
+        <Text style={styles.title}>History</Text>
+      </View>
+      <View>
+        <Pressable
+          onPress={() => handleOnHistoryClear()}
+          style={styles.btnContainer}
+        >
+          <MaterialCommunityIcons name="broom" size={20} />
+          <Text style={styles.containerTitle}>Clear All</Text>
+        </Pressable>
+      </View>
+      <View style={styles.titleContainer}>
         <Text style={styles.title}>Logout</Text>
       </View>
       <View>
-        <Pressable onPress={() => handleLogOut(true)} style={styles.logoutBtn}>
+        <Pressable
+          onPress={() => handleLogOut(true)}
+          style={styles.btnContainer}
+        >
           <AntDesign name="logout" size={20} />
-          <Text style={styles.logoutBtnTitle}>Logout From All</Text>
+          <Text style={styles.containerTitle}>Logout From All</Text>
         </Pressable>
-        <Pressable onPress={() => handleLogOut()} style={styles.logoutBtn}>
+        <Pressable onPress={() => handleLogOut()} style={styles.btnContainer}>
           <AntDesign name="logout" size={20} />
-          <Text style={styles.logoutBtnTitle}>Logout</Text>
+          <Text style={styles.containerTitle}>Logout</Text>
         </Pressable>
       </View>
       <View style={styles.marginTop}>
@@ -98,6 +150,8 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 25,
     // padding: 10,
+    backgroundColor: "#fff",
+    flex: 1,
   },
   titleContainer: {
     borderBottomWidth: 0.5,
@@ -142,12 +196,12 @@ const styles = StyleSheet.create({
   email: {
     marginRight: 10,
   },
-  logoutBtn: {
+  btnContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 15,
   },
-  logoutBtnTitle: {
+  containerTitle: {
     fontSize: 16,
     marginLeft: 5,
   },

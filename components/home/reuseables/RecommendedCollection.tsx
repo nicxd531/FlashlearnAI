@@ -1,7 +1,7 @@
-import { CollectionData } from "@/@types/collection";
+import { CollectionData, RecentlyPlayedData } from "@/@types/collection";
 import colors from "@/constants/Colors";
-import { useFetchRecommendedCollection } from "@/hooks/query";
-import { FC } from "react";
+import { useFetchPlaylist, useFetchRecommendedCollection } from "@/hooks/query";
+import { FC, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -12,16 +12,42 @@ import {
 import { Image } from "react-native-elements";
 import GridView from "./GridView";
 import PulseAnimationContainer from "./PulseAnimationContainer";
+import AppModal from "@/components/reuseables/AppModal";
+import CollectionModal from "@/components/library/CollectionModal";
+import PlaylistForm from "./PlaylistForm";
+import {
+  HandleOnFavoritePress,
+  HandleOnPlaylistPress,
+  handlePlaylistSubmit,
+  updatePlaylist,
+} from "../hook/request";
+import OptionsModal from "./OptionsModal";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import PlaylistModal from "./PlaylistModal";
 
 interface Props {}
 
 const RecommendedCollection: FC<Props> = (props) => {
-  const { data, isLoading } = useFetchRecommendedCollection();
-  const onLongPress = (i: CollectionData) => {
-    console.log("Long Pressed", i);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [collectionId, setCollectionId] = useState<string>("");
+  const closePlayerModal = () => {
+    setModalVisible(false);
   };
-  const onPress = (item: CollectionData) => {
-    console.log(" Pressed", item);
+  const [showOptions, setShowOptions] = useState(false);
+  const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+  const [showPlayListForm, setShowPlayListForm] = useState(false);
+
+  const [selectedCollection, setSelectedCollection] =
+    useState<RecentlyPlayedData>();
+  const { data, isLoading } = useFetchRecommendedCollection();
+  const { data: data2, isLoading: isLoading2 } = useFetchPlaylist();
+  const onLongPress = (mainData: RecentlyPlayedData) => {
+    setShowOptions(true);
+    setSelectedCollection(mainData);
+  };
+  const onPress = (userId: string) => {
+    setModalVisible(true);
+    setCollectionId(userId);
   };
 
   const getPoster = (poster?: string) => {
@@ -57,12 +83,12 @@ const RecommendedCollection: FC<Props> = (props) => {
         renderItem={(item: CollectionData) => {
           return (
             <Pressable
-              onPress={() => onPress(item)}
+              onPress={() => onPress(item.id)}
               onLongPress={() => onLongPress(item)}
             >
               <Image
                 PlaceholderContent={<ActivityIndicator />}
-                source={getPoster(item.poster)}
+                source={getPoster(item?.poster)}
                 style={styles.poster}
               />
               <Text
@@ -76,6 +102,83 @@ const RecommendedCollection: FC<Props> = (props) => {
           );
         }}
       />
+      <OptionsModal
+        visible={showOptions}
+        onRequestClose={() => setShowOptions(false)}
+        options={[
+          {
+            title: "Add to playlist",
+            icon: "playlist-music",
+            onPress: () =>
+              HandleOnPlaylistPress(setShowOptions, setShowPlaylistModal),
+          },
+          {
+            title: "Add to favorite",
+            icon: "cards-heart",
+            onPress: () =>
+              HandleOnFavoritePress(
+                selectedCollection,
+                setShowOptions,
+                setSelectedCollection
+              ),
+          },
+        ]}
+        renderItem={(item) => {
+          return (
+            <Pressable onPress={item.onPress} style={styles.optionContainer}>
+              <MaterialCommunityIcons
+                name={item.icon as any}
+                size={24}
+                color="black"
+              />
+              <Text style={styles.optionLabel}>{item.title}</Text>
+            </Pressable>
+          );
+        }}
+      />
+      <PlaylistModal
+        list={data2 || []}
+        onCreateNewPress={() => {
+          setShowPlaylistModal(false);
+          setShowPlayListForm(true);
+        }}
+        visible={showPlaylistModal}
+        onRequestClose={() => setShowPlaylistModal(false)}
+        onPlaylistPress={(item) =>
+          updatePlaylist(
+            item,
+            selectedCollection,
+            setShowPlayListForm,
+            setShowPlaylistModal,
+            setShowOptions,
+            setSelectedCollection
+          )
+        }
+      />
+
+      <PlaylistForm
+        visible={showPlayListForm}
+        onRequestClose={() => {
+          setShowPlayListForm(false);
+        }}
+        onSubmit={(value) => {
+          handlePlaylistSubmit(
+            value,
+            selectedCollection,
+            setShowPlayListForm,
+            setShowPlaylistModal,
+            setShowOptions,
+            setSelectedCollection
+          );
+        }}
+      />
+      <AppModal
+        animation
+        visible={modalVisible}
+        onRequestClose={closePlayerModal}
+      >
+        {collectionId && <CollectionModal userId={collectionId} />}
+      </AppModal>
     </View>
   );
 };
@@ -109,6 +212,12 @@ const styles = StyleSheet.create({
   dummyTopViewContainer: {
     flexDirection: "row",
   },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  optionLabel: { fontSize: 16, marginLeft: 5 },
 });
 
 export default RecommendedCollection;

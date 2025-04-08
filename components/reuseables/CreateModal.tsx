@@ -22,6 +22,7 @@ import colors from "@/constants/Colors";
 import AddQuestionInput from "./AddQuestionInput";
 import ListOfCards from "./ListOfCards";
 import { CollectionData } from "@/@types/collection";
+import { useQueryClient } from "react-query";
 
 interface NotificationModalProps {
   visible: boolean;
@@ -47,8 +48,14 @@ const CreateModal: React.FC<NotificationModalProps> = ({
   const [errorM, setError] = useState<string | null>(null);
   const [qaList, setQaList] = useState<
     { question: string; answer: string; _id: string; collectionId: string }[]
-  >(Array.isArray(createdCollectionData?.cards) && createdCollectionData?.cards.every(card => typeof card === 'object') ? createdCollectionData.cards : []);
+  >(
+    Array.isArray(createdCollectionData?.cards) &&
+      createdCollectionData?.cards.every((card) => typeof card === "object")
+      ? createdCollectionData.cards
+      : []
+  );
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const addQaItem = async () => {
     dispatch(updateBusyStateQuestion(true));
     try {
@@ -77,6 +84,7 @@ const CreateModal: React.FC<NotificationModalProps> = ({
           _id: card._id,
         }));
         updateCollectionData(data.collection);
+        queryClient.invalidateQueries({ queryKey: ["fetchCollectionData"] });
         setQaList([...newData]);
         setQuestion("");
         setAnswer("");

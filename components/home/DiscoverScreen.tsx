@@ -24,7 +24,6 @@ const DiscoverScreen: React.FC<Props> = (props) => {
     />
   );
   const { data, isLoading } = useFetchFeeds();
-  // console.log({ data });
 
   return (
     <View style={styles.container}>

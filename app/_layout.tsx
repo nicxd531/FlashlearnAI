@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 export default function RootLayout() {
   const queryClient = new QueryClient();
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "fff" }}>
       <Toasts
         overrideDarkMode={true}
         globalAnimationType="spring"

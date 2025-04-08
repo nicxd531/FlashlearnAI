@@ -49,7 +49,6 @@ const PlaylistItem: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "fff",
     flex: 1,
     flexWrap: "wrap",
     flexDirection: "row",

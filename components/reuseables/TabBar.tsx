@@ -96,22 +96,25 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: "grey",
+  },
   tabBar: {
     position: "absolute",
     bottom: 50,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255, 255, 255, 0.99)",
     marginHorizontal: 85,
     paddingVertical: 15,
     borderRadius: 35,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
+
+    shadowColor: "#000", // Black shadow for visibility
+    shadowOffset: { width: 0, height: 4 }, // Spread downward
+    // Adjust visibility
+    // Blur effect
+    elevation: 5, // Shadow for Android
     shadowRadius: 10,
     shadowOpacity: 0.1,
   },

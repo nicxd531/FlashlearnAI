@@ -1,21 +1,26 @@
-import { Playlist } from "@/@types/collection";
+import { CollectionData, Playlist } from "@/@types/collection";
 import { getClient } from "@/components/api/client";
 import { handleError } from "@/components/api/request";
 import { toast } from "@backpackapp-io/react-native-toast";
+import { useQuery, useQueryClient } from "react-query";
 
 export const HandleOnFavoritePress = async (
   selectedCollection: any,
   setShowOptions: (value: boolean) => void,
-  setSelectedCollection: (value: any) => void
+  setSelectedCollection: (value: any) => void,
+  queryClient?: any
 ) => {
   try {
     if (!selectedCollection) return;
+    console.log(selectedCollection.id);
     const client = await getClient();
     const { data } = await client.post(
       "/favorite?collectionId=" + selectedCollection?.id
     );
     toast.success("added to favorite list  ", { icon: "🎉" });
+    if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
+    console.log(e);
     handleError(e);
   }
   setShowOptions(false);
@@ -38,7 +43,8 @@ export const handlePlaylistSubmit = async (
   setShowPlayListForm: (value: boolean) => void,
   setShowPlaylistModal: (value: boolean) => void,
   setShowOptions: (value: boolean) => void,
-  setSelectedCollection: (value: any) => void
+  setSelectedCollection: (value: any) => void,
+  queryClient?: any
 ) => {
   if (!value.title.trim()) return;
   try {
@@ -49,6 +55,7 @@ export const handlePlaylistSubmit = async (
       visibility: value.private ? "private" : "public",
       resId: selectedCollection?.id,
     });
+    if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
     handleError(e);
   }
@@ -75,7 +82,6 @@ export const updatePlaylist = async (
       visibility: item.visibility,
     });
     toast.success("collection added to playlist", { icon: "🎉" });
-    console.log({ data });
   } catch (e) {
     handleError(e);
   }

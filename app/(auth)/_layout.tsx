@@ -1,6 +1,6 @@
-import store from "@/utils/store";
+import store, { RootState } from "@/utils/store";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import SignUp from "./SignUp";
 import Login from "./Login";
@@ -8,12 +8,24 @@ import LostPassword from "./LostPassword";
 import Verification from "./Verification";
 import Index from "./Index";
 import { Toasts } from "@backpackapp-io/react-native-toast";
+import { useSelector } from "react-redux";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import { AuthStackParamList } from "@/@types/navigation";
 
 interface Props {}
 
 const AuthPage: FC<Props> = (props) => {
+  const { loggedIn, busy } = useSelector(
+    (state: RootState) => (state as any).auth
+  );
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const Stack = createNativeStackNavigator();
-
+  useEffect(() => {
+    if (loggedIn) {
+      navigation.navigate<any>("(tabs)");
+    }
+  }, [loggedIn, busy]);
   return (
     <>
       <StatusBar barStyle="light-content" hidden={false} translucent={true} />

@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from ".";
 import { categoriesTypes } from "../Categories";
+import { topCreatorsData } from "@/@types/collection";
 
 interface CollectionState {
   busyACollection: boolean;
@@ -42,6 +43,7 @@ interface CollectionState {
     visibility: "private" | "public"; // This defines the accepted values for TypeScript
     createdAt: Date;
   };
+  otherProfileData?: topCreatorsData;
 }
 const initialState: CollectionState = {
   busyACollection: false,
@@ -75,6 +77,9 @@ const slice = createSlice({
     updateCreatedCollectionData(collectionState, { payload }) {
       collectionState.createdCollectionData = payload;
     },
+    updateOtherProfileData(collectionState, { payload }) {
+      collectionState.otherProfileData = payload;
+    },
   },
 });
 export const {
@@ -85,6 +90,7 @@ export const {
   updateCreatedCollectionData,
   updateCreatedCollectionId,
   updateCreateBusyState,
+  updateOtherProfileData,
 } = slice.actions;
 
 export const getCollectionState = createSelector(

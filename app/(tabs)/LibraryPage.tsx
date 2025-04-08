@@ -5,7 +5,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import Collections from "@/components/library/Collections";
 import Playlist from "@/components/library/Playlist";
 import Favorites from "@/components/library/Favorites";
-import History from "@/components/library/History";
+import HistoryT from "@/components/library/History";
 import colors from "@/constants/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,20 +24,12 @@ import CollectionPreview from "@/components/library/CollectionPreview";
 import ProfilePreviewPage from "@/components/library/screens/ProfilePreviewPage";
 import { NavigationProp, useIsFocused } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
+import CategoriesPreviewPage from "@/components/library/screens/CategoriesPreviewPage";
 
 interface Props {}
 const Stack = createNativeStackNavigator();
 const LibraryPage: FC<Props> = (props) => {
-  const isFocused = useIsFocused();
   const navigation = useNavigation<NavigationProp<any>>();
-
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     navigation.navigate("LibraryPage", {
-  //       screen: "libraryMain", // Pass any necessary parameters
-  //     });
-  //   }
-  // }, [isFocused, navigation]);
   return (
     <View style={styles.container}>
       <Stack.Navigator
@@ -51,6 +43,10 @@ const LibraryPage: FC<Props> = (props) => {
           name="ProfilePreviewPage"
           component={ProfilePreviewPage}
         />
+        <Stack.Screen
+          name="CategoriesPreviewPage"
+          component={CategoriesPreviewPage}
+        />
       </Stack.Navigator>
     </View>
   );
@@ -60,7 +56,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-
     backgroundColor: "#fff",
   },
   tabBarStyles: {

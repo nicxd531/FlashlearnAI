@@ -39,7 +39,7 @@ import axios from "axios";
 import { signUpValidation } from "@/components/api/Validators";
 import AppLink from "@/components/AppLink";
 import { useDispatch } from "react-redux";
-import { handleError } from "@/components/api/request";
+import { handleAuthErrors } from "@/components/Auth/request";
 
 const { height } = Dimensions.get("window");
 
@@ -89,7 +89,7 @@ const LogIn: FC<Props> = (props) => {
       dispatch(updateLoggedInState(true));
       toast.success("Log in Successful ", { icon: "🎉🎊" });
     } catch (err) {
-      handleError(err);
+      handleAuthErrors(err);
     } finally {
       actions.setSubmitting(false);
     }
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   marginBottom: {
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   linkContainer: {
     flexDirection: "row",

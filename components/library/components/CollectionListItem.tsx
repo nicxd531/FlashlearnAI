@@ -1,4 +1,4 @@
-import { CollectionData } from "@/@types/collection";
+import { CollectionData, RecentlyPlayedData } from "@/@types/collection";
 import { getSource } from "@/components/api/request";
 import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
 import colors from "@/constants/Colors";
@@ -9,9 +9,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Image } from "react-native-elements";
 
 interface Props {
-  collection: CollectionData;
+  collection: RecentlyPlayedData;
   onPress(id: string): void;
-  onLongPress?(collection: CollectionData): void;
+  onLongPress?(collection: RecentlyPlayedData): void;
 }
 
 const CollectionListItem: FC<Props> = (props) => {
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flexDirection: "column",
-    // backgroundColor: colors.INACTIVE_CONTRAST,
+    backgroundColor: "#fff",
     marginBottom: 15,
     borderRadius: 5,
     width: "45%",

@@ -5,6 +5,12 @@ import { Text } from "react-native-paper";
 import { categories } from "@/utils/Categories";
 import colors from "@/constants/Colors";
 import CategorySelector from "./CategorySelector";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import {
+  homeNavigatorStackParamListMini,
+  libraryNavigatorStackParamListMini,
+} from "@/@types/navigation";
 const categoriesSub = [
   { name: "Mathematics", icon: "calculator" },
   { name: "Physics", icon: "atom" },
@@ -16,6 +22,14 @@ const categoriesSub = [
 
 const Categories = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const navigation =
+    useNavigation<NavigationProp<homeNavigatorStackParamListMini>>();
+  const handleOthers = (category: string) => {
+    navigation.navigate("HomePage", {
+      screen: "CategoriesPreviewPage",
+      params: { category: category }, // Pass any necessary parameters
+    });
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
@@ -33,6 +47,12 @@ const Categories = () => {
                 category.name === "Others" && category.icon
                   ? setShowCategoryModal(true)
                   : null;
+
+                if (!(category.name === "Others"))
+                  navigation.navigate("HomePage", {
+                    screen: "CategoriesPreviewPage",
+                    params: { category: category.name }, // Pass any necessary parameters
+                  });
               }}
             >
               <FontAwesome5 name={category.icon} size={24} color="black" />
@@ -48,6 +68,7 @@ const Categories = () => {
                   renderItem={(item) => {
                     return <Text style={styles.category}>{item}</Text>;
                   }}
+                  handleOthers={handleOthers}
                 />
               ) : null}
             </TouchableOpacity>

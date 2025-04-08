@@ -54,27 +54,7 @@ export const useFetchRecentlyPlayed = () => {
     isSuccess,
   };
 };
-export const fetchSuggestedCollections = async () => {
-  const client = await getClient();
-  const { data } = await client("/collection/suggested-collections");
-  return data.collections;
-};
 
-export const useSuggestedCollections = () => {
-  const { data, isLoading, error, isSuccess } = useQuery(
-    ["suggestedCollections"],
-    {
-      queryFn: () => fetchSuggestedCollections(),
-      onError: (err) => console.error(err),
-    }
-  );
-  return {
-    data,
-    isLoading,
-    error,
-    isSuccess,
-  };
-};
 export const fetchFavorites = async () => {
   const client = await getClient();
   const { data } = await client("/favorite");
@@ -183,28 +163,6 @@ export const useFetchPlaylist = () => {
     ["playlist-by-profile"],
     {
       queryFn: () => fetchPlaylist(),
-      onError: (err) => console.error(err),
-    }
-  );
-  return {
-    data,
-    isLoading,
-    error,
-    isSuccess,
-  };
-};
-export const fetchUploadsByProfile = async () => {
-  const client = await getClient();
-  const { data } = await client("/profile/uploads");
-
-  return data.cardsCollection;
-};
-
-export const useFetchUploadsByProfile = () => {
-  const { data, isLoading, error, isSuccess } = useQuery(
-    ["uploads-by-profile"],
-    {
-      queryFn: () => fetchUploadsByProfile(),
       onError: (err) => console.error(err),
     }
   );

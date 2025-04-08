@@ -8,33 +8,19 @@ import {
   Pressable,
 } from "react-native";
 import Carousel from "react-native-snap-carousel";
-import { Avatar, Card, IconButton, Title } from "react-native-paper";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
-import { backgroundImage, faceImage } from "@/constants/Styles";
+import { Avatar, Card, Title } from "react-native-paper";
+import { ActivityIndicator } from "react-native";
 import tw from "twrnc";
 import { Image } from "react-native-elements";
 import PulseAnimationContainer from "./PulseAnimationContainer";
-import {
-  useFetchPlaylist,
-  useFetchRecentlyPlayed,
-  useFetchTopCreators,
-  useSuggestedCollections,
-} from "@/hooks/query";
-import {
-  CollectionData,
-  Playlist,
-  RecentlyPlayedData,
-  topCreatorsData,
-} from "@/@types/collection";
+import { useFetchPlaylist, useFetchRecentlyPlayed } from "@/hooks/query";
+import { RecentlyPlayedData } from "@/@types/collection";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getClient } from "@/components/api/client";
-import { handleError } from "@/components/api/request";
+
 import PlaylistModal from "./PlaylistModal";
 import PlaylistForm from "./PlaylistForm";
 import OptionsModal from "./OptionsModal";
-import { toast } from "@backpackapp-io/react-native-toast";
-import CollectionPreviewModal from "@/components/reuseables/CollectionPreviewModal";
 import AppModal from "@/components/reuseables/AppModal";
 import CollectionModal from "@/components/library/CollectionModal";
 import {
@@ -43,12 +29,20 @@ import {
   handlePlaylistSubmit,
   updatePlaylist,
 } from "../hook/request";
+import { useSuggestedCollections } from "../hook/query";
+import { useQueryClient } from "react-query";
+import { getSource } from "@/components/api/request";
+import {
+  avatarPlaceholder,
+  backgroundImage,
+  flashcardPlaceholder,
+} from "@/constants/Styles";
+import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 
 const { width } = Dimensions.get("window");
 interface Props {
   onOpen: (event: GestureResponderEvent) => void;
 }
-
 const RecentlyPlayed: React.FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [collectionId, setCollectionId] = useState<string>("");
@@ -60,9 +54,10 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
   const [showPlayListForm, setShowPlayListForm] = useState(false);
   const [selectedCollection, setSelectedCollection] =
     useState<RecentlyPlayedData>();
-  const { onOpen } = props;
+
+  const queryClient = useQueryClient();
   const { data = [], isLoading: loading1 } = useFetchRecentlyPlayed();
-  const { data: data3, isLoading } = useFetchPlaylist();
+  const { data: data3, isLoading: loading3 } = useFetchPlaylist();
   const { data: data2, isLoading: loading2 } = useSuggestedCollections();
   const mainData = data.length > 0 ? data : data2;
   const onLongPress = (mainData: RecentlyPlayedData) => {
@@ -74,16 +69,7 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
     setCollectionId(userId);
   };
 
-  const renderItem = ({
-    item,
-  }: {
-    item: {
-      id: string;
-      title: string;
-      poster: string;
-      owner: { avatar: string };
-    };
-  }) => (
+  const renderItem = ({ item }: { item: RecentlyPlayedData }) => (
     <Card
       onLongPress={() => onLongPress(item)}
       key={item.id}
@@ -92,11 +78,16 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
     >
       <Image
         PlaceholderContent={<ActivityIndicator />}
-        source={{ uri: item?.poster }}
+        source={getSource(
+          typeof item?.poster === "string" ? item?.poster : item?.poster?.url,
+          flashcardPlaceholder
+        )}
         style={styles.poster}
       />
       <Card.Content>
         <Title
+          ellipsizeMode="tail"
+          numberOfLines={1}
           style={[
             styles.title,
             tw``,
@@ -109,16 +100,14 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
       <View style={styles.avatarContainer}>
         <Avatar.Image
           size={50}
-          source={{
-            uri: item?.owner?.avatar,
-          }}
+          source={getSource(item?.owner?.avatar, avatarPlaceholder)}
         />
       </View>
     </Card>
   );
 
   const dummyData = new Array(4).fill("");
-  if (loading1 || loading2) {
+  if (loading1 || loading2 || loading3) {
     return (
       <PulseAnimationContainer>
         <View style={styles.container}>
@@ -140,7 +129,7 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
         </Text>
       </View>
       <Carousel
-        data={mainData}
+        data={mainData ? mainData : []}
         renderItem={renderItem}
         sliderWidth={width}
         itemWidth={width * 0.6}
@@ -168,7 +157,8 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
               HandleOnFavoritePress(
                 selectedCollection,
                 setShowOptions,
-                setSelectedCollection
+                setSelectedCollection,
+                queryClient
               ),
           },
         ]}
@@ -217,7 +207,8 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
             setShowPlayListForm,
             setShowPlaylistModal,
             setShowOptions,
-            setSelectedCollection
+            setSelectedCollection,
+            queryClient
           );
         }}
       />
@@ -279,14 +270,14 @@ const styles = StyleSheet.create({
   dummyTitleView: {
     height: 30,
     width: 150,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     marginBottom: 10,
     borderRadius: 16,
   },
   dummyTopView: {
     height: 150,
     width: 250,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     marginRight: 10,
     borderRadius: 16,
   },

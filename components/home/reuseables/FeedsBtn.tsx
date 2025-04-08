@@ -1,11 +1,14 @@
 import { getClient } from "@/components/api/client";
+import { handleError } from "@/components/api/request";
 import { handleLikeCollection } from "@/hooks/query";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { FC, useState } from "react";
 import { GestureResponderEvent } from "react-native";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconButton, MD3Colors } from "react-native-paper";
+import { useMutation, useQueryClient } from "react-query";
 import tw from "twrnc";
+import { useFetchHasUserLiked } from "../hook/query";
 interface Props {
   onOpen: (event: GestureResponderEvent) => void;
   collectionId: string;
@@ -15,20 +18,28 @@ interface Props {
 
 const FeedsBtn: FC<Props> = (props) => {
   const { onOpen, collectionId, likes, setLikes } = props;
+  const { data } = useFetchHasUserLiked(collectionId);
 
-  const [isLiked, setIsLiked] = useState(likes);
-  const handleLikePress = async (collectionId: string) => {
+  const queryClient = useQueryClient();
+  const likeMutation = useMutation({
+    mutationFn: async (id) => toggleLike(id),
+    onMutate: (id: string) => {
+      queryClient.setQueryData<boolean>(
+        ["fetchHasUserLiked", id],
+        (oldData) => !oldData
+      );
+    },
+  });
+  const toggleLike = async (id: string) => {
     try {
+      if (!id) return;
       const client = await getClient();
-      const { data } = await client.post(`/collection/${collectionId}/like`); // Call your API function
-      console.log({ data });
-      if (data) {
-        setIsLiked(data.liked);
-        setLikes(data.liked ? likes + 1 : likes - 1);
-      }
-    } catch (error) {
-      console.error("Error liking collection:", error);
-      // Handle error appropriately (e.g., show an alert)
+      const res = await client.post(`collection/${id}/like`);
+      console.log(res.data);
+      queryClient.invalidateQueries({ queryKey: ["fetchHasUserLiked",id] });
+      queryClient.invalidateQueries({ queryKey: ["fetchLikes",id] });
+    } catch (err) {
+      handleError(err);
     }
   };
   return (
@@ -38,15 +49,14 @@ const FeedsBtn: FC<Props> = (props) => {
           <IconButton
             icon={() => (
               <Ionicons
-                onPress={() => handleLikePress(collectionId)}
-                name={isLiked ? "heart" : "heart-outline"}
+                name={data ? "heart" : "heart-outline"}
                 size={25}
                 color="#00000"
               />
             )}
             iconColor={MD3Colors.error50}
             size={20}
-            onPress={() => console.log("Pressed")}
+            onPress={() => likeMutation.mutate(collectionId)}
           />
         </TouchableOpacity>
         <TouchableOpacity>

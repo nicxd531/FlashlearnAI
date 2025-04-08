@@ -84,8 +84,8 @@ const SignUp: FC<Props> = ({ navigation }) => {
       });
       actions.setSubmitting(false);
     } catch (err) {
-      handleAuthErrors(err)
       actions.setSubmitting(false);
+      handleAuthErrors(err)
     } finally {
       actions.setSubmitting(false);
     }
