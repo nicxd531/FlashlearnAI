@@ -2,8 +2,6 @@ import { RootState } from "@/utils/store";
 import { FC, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import AuthNavigator from "./AuthNavigatioin";
-import TabNavigator from "./TabNavigator";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "@/@types/navigation";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
@@ -40,7 +38,6 @@ const AllNavigator: FC<Props> = (props) => {
   });
 
   return <Slot />;
-
 };
 const styles = StyleSheet.create({
   container: {

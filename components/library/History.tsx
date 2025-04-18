@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import {
+  FlatList,
   Image,
   Pressable,
   RefreshControl,
@@ -7,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useFetchHistories } from "./hooks/query";
+import { fetchHistories, useFetchHistories } from "./hooks/query";
 import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
 import EmptyRecords from "./components/EmptyRecords";
 import { ScrollView } from "react-native";
@@ -17,14 +18,19 @@ import { getClient } from "../api/client";
 import { useMutation, useQueryClient } from "react-query";
 import { HistoryT, historyCollection } from "@/@types/collection";
 import { useNavigation } from "expo-router";
+import { fetchFavorites } from "@/hooks/query";
+import PulseAnimationContainer from "../home/reuseables/PulseAnimationContainer";
+import PaginatedList from "../reuseables/PaginatedList";
 
 interface Props {}
 
 const History: FC<Props> = (props) => {
   const { data, isLoading, isFetching } = useFetchHistories();
   const [selectedHistories, setSelectedHistories] = useState<string[]>([]);
-
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const navigation = useNavigation();
+
   const queryClient = useQueryClient();
   const removeMutate = useMutation({
     mutationFn: async (histories) => removeHistories(histories),
@@ -68,6 +74,7 @@ const History: FC<Props> = (props) => {
     setSelectedHistories([history.id]);
   };
   const handleOnPress = async (history: historyCollection) => {
+    if (selectedHistories.length == 0) return;
     setSelectedHistories((old) => {
       if (old.includes(history.id)) {
         return old.filter((item) => item !== history.id);
@@ -84,6 +91,8 @@ const History: FC<Props> = (props) => {
     setSelectedHistories([]);
   };
   const handleOnRefresh = () => {
+    pageNo = 0;
+    setHasMore(true);
     queryClient.invalidateQueries({
       queryKey: ["histories"],
     });
@@ -91,15 +100,40 @@ const History: FC<Props> = (props) => {
       queryKey: ["recentlyPlayed"],
     });
   };
-  useEffect(() => {
-    navigation.addListener("blur", unSelectHistories);
-    return () => {
-      navigation.removeListener("blur", unSelectHistories);
-    };
-  }, []);
   if (isLoading) return <CollectionListLoadingUi />;
+  let pageNo = 0;
 
-  const noData = !data?.length;
+  const HandleOnEndReached = async () => {
+    if (!data || !hasMore || isFetching) return;
+
+    setIsFetchingMore(true);
+    pageNo += 1;
+    const res = await fetchHistories(pageNo);
+    if (!res || !res.length) {
+      setHasMore(false);
+    }
+    const newData = [...data, ...res];
+    const finalData: HistoryT[] = [];
+    const mergedData = newData.reduce((acc, curr) => {
+      const foundObj = acc.find((item) => item.date === curr.date);
+      if (foundObj) {
+        foundObj.cardsCollection = foundObj.cardsCollection.concat(
+          curr.cardsCollection
+        );
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, finalData);
+    queryClient.setQueriesData(["histories"], mergedData);
+    setIsFetchingMore(false);
+  };
+  // useEffect(() => {
+  //   navigation.addListener("blur", unSelectHistories);
+  //   return () => {
+  //     navigation.removeListener("blur", unSelectHistories);
+  //   };
+  // }, [navigation, unSelectHistories]);
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       {selectedHistories.length ? (
@@ -110,16 +144,11 @@ const History: FC<Props> = (props) => {
           <Text style={styles.removeBtnText}>Remove</Text>
         </Pressable>
       ) : null}
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={isFetching} onRefresh={handleOnRefresh} />
-        }
-        style={styles.container}
-      >
-        {noData ? <EmptyRecords title="There is no history!" /> : null}
-        {data?.map((item: HistoryT, index) => {
+      <PaginatedList
+        data={data}
+        renderItem={({ item }) => {
           return (
-            <View key={item.date + index}>
+            <View key={item.date}>
               <Text style={styles.date}>{item.date}</Text>
               <View style={styles.listContainer}>
                 {item.cardsCollection.map((collection, index) => {
@@ -153,8 +182,14 @@ const History: FC<Props> = (props) => {
               </View>
             </View>
           );
-        })}
-      </ScrollView>
+        }}
+        ListEmptyComponent={() => <EmptyRecords title="No history found!" />}
+        isFetching={isFetchingMore}
+        refreshing={isFetching}
+        onRefresh={handleOnRefresh}
+        OnEndReached={HandleOnEndReached}
+        hasMore={hasMore}
+      />
     </View>
   );
 };

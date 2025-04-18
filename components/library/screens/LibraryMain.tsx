@@ -45,8 +45,8 @@ const LibraryMain: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 10,
-    paddingTop: 40,
+    padding: 10,
+    paddingTop: 50,
     backgroundColor: "#fff",
   },
   tabBarStyles: {

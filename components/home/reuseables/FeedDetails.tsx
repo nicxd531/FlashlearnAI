@@ -6,6 +6,7 @@ import tw from "twrnc";
 import { GestureResponderEvent } from "react-native";
 import { formatLikes } from "@/components/api/request";
 import { useFetchLikes } from "../hook/query";
+import { CollectionData } from "@/@types/collection";
 
 interface Props {
   name: string;
@@ -13,10 +14,12 @@ interface Props {
   likes: number;
   description: string;
   onOpen: (event: GestureResponderEvent) => void;
+  collectionData: CollectionData;
 }
 
 const FeedDetails: FC<Props> = (props) => {
-  const { name, likes, description, onOpen, collectionId } = props;
+  const { name, likes, description, onOpen, collectionId, collectionData } =
+    props;
   const [newLikes, setNewLikes] = useState(likes);
   const { data } = useFetchLikes(collectionId);
   const formattedLikes = formatLikes(data || 0);
@@ -28,6 +31,7 @@ const FeedDetails: FC<Props> = (props) => {
         onOpen={onOpen}
         likes={newLikes}
         setLikes={setNewLikes}
+        collectionData={collectionData}
       />
       <View>
         <Text variant="titleMedium">

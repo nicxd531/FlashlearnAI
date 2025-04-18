@@ -50,16 +50,16 @@ const RecommendedCollection: FC<Props> = (props) => {
     setCollectionId(userId);
   };
 
-  const getPoster = (poster?: string) => {
-    return poster
-      ? { uri: poster }
+  const getPoster = (poster?: { url: string; publicId: string }) => {
+    return poster?.url
+      ? { uri: poster.url }
       : require("../../../assets/images/placeholder.png");
   };
   const dummyData = new Array(6).fill("");
   if (isLoading) {
     return (
       <PulseAnimationContainer>
-        <View style={styles.container}>
+        <View style={styles.containerLoader}>
           <View style={styles.dunmmyTitleView} />
 
           <GridView
@@ -76,6 +76,7 @@ const RecommendedCollection: FC<Props> = (props) => {
 
   return (
     <View style={styles.container}>
+      {/* {!data && <ErrorMessage message="Failed to fetch" />} */}
       <Text style={styles.title}>Recommended Collection</Text>
       <GridView
         col={3}
@@ -199,14 +200,14 @@ const styles = StyleSheet.create({
   dunmmyTitleView: {
     height: 20,
     width: 150,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     marginBottom: 10,
     borderRadius: 16,
   },
   dummyTopView: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: "white",
+    backgroundColor: "#d2cfd9",
     borderRadius: 7,
   },
   dummyTopViewContainer: {
@@ -218,6 +219,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   optionLabel: { fontSize: 16, marginLeft: 5 },
+  containerLoader: {
+    flex: 1,
+    padding: 16,
+    marginTop: 2,
+  },
 });
 
 export default RecommendedCollection;

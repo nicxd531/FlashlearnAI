@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import AvatarField from "./components/AvatarField";
 import { useSelector } from "react-redux";
 import colors from "@/constants/Colors";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { Text } from "react-native";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
@@ -16,9 +16,9 @@ import { formatFollowers } from "../api/request";
 import { useFetchLogInUser } from "./hooks/query";
 
 interface Props {}
-const ProfileComponent: FC<Props> = ( props) => {
-  const {data:profile}=useFetchLogInUser()
-  
+const ProfileComponent: FC<Props> = (props) => {
+  const { data: profile } = useFetchLogInUser();
+
   const { navigate } =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
   if (!profile) return null;
@@ -30,12 +30,12 @@ const ProfileComponent: FC<Props> = ( props) => {
         <Text style={styles.profileName}>{profile.name}</Text>
         <View style={styles.flexRow}>
           <Text style={styles.email}>{profile.email}</Text>
-          <MaterialIcons name="verified" size={15} color={colors.SECONDARY} />
-          {/* {profile?.verified ? (
-            <MaterialIcon name="verified" size={15} color={colors.SECONDARY} />
+
+          {profile?.verified ? (
+            <MaterialIcons name="verified" size={15} color={colors.SECONDARY} />
           ) : (
-            <ReVerificationLink linkTitle="verify" activeAtFirst />
-          )} */}
+            <Octicons name="unverified" size={15} color={colors.SECONDARY} />
+          )}
         </View>
 
         <View style={styles.flexRow}>

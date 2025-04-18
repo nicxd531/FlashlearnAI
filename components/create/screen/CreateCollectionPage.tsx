@@ -13,17 +13,19 @@ import {
   handleSubmitCollection,
   handleUpdateCollection,
 } from "@/components/create/hooks/request";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { updateCollectionId } from "@/utils/store/Collection";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import { createNavigatorStackParamList } from "@/@types/navigation";
 import { Toasts } from "@backpackapp-io/react-native-toast";
+import PosterImageUpload from "../reuseables/PosterImageUpload";
 
 interface Props {}
 
 const CreateCollectionPage: FC<Props> = (props) => {
   const [checked, setChecked] = React.useState(false);
+  const [PosterPhoto, setPosterPhoto] = React.useState<string>("");
   const dispatch = useDispatch();
   const navigation =
     useNavigation<NavigationProp<createNavigatorStackParamList>>();
@@ -42,10 +44,21 @@ const CreateCollectionPage: FC<Props> = (props) => {
   const handleNew = () => {
     setCollectionInfo({ ...defaultForm });
     dispatch(updateCollectionId(null));
+    setPosterPhoto("");
+    setChecked(false);
   };
   useEffect(() => {
+    const { title } = collectionInfo;
     setCollectionInfo({ ...collectionInfo, visibility });
-  }, [checked]);
+    setCollectionInfo({
+      ...collectionInfo,
+      poster: {
+        uri: PosterPhoto,
+        name: `${title ? title : "posterPhoto"}.jpg`,
+        type: "image/jpeg",
+      },
+    });
+  }, [checked, PosterPhoto]);
 
   return (
     <View style={styles.container}>
@@ -55,7 +68,9 @@ const CreateCollectionPage: FC<Props> = (props) => {
             Create Collection
           </Text>
           <Pressable onPress={handleNew} style={tw`mr-2`}>
-            <AntDesign name="plus" size={24} />
+            {createdCollectionId ? null : (
+              <MaterialCommunityIcons name="cancel" size={24} />
+            )}
           </Pressable>
         </View>
         <TextInput
@@ -87,7 +102,12 @@ const CreateCollectionPage: FC<Props> = (props) => {
           placeholder={{ label: "categories", value: null }}
         />
         <TextHCheckBox checked={checked} setChecked={setChecked} />
-        <View style={{ width: 380, alignItems: "center" }}></View>
+        <View style={{ width: 380, alignItems: "center" }}>
+          <PosterImageUpload
+            setPosterPhoto={setPosterPhoto}
+            posterPhoto={PosterPhoto}
+          />
+        </View>
         <View style={[{ width: "60%", marginHorizontal: "auto" }, tw`mt-5`]}>
           <BtnRNPIcon
             busyACollection={createBusyState}

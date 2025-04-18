@@ -119,13 +119,17 @@ export const fetchFeeds = async () => {
 };
 
 export const useFetchFeeds = () => {
-  const { data, isLoading, error, isSuccess } = useQuery(["recommended"], {
-    queryFn: () => fetchFeeds(),
-    onError: (err) => console.error(err),
-  });
+  const { data, isLoading, isFetching, error, isSuccess } = useQuery(
+    ["feeds"],
+    {
+      queryFn: () => fetchFeeds(),
+      onError: (err) => console.error(err),
+    }
+  );
   return {
     data,
     isLoading,
+    isFetching,
     error,
     isSuccess,
   };

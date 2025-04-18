@@ -20,6 +20,9 @@ import CardsPreviewList from "../reuseables/CardsPreviewList";
 import { formatRelativeTime } from "@/components/api/request";
 import { updateCreatedCollectionData } from "@/utils/store/Collection";
 import { useFetchCollectionData } from "@/components/library/hooks/query";
+import { NavigationProp } from "@react-navigation/native";
+import { createNavigatorStackParamList } from "@/@types/navigation";
+import { useNavigation } from "expo-router";
 
 interface Props {}
 
@@ -33,7 +36,8 @@ const CardsPreview: FC<Props> = (props) => {
       };
     }) => state.collection
   );
-
+  const navigation =
+    useNavigation<NavigationProp<createNavigatorStackParamList>>();
   const { data, isLoading } = useFetchCollectionData(createdCollectionId);
   const createdAt = formatRelativeTime(data?.createdAt);
   const updatedAt = formatRelativeTime(data?.updatedAt);
@@ -64,9 +68,7 @@ const CardsPreview: FC<Props> = (props) => {
             justifyContent: "center",
             alignItems: "center",
           }}
-          onPress={() => {
-            setVisible(true);
-          }}
+          onPress={() => navigation.navigate("AddCards")}
         >
           <AntDesign name="plus" color={"#fff"} size={20} />
         </TouchableOpacity>

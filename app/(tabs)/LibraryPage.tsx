@@ -25,9 +25,11 @@ import ProfilePreviewPage from "@/components/library/screens/ProfilePreviewPage"
 import { NavigationProp, useIsFocused } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import CategoriesPreviewPage from "@/components/library/screens/CategoriesPreviewPage";
+import Verification from "../(auth)/Verification";
+import { libraryNavigatorStackParamList } from "@/@types/navigation";
 
 interface Props {}
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<libraryNavigatorStackParamList>();
 const LibraryPage: FC<Props> = (props) => {
   const navigation = useNavigation<NavigationProp<any>>();
   return (
@@ -39,6 +41,7 @@ const LibraryPage: FC<Props> = (props) => {
         <Stack.Screen name="libraryMain" component={LibraryMain} />
         <Stack.Screen name="librarySettings" component={LibrarySettings} />
         <Stack.Screen name="collectionPreview" component={CollectionPreview} />
+        <Stack.Screen name="Verification" component={Verification} />
         <Stack.Screen
           name="ProfilePreviewPage"
           component={ProfilePreviewPage}
@@ -55,7 +58,6 @@ const LibraryPage: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: "#fff",
   },
   tabBarStyles: {
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowRadius: 0,
     shadowColor: "transparent",
-    marginBottom: 20,
+    // marginBottom: 20,
     shadowOffset: {
       width: 0,
       height: 0,

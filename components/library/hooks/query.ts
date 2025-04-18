@@ -118,9 +118,9 @@ export const useFetchUploadsByProfile = () => {
   };
 };
 // FETch HISTORIES
-export const fetchHistories = async (): Promise<HistoryT[]> => {
+export const fetchHistories = async (pageNo = 0): Promise<HistoryT[]> => {
   const client = await getClient();
-  const { data } = await client("/history");
+  const { data } = await client("/history?limit=15&pageNo=" + pageNo);
 
   return data.histories;
 };

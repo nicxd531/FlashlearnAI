@@ -22,6 +22,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import OptionsModal from "../home/reuseables/OptionsModal";
 import { useQueryClient } from "react-query";
 import EmptyRecords from "./components/EmptyRecords";
+import PaginatedList from "../reuseables/PaginatedList";
 
 interface Props {}
 
@@ -54,18 +55,22 @@ const Favorites: FC<Props> = (props) => {
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        {!data?.length ? <EmptyRecords title="No favorites found!" /> : null}
-        {data?.map((item: CollectionData) => {
-          return (
-            <CollectionListItem
-              key={item.id}
-              collection={item}
-              onPress={handlePress}
-              onLongPress={() => onLongPress(item)}
-            />
-          );
-        })}
+      <PaginatedList
+      data={data}
+      renderItem={({ item }: { item: CollectionData }) => {
+        return (
+          <CollectionListItem
+            key={item.id}
+            collection={item}
+            onPress={handlePress}
+            onLongPress={() => onLongPress(item)}
+          />
+        );
+      }}
+      ListEmptyComponent={() => (
+        <EmptyRecords title="No favorites found! 😔" />
+      )}
+      />
         <OptionsModal
           visible={showOptions}
           onRequestClose={() => setShowOptions(false)}
@@ -144,7 +149,6 @@ const Favorites: FC<Props> = (props) => {
         >
           {collectionId && <CollectionModal userId={collectionId} />}
         </AppModal>
-      </ScrollView>
     </View>
   );
 };

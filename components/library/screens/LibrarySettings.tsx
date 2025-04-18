@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAuthState,
   updateBusyState,
+  updateLoggedInState,
   updateProfile,
 } from "@/utils/store/auth";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -32,6 +33,7 @@ import { useQueryClient } from "react-query";
 import { RootState } from "@/utils/store";
 import deepEqual from "deep-equal";
 import * as ImagePicker from "expo-image-picker";
+import ReverificationLink from "@/components/home/reuseables/ReverificationLink";
 
 interface Props {}
 interface ProfileInfo {
@@ -46,7 +48,7 @@ const LibrarySettings: FC<Props> = (props) => {
   const [image, setImage] = useState();
   const isSame = deepEqual(userInfo, {
     name: profile?.name,
-    avatar: profile.avatar,
+    avatar: profile?.avatar,
   });
 
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
@@ -60,6 +62,8 @@ const LibrarySettings: FC<Props> = (props) => {
       const client = await getClient();
       const { data } = await client.post(endpoint);
       await removeFromAsyncStorage(Keys.AUTH_TOKEN);
+
+      dispatch(updateLoggedInState(false));
       dispatch(updateProfile(null));
       toast("logout success", { icon: "🎉🎊" });
       navigation.navigate<any>("(auth)");
@@ -109,9 +113,9 @@ const LibrarySettings: FC<Props> = (props) => {
         return toast.error("profile name is required!", { icon: "⚠️" });
       const formData = new FormData();
       formData.append("name", userInfo.name);
-      if (userInfo.avatar) {
+      if (userInfo?.avatar) {
         formData.append("avatar", {
-          uri: userInfo.avatar,
+          uri: userInfo?.avatar,
           name: "avatar.jpg",
           type: "image/jpeg",
         });
@@ -179,7 +183,11 @@ const LibrarySettings: FC<Props> = (props) => {
         />
         <View style={styles.eamilContainer}>
           <Text style={styles.email}>{profile.email}</Text>
-          <MaterialIcons name="verified" size={15} color={colors.SECONDARY} />
+          {profile.verified ? (
+            <MaterialIcons name="verified" size={15} color={colors.SECONDARY} />
+          ) : (
+            <ReverificationLink linkTitle="verify" activeAtFirst />
+          )}
         </View>
       </View>
       <View style={styles.titleContainer}>
@@ -226,8 +234,8 @@ const LibrarySettings: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 25,
-    // padding: 10,
+    paddingTop: 35,
+    padding: 10,
     backgroundColor: "#fff",
     flex: 1,
   },

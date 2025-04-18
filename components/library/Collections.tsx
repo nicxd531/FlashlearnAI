@@ -29,6 +29,7 @@ import {
 } from "./hooks/query";
 import { useQueryClient } from "react-query";
 import { getClient } from "../api/client";
+import PaginatedList from "../reuseables/PaginatedList";
 
 interface Props {}
 
@@ -46,7 +47,6 @@ const Collections: FC<Props> = (props) => {
   const { data, isLoading } = useFetchUploadsByProfile();
   if (isLoading) return <CollectionListLoadingUi />;
 
-  if (!data?.length) return <EmptyRecords title="There is no Collection! 😔" />;
   const handlePress = async (id: string) => {
     try {
       setCollectionId(id);
@@ -71,18 +71,24 @@ const Collections: FC<Props> = (props) => {
     }
   };
   return (
-     <View style={{ backgroundColor: "#fff", flex: 1 }}>
-    <ScrollView contentContainerStyle={styles.container}>
-      {data?.map((item: RecentlyPlayedData) => {
-        return (
-          <CollectionListItem
-            key={item.id}
-            collection={item}
-            onPress={() => handlePress(item.id)}
-            onLongPress={() => onLongPress(item)}
-          />
-        );
-      })}
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+      <PaginatedList
+        data={data}
+        renderItem={({ item }: { item: RecentlyPlayedData }) => {
+          return (
+            <CollectionListItem
+              key={item.id}
+              collection={item}
+              onPress={() => handlePress(item.id)}
+              onLongPress={() => onLongPress(item)}
+            />
+          );
+        }}
+        ListEmptyComponent={() => (
+          <EmptyRecords title="There is no Collection! 😔" />
+        )}
+      />
+
       {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
 
       <OptionsModal
@@ -127,7 +133,6 @@ const Collections: FC<Props> = (props) => {
       >
         {collectionId && <CollectionModal userId={collectionId} />}
       </AppModal>
-    </ScrollView>
     </View>
   );
 };

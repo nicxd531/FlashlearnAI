@@ -22,7 +22,9 @@ export type libraryNavigatorStackParamList = {
   libraryMain: undefined;
   librarySettings: undefined;
   collectionPreview: undefined;
+  CategoriesPreviewPage: undefined;
   ProfilePreviewPage: undefined;
+  Verification: { userInfo: NewUserResponse };
 };
 export type homeNavigatorStackParamList = {
   HomeMain: undefined;
@@ -49,6 +51,7 @@ export type homeNavigatorStackParamListMini = {
 };
 export type createNavigatorStackParamList = {
   CreateCollectionPage: undefined;
+  AddCards: undefined;
   AiCardsCreator: { collectionInfo: CollectionData };
   ManualCardsCreation: { collectionInfo: CollectionData };
   CardsPreview: { collectionInfo: CollectionData };

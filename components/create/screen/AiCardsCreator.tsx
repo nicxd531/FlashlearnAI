@@ -1,6 +1,7 @@
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Button,
   Pressable,
   StyleSheet,
@@ -16,36 +17,29 @@ import { FloatingAction } from "react-native-floating-action";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import { createNavigatorStackParamList } from "@/@types/navigation";
+import { toast } from "@backpackapp-io/react-native-toast";
 interface Props {
   route: any;
 }
 
 const AiCardsCreator: FC<Props> = ({ route }) => {
+  const [active, setActive] = useState(false);
   const { collectionInfo } = route.params;
   const navigation =
     useNavigation<NavigationProp<createNavigatorStackParamList>>();
-  const actions = [
-    {
-      text: "Video",
-      name: "manual create",
-      position: 4,
-      render: () => (
-        <Pressable
-          style={styles.sendButton2}
-          onPress={() =>
-            navigation.navigate("CardsPreview", {
-              collectionInfo: collectionInfo,
-            })
-          }
-        >
-          <Feather name="plus" size={18} color="black" />
-        </Pressable>
-      ),
-    },
-  ];
+
   const { busyACollection, collectionId } = useSelector(
     (state: any) => state.collection
   );
+  const handleAi = () => {
+    setActive(true);
+    setTimeout(() => {
+      setActive(false);
+      toast.error("AI is not available yet", {
+        icon: <AntDesign name="exclamationcircleo" size={24} color="red" />,
+      });
+    }, 3000);
+  };
   useEffect(() => {}, []);
   const ai = require("../../../assets/images/Ai-image.png");
   return (
@@ -72,17 +66,14 @@ const AiCardsCreator: FC<Props> = ({ route }) => {
         >
           <Feather name="plus" size={18} color="black" />
         </Pressable>
-        <Pressable style={styles.sendButton}>
-          <Feather name="send" size={18} color="black" />
+        <Pressable style={styles.sendButton} onPress={() => handleAi}>
+          {active ? (
+            <ActivityIndicator />
+          ) : (
+            <Feather name="send" size={18} color="black" />
+          )}
         </Pressable>
       </View>
-      {/* <FloatingAction
-        buttonSize={40}
-        color={"#ccc"}
-        actions={actions}
-        showBackground={false}
-        distanceToEdge={{ vertical: 70, horizontal: 40 }}
-      /> */}
     </View>
   );
 };

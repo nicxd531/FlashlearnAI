@@ -24,6 +24,7 @@ import { Image } from "react-native-elements";
 import FeedDetails from "./FeedDetails";
 import { backgroundImage, flashcardPlaceholder } from "@/constants/Styles";
 import { getSource } from "@/components/api/request";
+import { CollectionData } from "@/@types/collection";
 
 const Feeds: FC<{
   image: string;
@@ -35,6 +36,7 @@ const Feeds: FC<{
   bookmarks: number;
   likes: number;
   onOpen: (event: GestureResponderEvent) => void;
+  CollectionData: CollectionData;
 }> = ({
   image,
   avatar,
@@ -45,6 +47,7 @@ const Feeds: FC<{
   bookmarks,
   likes,
   collectionId,
+  CollectionData,
 }) => {
   return (
     <View
@@ -73,6 +76,7 @@ const Feeds: FC<{
         likes={likes}
         description={info}
         collectionId={collectionId}
+        collectionData={CollectionData}
       />
     </View>
   );

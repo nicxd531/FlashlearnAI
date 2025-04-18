@@ -2,7 +2,6 @@ import { AuthStackParamList } from "@/@types/navigation";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { NavigationProp } from "@react-navigation/native";
 import axios from "axios";
-
 import client from "../api/client";
 import { Keyboard } from "react-native";
 
@@ -14,7 +13,7 @@ export const handleAuthErrors = (err: any) => {
         icon: "❌",
       });
     } else if (err.response.status === 401) {
-      toast.error("Unauthorized access, please try again", { icon: "❌" });
+      toast.error(`Error: ${err.response.data.message}`, { icon: "❌" });
     } else if (err.response.status === 403) {
       toast.error("Wrong email or password ", { icon: "❌" });
     } else if (err.response.status === 409) {

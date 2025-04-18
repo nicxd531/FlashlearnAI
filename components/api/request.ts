@@ -106,12 +106,15 @@ export const formatFollowers = (followers: number): string => {
 };
 
 // here ends Favorites.tsx
-export const handleError = (err: unknown) => {
+export const handleError = (err: unknown, msg?: string) => {
+  if (msg) {
+    toast.error(msg, { icon: "❌" });
+  }
   if (axios.isAxiosError(err)) {
     // Server responded with a status other than 200 range
     if (err.response?.status === 401 || err.response?.status === 403) {
       const errorMessage = err.response?.data?.message || err.message;
-      toast.error(`${errorMessage}` ,{ icon: "❌" });
+      toast.error(`${errorMessage}`, { icon: "❌" });
       console.log("handle err", err);
     } else if (err.response?.status === 422) {
       toast.error("Unprocessable Entity: Please check your input data ", {

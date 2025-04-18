@@ -7,6 +7,7 @@ import AiCardsCreator from "@/components/create/screen/AiCardsCreator";
 import ManualCardsCreation from "@/components/create/screen/ManualCardsCreation";
 import CardsPreview from "@/components/create/screen/CardsPreview";
 import CreateCollectionPage from "@/components/create/screen/CreateCollectionPage";
+import AddCards from "@/components/create/screen/AddCards";
 
 interface Props {}
 
@@ -21,6 +22,7 @@ const CreatePage: FC<Props> = (props) => {
           component={CreateCollectionPage}
         />
         <Stack.Screen name="AiCardsCreator" component={AiCardsCreator} />
+        <Stack.Screen name="AddCards" component={AddCards} />
         <Stack.Screen
           name="ManualCardsCreation"
           component={ManualCardsCreation}

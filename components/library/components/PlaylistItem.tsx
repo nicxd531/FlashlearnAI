@@ -16,13 +16,19 @@ import { Image } from "react-native-elements";
 interface Props {
   playlist: Playlist;
   onPress?(): void;
+  onLongPress?(): void;
 }
 
 const PlaylistItem: FC<Props> = (props) => {
-  const { playlist, onPress } = props;
+  const { playlist, onPress, onLongPress } = props;
   const { id, itemsCount, title, visibility } = playlist;
   return (
-    <Pressable onPress={onPress} style={styles.listItem} key={id}>
+    <Pressable
+      onLongPress={onLongPress}
+      onPress={onPress}
+      style={styles.listItem}
+      key={id}
+    >
       <Image
         style={styles.poster}
         PlaceholderContent={<ActivityIndicator />}

@@ -23,33 +23,38 @@ import { AuthStackParamList } from "@/@types/navigation";
 import { toast } from "@backpackapp-io/react-native-toast";
 import AppLink from "@/components/AppLink";
 import { handleAuthErrors } from "@/components/Auth/request";
+import ReverificationLink from "@/components/home/reuseables/ReverificationLink";
+import { updateProfile } from "@/utils/store/auth";
+import { useDispatch } from "react-redux";
+import { handleError } from "@/components/api/request";
 
 interface Props {
   route: any;
 }
+type PossibleScreen = {
+  librarySettings: undefined;
+  Login: undefined;
+};
 
 const otpFields = new Array(6).fill("");
 const Verification: FC<Props> = ({ route }) => {
   const { userInfo } = route.params;
-  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
-
+  const navigation = useNavigation<NavigationProp<PossibleScreen>>();
   const [otp, setOtp] = useState([...otpFields]);
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [countDown, setCountDown] = useState(60);
-  const [canSendNewOtpRequest, setCanSendNewOtpRequest] = useState(false);
+  const dispatch = useDispatch();
   const inputRef = useRef<TextInput>(null);
-  const handleChange = (value: string, index: number) => {
-    const newOtp = [...otp];
-    if (value === "Backspace") {
-      if (!newOtp[index]) setActiveOtpIndex(index - 1);
-      newOtp[index] = "";
-    } else {
-      setActiveOtpIndex(index + 1);
-      newOtp[index] = value;
-    }
-    setOtp([...newOtp]);
-  };
+  //   const newOtp = [...otp];
+  //   if (value === "Backspace") {
+  //     if (!newOtp[index]) setActiveOtpIndex(index - 1);
+  //     newOtp[index] = "";
+  //   } else {
+  //     setActiveOtpIndex(index + 1);
+  //     newOtp[index] = value;
+  //   }
+  //   setOtp([...newOtp]);
+  // };
 
   const handlePaste = (value: string) => {
     if (value.length === 6) {
@@ -71,61 +76,31 @@ const Verification: FC<Props> = ({ route }) => {
     }
     try {
       // Await the response from the post request
-      const response = await client.post("/auth/verify-email", {
+      const { data } = await client.post("/auth/verify-email", {
         userId: userInfo.id,
         token: otp.join(""),
       });
-
+      dispatch(updateProfile(data.profile));
       toast.success("Email Verified", { icon: "✔️" });
-      console.log(response.data); // Process the data as needed
+      const { routeNames } = navigation.getState();
+      if (routeNames.includes("Login")) {
+        // Navigate to sign in
+        navigation.navigate("Login");
+      }
 
-      // Navigate to sign in
-      navigation.navigate("Login");
+      if (routeNames.includes("librarySettings")) {
+        // Navigate to librarySetting
+        navigation.goBack();
+      }
       setSubmitting(false);
     } catch (err) {
-      handleAuthErrors(err);
+      handleError(err, "invalid OTP, please confirm your input");
       console.log("Verification error", err);
       setSubmitting(false);
     } finally {
       setSubmitting(false);
     }
   };
-
-  const requestForNewOtp = async () => {
-    setCountDown(60);
-    setCanSendNewOtpRequest(false);
-    try {
-      const response = await client.post("/auth/re-verify-email", {
-        userId: userInfo.id,
-      });
-
-      toast.success("Request successful", { icon: "✔️" });
-    } catch (err) {
-      handleAuthErrors(err);
-    }
-  };
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [activeOtpIndex]);
-  useEffect(() => {
-    if (canSendNewOtpRequest) return;
-
-    const intervalId = setInterval(() => {
-      setCountDown((oldCountDown) => {
-        if (oldCountDown <= 0) {
-          setCanSendNewOtpRequest(true);
-          clearInterval(intervalId);
-
-          return 0;
-        }
-        return oldCountDown - 1;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [canSendNewOtpRequest]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -200,13 +175,9 @@ const Verification: FC<Props> = ({ route }) => {
                   />
                 </View>
                 <View style={styles.linkContainer}>
-                  {countDown > 0 ? (
-                    <Text style={styles.countDown}>{countDown} sec</Text>
-                  ) : null}
-                  <AppLink
-                    active={canSendNewOtpRequest}
-                    title="Re-send OTP"
-                    onPress={requestForNewOtp}
+                  <ReverificationLink
+                    linkTitle="Re-send OTP"
+                    userId={userInfo.id}
                   />
                 </View>
               </View>
@@ -235,7 +206,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
     justifyContent: "flex-end",
-    flexDirection: "row",
   },
   image: {
     width: "100%",

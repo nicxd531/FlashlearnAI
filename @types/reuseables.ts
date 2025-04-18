@@ -10,7 +10,7 @@ export interface FromFields {
     uri: string | null | undefined;
     name: string | null | undefined;
     type: string | null | undefined;
-    size: number | null | undefined;
+    size?: number | null | undefined;
   };
 }
 export const defaultForm: FromFields = {
