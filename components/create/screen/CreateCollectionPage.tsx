@@ -14,7 +14,11 @@ import {
   handleUpdateCollection,
 } from "@/components/create/hooks/request";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { updateCollectionId } from "@/utils/store/Collection";
+import {
+  updateCollectionId,
+  updateCreatedCollectionData,
+  updateCreatedCollectionId,
+} from "@/utils/store/Collection";
 import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import { createNavigatorStackParamList } from "@/@types/navigation";
@@ -29,9 +33,19 @@ const CreateCollectionPage: FC<Props> = (props) => {
   const dispatch = useDispatch();
   const navigation =
     useNavigation<NavigationProp<createNavigatorStackParamList>>();
-  const { createBusyState, createdCollectionId } = useSelector(
-    (state: any) => state.collection
-  );
+  const { createBusyState, createdCollectionId, createdCollectionData } =
+    useSelector((state: any) => state.collection);
+  if (createdCollectionData) {
+    const { title, description, category, visibility } = createdCollectionData;
+    setPosterPhoto(
+      createdCollectionData?.poster?.url || createdCollectionData?.poster
+    );
+    defaultForm.title = title;
+    defaultForm.description = description;
+    defaultForm.category = category;
+    defaultForm.visibility = visibility;
+    dispatch(updateCreatedCollectionData(null));
+  }
   const [collectionInfo, setCollectionInfo] = React.useState({
     ...defaultForm,
   });
@@ -43,7 +57,8 @@ const CreateCollectionPage: FC<Props> = (props) => {
   const visibility = checked ? "public" : "private";
   const handleNew = () => {
     setCollectionInfo({ ...defaultForm });
-    dispatch(updateCollectionId(null));
+    dispatch(updateCreatedCollectionId(null));
+    dispatch(updateCreatedCollectionData(null));
     setPosterPhoto("");
     setChecked(false);
   };
@@ -68,9 +83,9 @@ const CreateCollectionPage: FC<Props> = (props) => {
             Create Collection
           </Text>
           <Pressable onPress={handleNew} style={tw`mr-2`}>
-            {createdCollectionId ? null : (
+            {createdCollectionId ? (
               <MaterialCommunityIcons name="cancel" size={24} />
-            )}
+            ) : null}
           </Pressable>
         </View>
         <TextInput
@@ -95,6 +110,7 @@ const CreateCollectionPage: FC<Props> = (props) => {
           textAlignVertical="top"
         />
         <RNPickerSelect
+          value={collectionInfo.category}
           onValueChange={(category) =>
             setCollectionInfo({ ...collectionInfo, category })
           }

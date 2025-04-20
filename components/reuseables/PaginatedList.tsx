@@ -18,6 +18,7 @@ interface Props<T> {
   hasMore?: boolean;
   onRefresh?: () => void;
   OnEndReached?: FlatListProps<T>["onEndReached"];
+  numColumns?: boolean;
 }
 
 const Footer = (props: { visible?: boolean }) => {
@@ -38,6 +39,7 @@ const PaginatedList = <T extends any>(props: Props<T>) => {
     onRefresh,
     OnEndReached,
     hasMore,
+    numColumns = false,
   } = props;
   return (
     <FlatList
@@ -53,11 +55,15 @@ const PaginatedList = <T extends any>(props: Props<T>) => {
       }
       style={styles.container}
       ListEmptyComponent={ListEmptyComponent}
+      numColumns={numColumns ? 2 : 1}
     />
   );
 };
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
 });
 
 export default PaginatedList;

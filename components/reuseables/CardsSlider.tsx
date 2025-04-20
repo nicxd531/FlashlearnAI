@@ -115,9 +115,7 @@ const CardsSlider: FC<Props> = (props) => {
             <View
               style={tw`absolute inset-0 justify-center items-center p-4 bg-black bg-opacity-50`}
             >
-              <Text style={tw`text-white text-lg text-center`}>
-                {item.question}
-              </Text>
+              <Text style={tw`text-white text-lg text-center`}>question</Text>
             </View>
           </View>
           {/* Back Side */}
@@ -136,12 +134,10 @@ const CardsSlider: FC<Props> = (props) => {
                   maxDelay={100}
                   style={tw`text-white text-lg text-center`}
                 >
-                  {item.answer}
+                  answer
                 </TypeWriter>
               ) : (
-                <Text style={tw`text-white text-lg text-center`}>
-                  {item.answer}
-                </Text>
+                <Text style={tw`text-white text-lg text-center`}>answer</Text>
               )}
               <CorrectBtn id={item._id} collectionId={item.collectionId} />
             </View>

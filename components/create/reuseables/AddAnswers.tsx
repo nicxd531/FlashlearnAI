@@ -1,11 +1,12 @@
 import { FC } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import CardComponent from "./CardComponent";
 
 interface Props {
-  answer: { text: string; image: null }[];
+  answer: { text: string; image: string | null }[];
   setAnswer: React.Dispatch<
-    React.SetStateAction<{ text: string; image: null }[]>
+    React.SetStateAction<{ text: string; image: string | null }[]>
   >;
 }
 
@@ -13,14 +14,24 @@ const AddAnswers: FC<Props> = (props) => {
   const { answer, setAnswer } = props;
 
   return (
-    <View style={styles.container}>
-      <Text>Add Answers</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {answer?.map((_, index) => (
+        <CardComponent
+          data={answer}
+          setData={setAnswer}
+          index={index}
+          key={index}
+        />
+      ))}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    padding: 10,
+    backgroundColor: "#fff",
+    paddingBottom: 480,
+  },
 });
-
 export default AddAnswers;

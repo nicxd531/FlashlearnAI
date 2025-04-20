@@ -23,6 +23,7 @@ import { useFetchCollectionData } from "@/components/library/hooks/query";
 import { NavigationProp } from "@react-navigation/native";
 import { createNavigatorStackParamList } from "@/@types/navigation";
 import { useNavigation } from "expo-router";
+import { useFetchCardsCreate } from "../hooks/query";
 
 interface Props {}
 
@@ -39,6 +40,8 @@ const CardsPreview: FC<Props> = (props) => {
   const navigation =
     useNavigation<NavigationProp<createNavigatorStackParamList>>();
   const { data, isLoading } = useFetchCollectionData(createdCollectionId);
+  const { data: cards, isLoading: loadCards } =
+    useFetchCardsCreate(createdCollectionId);
   const createdAt = formatRelativeTime(data?.createdAt);
   const updatedAt = formatRelativeTime(data?.updatedAt);
   const [stackStyle, setStackStyle] = React.useState("default");
@@ -73,15 +76,6 @@ const CardsPreview: FC<Props> = (props) => {
           <AntDesign name="plus" color={"#fff"} size={20} />
         </TouchableOpacity>
       </View>
-      <CreateModal
-        visible={visible}
-        onClose={() => setVisible(false)}
-        message={" Add Cards panel"}
-        createdCollectionId={createdCollectionId}
-        busyAQuestion={busyAQuestion}
-        createdCollectionData={data}
-        updateCollectionData={updateCreatedCollectionData}
-      />
       <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
       {(data?.cards?.length ?? 0) > 0 ? (
         <FullCardComp
@@ -122,7 +116,7 @@ const CardsPreview: FC<Props> = (props) => {
           </View>
         </View>
       )}
-      {data?.cards && <CardsPreviewList cards={data?.cards} />}
+      {cards && !loadCards ? <CardsPreviewList cards={cards} /> : null}
       <View style={{ marginBottom: 40 }} />
     </ScrollView>
   );
@@ -133,6 +127,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     minWidth: 350,
     minHeight: 500,
+    backgroundColor: "#fff",
   },
   heading: {
     width: "45%",

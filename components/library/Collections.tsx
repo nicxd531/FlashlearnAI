@@ -30,6 +30,13 @@ import {
 import { useQueryClient } from "react-query";
 import { getClient } from "../api/client";
 import PaginatedList from "../reuseables/PaginatedList";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import { createNavigatorStackParamList } from "@/@types/navigation";
+import {
+  updateCreatedCollectionData,
+  updateCreatedCollectionId,
+} from "@/utils/store/Collection";
 
 interface Props {}
 
@@ -39,6 +46,8 @@ const Collections: FC<Props> = (props) => {
   const [collectionId, setCollectionId] = useState<string>("");
   const [selectedCollection, setSelectedCollection] =
     useState<RecentlyPlayedData>();
+  const dispatch = useDispatch();
+  const navigation = useNavigation<NavigationProp<any>>();
   const queryClient = useQueryClient();
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
   const closePlayerModal = () => {
@@ -70,6 +79,12 @@ const Collections: FC<Props> = (props) => {
       handleCreateErrors(err);
     }
   };
+  const handleEdit = (id: string) => {
+    dispatch(updateCreatedCollectionId(id));
+    dispatch(updateCreatedCollectionData(selectedCollection));
+    navigation.navigate("CreatePage");
+  };
+
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <PaginatedList
@@ -87,6 +102,7 @@ const Collections: FC<Props> = (props) => {
         ListEmptyComponent={() => (
           <EmptyRecords title="There is no Collection! 😔" />
         )}
+        numColumns={true}
       />
 
       {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
@@ -103,7 +119,7 @@ const Collections: FC<Props> = (props) => {
           {
             title: "Edit",
             icon: "edit-3",
-            onPress: () => console.log("delete"),
+            onPress: () => handleEdit(collectionId),
           },
         ]}
         renderItem={(item) => {

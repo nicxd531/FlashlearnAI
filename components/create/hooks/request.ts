@@ -55,9 +55,7 @@ export const handleSubmitCollection = async (
     if (!token) {
       throw new Error("User is not authenticated. Token is missing.");
     }
-    // formData.forEach((value, key) => {
-    //   console.log(`${key}: ${value}`);
-    // });
+
     const response = await client.post("/collection/create", formData, {
       headers: {
         Authorization: `Bearer ${token}`,

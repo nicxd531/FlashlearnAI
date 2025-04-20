@@ -18,13 +18,11 @@ interface Props {
 
 const PosterImageUpload: FC<Props> = (props) => {
   const { posterPhoto, setPosterPhoto } = props;
-  const [image, setImage] = useState();
+  const [image, setImage] = useState<string | undefined>();
   const saveImage = (image: any) => {
     try {
       setImage(image);
       setPosterPhoto(image);
-
-      console.log(posterPhoto, image);
     } catch (error) {
       throw error;
     }
@@ -53,7 +51,7 @@ const PosterImageUpload: FC<Props> = (props) => {
           <View style={{ width: 350, height: 200 }}>
             <Image
               style={{ width: 350, height: 200, borderRadius: 8 }}
-              source={{ uri: image }}
+              source={{ uri: posterPhoto }}
               PlaceholderContent={<ActivityIndicator />}
             />
           </View>

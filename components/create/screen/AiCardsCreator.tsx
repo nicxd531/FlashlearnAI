@@ -1,5 +1,5 @@
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -32,6 +32,7 @@ const AiCardsCreator: FC<Props> = ({ route }) => {
     (state: any) => state.collection
   );
   const handleAi = () => {
+    console.log("clicked");
     setActive(true);
     setTimeout(() => {
       setActive(false);
@@ -40,7 +41,7 @@ const AiCardsCreator: FC<Props> = ({ route }) => {
       });
     }, 3000);
   };
-  useEffect(() => {}, []);
+
   const ai = require("../../../assets/images/Ai-image.png");
   return (
     <View style={styles.container}>
@@ -66,11 +67,16 @@ const AiCardsCreator: FC<Props> = ({ route }) => {
         >
           <Feather name="plus" size={18} color="black" />
         </Pressable>
-        <Pressable style={styles.sendButton} onPress={() => handleAi}>
+        <Pressable style={styles.sendButton} onPress={() => handleAi()}>
           {active ? (
             <ActivityIndicator />
           ) : (
-            <Feather name="send" size={18} color="black" />
+            <Feather
+              onPress={() => handleAi()}
+              name="send"
+              size={18}
+              color="black"
+            />
           )}
         </Pressable>
       </View>
