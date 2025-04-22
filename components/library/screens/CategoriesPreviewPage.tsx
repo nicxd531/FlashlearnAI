@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     paddingVertical: 30,
+    backgroundColor: "#fff",
   },
   containerScroll: {
     flexWrap: "wrap",
