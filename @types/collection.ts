@@ -221,3 +221,26 @@ export const categories = [
   "Current Events",
   "others",
 ];
+
+export interface questionSection {
+  _id: string;
+  image: {
+    publicId: string;
+    url: string;
+  };
+  text: string;
+}
+export interface answerSection {
+  _id: string;
+  image: {
+    publicId: string;
+    url: string;
+  };
+  text: string;
+}
+export interface cards {
+  _id: string;
+  answer: answerSection[];
+  question: questionSection[];
+  collectionId: string;
+}

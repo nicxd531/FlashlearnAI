@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Align buttons in a row
     gap: 10, // Space between buttons
     alignItems: "center",
-    marginTop: 30,
+    padding: 3,
   },
   button: {
     width: 40, // Circle size

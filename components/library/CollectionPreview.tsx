@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     minWidth: 350,
     minHeight: 500,
+    backgroundColor: "#fff",
   },
   heading: {
     width: "45%",

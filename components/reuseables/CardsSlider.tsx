@@ -14,17 +14,16 @@ import TypeWriter from "react-native-typewriter";
 import { getClient } from "../api/client";
 import { useQueryClient } from "react-query";
 import CorrectBtn from "./CorrectBtn";
+import QuestionPreview from "../create/reuseables/QuestionPreview";
+import { cards } from "@/@types/collection";
+import ImagePreview from "./ImagePreview";
+import AnswerPreview from "../create/reuseables/AnswerPreview";
 
 interface Props {
   stackStyle: string;
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-  data: {
-    question: string;
-    answer: string;
-    _id: string;
-    collectionId: string;
-  }[];
+  data: cards[];
 }
 const CardsSlider: FC<Props> = (props) => {
   const queryClient = useQueryClient();
@@ -34,6 +33,13 @@ const CardsSlider: FC<Props> = (props) => {
   const { stackStyle, currentIndex, setCurrentIndex, data } = props;
 
   const [isFlipped, setIsFlipped] = useState<string>("");
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [typingComplete, setTypingComplete] = useState<boolean[]>(
+    new Array(data.length).fill(false)
+  );
+  const [visible, setVisible] = useState(false);
+  const [images, setImages] = useState([]);
   const handleReveal = (id: string) => {
     if (isFlipped == id) {
       setIsFlipped("");
@@ -41,8 +47,6 @@ const CardsSlider: FC<Props> = (props) => {
       setIsFlipped(id);
     }
   };
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Function to handle card click
   const handleCardClick = (index: number) => {
@@ -56,7 +60,7 @@ const CardsSlider: FC<Props> = (props) => {
     // Set a new timer to send progress after 5 seconds
     const newTimer = setTimeout(() => {
       sendProgressToBackend(index);
-    }, 5000);
+    }, 6000);
 
     setTimer(newTimer);
   };
@@ -89,16 +93,9 @@ const CardsSlider: FC<Props> = (props) => {
       if (timer) clearTimeout(timer);
     };
   }, [timer]);
-  const renderItem = ({
-    item,
-  }: {
-    item: {
-      question: string;
-      answer: string;
-      _id: string;
-      collectionId: string;
-    };
-  }) => {
+  const renderItem = ({ item, index }: { item: cards; index: number }) => {
+    const { answer, question } = item;
+
     return (
       <View style={styles.item}>
         <FlipCard
@@ -109,47 +106,55 @@ const CardsSlider: FC<Props> = (props) => {
           {/* Front Side */}
           <View style={styles.card}>
             <Image
-              style={{ width: 300, height: 400, borderRadius: 8 }}
+              style={{ width: 350, height: 600, borderRadius: 8 }}
               source={advert1}
             />
             <View
-              style={tw`absolute inset-0 justify-center items-center p-4 bg-black bg-opacity-50`}
+              style={tw`absolute inset-0 justify-center items-center bg-black bg-opacity-50 `}
             >
-              <Text style={tw`text-white text-lg text-center`}>question</Text>
+              <QuestionPreview
+                setVisible={setVisible}
+                setImages={setImages}
+                data={question}
+              />
             </View>
           </View>
           {/* Back Side */}
           <View style={styles.card}>
             <Image
-              style={{ width: 300, height: 400, borderRadius: 8 }}
+              style={{ width: 350, height: 600, borderRadius: 8 }}
               source={advert2}
             />
             <View
-              style={tw`absolute inset-0 justify-center items-center p-4 bg-black bg-opacity-50`}
+              style={tw`absolute inset-0 justify-center items-center  bg-black bg-opacity-50`}
             >
               {isFlipped ? (
-                <TypeWriter
-                  typing={1}
-                  minDelay={10}
-                  maxDelay={100}
-                  style={tw`text-white text-lg text-center`}
-                >
-                  answer
-                </TypeWriter>
+                <AnswerPreview
+                  setVisible={setVisible}
+                  setImages={setImages}
+                  data={answer}
+                />
               ) : (
                 <Text style={tw`text-white text-lg text-center`}>answer</Text>
               )}
-              <CorrectBtn id={item._id} collectionId={item.collectionId} />
+              <CorrectBtn id={item._id} collectionId={item._id} />
             </View>
           </View>
         </FlipCard>
-        <Button
-          mode="contained"
-          onPress={() => handleReveal(item._id)}
-          style={tw`mt-4`}
-        >
-          Reveal
-        </Button>
+        {index == selectedIndex + 1 ? (
+          <Button
+            mode="contained"
+            onPress={() => handleReveal(item._id)}
+            style={tw`mt-4`}
+          >
+            Reveal
+          </Button>
+        ) : null}
+        <ImagePreview
+          images={images}
+          visible={visible}
+          setVisible={setVisible}
+        />
       </View>
     );
   };
@@ -160,8 +165,8 @@ const CardsSlider: FC<Props> = (props) => {
         layout={stackStyle === "default" ? "default" : "stack"}
         data={data}
         renderItem={renderItem}
-        sliderWidth={400}
-        itemWidth={300}
+        sliderWidth={600}
+        itemWidth={350}
         loop={true}
         autoplayInterval={3000}
         onSnapToItem={(index) => handleCardClick(index)}
@@ -181,12 +186,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   flipCard: {
-    width: 300,
-    height: 400,
+    width: 350,
+    height: 600,
   },
   card: {
-    width: 300,
-    height: 400,
+    width: 350,
+    height: 600,
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",

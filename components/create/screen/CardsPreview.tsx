@@ -57,7 +57,7 @@ const CardsPreview: FC<Props> = (props) => {
   const progress = calculateProgress(currentIndex + 1, data?.cards?.length);
   // console.log(collectionData.cards.length);
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={[styles.heading]}>
         <Text style={[tw`font-bold `]} variant="titleLarge">
           Add cards
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     minWidth: 350,
     minHeight: 500,
-    backgroundColor: "#fff",
+    backgroundColor: "#red",
   },
   heading: {
     width: "45%",
