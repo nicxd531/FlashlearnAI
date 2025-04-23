@@ -6,40 +6,51 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFetchPublicPlaylist } from "../hook/query";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PublicProfileTabParamsList } from "@/@types/navigation";
+import CollectionListLoadingUi from "@/components/library/components/CollectionListLoadingUi";
+import EmptyRecords from "@/components/library/components/EmptyRecords";
 
-type Props = NativeStackScreenProps<
+
+type Props = Partial<NativeStackScreenProps<
   PublicProfileTabParamsList,
   "publicPlaylist"
->;
+>> & {
+  publicProfileId?: string;
+};
 const Playlist: FC<Props> = (props) => {
+  const {publicProfileId}=props
   const { data, isLoading } = useFetchPublicPlaylist(
-    props.route.params.profileId
+    publicProfileId ?? props.route?.params?.profileId ?? ''
   );
 
   const [modalVisible, setModalVisible] = useState(false);
-
+  if (isLoading) return <CollectionListLoadingUi />;
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
+      <View style={{flex:1, flexDirection: "row", flexWrap: "wrap" ,justifyContent:"space-between",paddingHorizontal:10}}>
+
       {data?.map((playlist: any) => {
         return <PlaylistItem playlist={playlist} key={playlist.id} />;
       })}
+      </View>
       <CollectionPreviewModal
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
         data={data}
-      />
-    </ScrollView>
+        />
+        {!data.length &&<View style={{flex:1,width:"100%",backgroundColor:"blue"}}><EmptyRecords title="There is no Playlist! 😔" /></View> }
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "fff",
+    backgroundColor: "#fff",
     flex: 1,
     flexWrap: "wrap",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     marginTop: 15,
+    width: "100%",
   },
 });
 

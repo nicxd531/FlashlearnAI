@@ -18,7 +18,7 @@ const BtnRNPIcon: React.FC<BtnRNPIconProps> = ({
   title,
   iconName,
 }) => {
-  console.log({ busyACollection });
+  
   return (
     <TouchableOpacity
       disabled={busyACollection}

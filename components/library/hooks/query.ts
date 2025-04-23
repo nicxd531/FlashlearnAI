@@ -12,7 +12,7 @@ export const fetchUserPublicProfile = async (userId: string) => {
 };
 
 export const useFetchUserPublicProfile = (id: string) => {
-  const { data, isLoading, error, isSuccess } = useQuery(
+  const { data, isLoading, error, isSuccess,isFetching } = useQuery(
     ["UserPublicProfile"],
     {
       queryFn: () => fetchUserPublicProfile(id),
@@ -22,6 +22,7 @@ export const useFetchUserPublicProfile = (id: string) => {
   return {
     data,
     isLoading,
+    isFetching,
     error,
     isSuccess,
   };

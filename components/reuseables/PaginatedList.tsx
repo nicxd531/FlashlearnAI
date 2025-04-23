@@ -19,6 +19,7 @@ interface Props<T> {
   onRefresh?: () => void;
   OnEndReached?: FlatListProps<T>["onEndReached"];
   numColumns?: boolean;
+  ListHeaderComponent?: FlatListProps<T>["ListHeaderComponent"];
 }
 
 const Footer = (props: { visible?: boolean }) => {
@@ -40,6 +41,7 @@ const PaginatedList = <T extends any>(props: Props<T>) => {
     OnEndReached,
     hasMore,
     numColumns = false,
+    ListHeaderComponent
   } = props;
   return (
     <FlatList
@@ -47,6 +49,9 @@ const PaginatedList = <T extends any>(props: Props<T>) => {
         if (!hasMore || isFetching) return;
         OnEndReached && OnEndReached(info);
       }}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+      ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={<Footer visible={isFetching} />}
       data={data}
       renderItem={renderItem}

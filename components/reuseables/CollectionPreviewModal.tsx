@@ -69,7 +69,7 @@ const CollectionPreviewModal: React.FC<CollectionPreviewModalProps> = ({
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{display: modalVisible ? "flex" : "none"}]}>
       <Modal
         animationType="slide"
         transparent={true}

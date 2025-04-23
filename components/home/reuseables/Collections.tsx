@@ -1,7 +1,4 @@
-import {
-  useFetchCollectionsByProfile,
-  useFetchUploadsByProfile,
-} from "@/hooks/query";
+
 import { FC, useState } from "react";
 import {
   Pressable,
@@ -27,14 +24,18 @@ import { useFetchPublicUploads } from "../hook/query";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PublicProfileTabParamsList } from "@/@types/navigation";
 
-type Props = NativeStackScreenProps<
+type Props = Partial<NativeStackScreenProps<
   PublicProfileTabParamsList,
   "publicCollections"
->;
+>> & {
+  publicProfileId?: string;
+};
+
 
 const Collections: FC<Props> = (props) => {
+  const {publicProfileId}=props
   const { data, isLoading } = useFetchPublicUploads(
-    props.route.params.profileId
+    publicProfileId ?? props.route?.params?.profileId ?? ''
   );
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -74,7 +75,7 @@ const Collections: FC<Props> = (props) => {
         visible={modalVisible}
         onRequestClose={closePlayerModal}
       >
-        {userId && <CollectionModal userId={userId} />}
+        {userId && <CollectionModal CollectionId={userId} />}
       </AppModal>
     </View>
   );

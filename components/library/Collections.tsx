@@ -37,6 +37,7 @@ import {
   updateCreatedCollectionData,
   updateCreatedCollectionId,
 } from "@/utils/store/Collection";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 interface Props {}
 
@@ -74,6 +75,7 @@ const Collections: FC<Props> = (props) => {
     try {
       const { data } = await client.delete(`/collection/${collectionId}`);
       queryClient.invalidateQueries({ queryKey: ["uploads-by-profile"] });
+      toast.success("Collection deleted successfully!");
       setShowOptions(false);
     } catch (err) {
       handleCreateErrors(err);
@@ -147,7 +149,7 @@ const Collections: FC<Props> = (props) => {
         visible={modalVisible}
         onRequestClose={closePlayerModal}
       >
-        {collectionId && <CollectionModal userId={collectionId} />}
+        {collectionId && <CollectionModal CollectionId={collectionId} />}
       </AppModal>
     </View>
   );
@@ -155,12 +157,6 @@ const Collections: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "flex-start", // Changed to flex-start
-    alignItems: "flex-start", // Add this line
-    marginTop: 15,
-    backgroundColor: "#fff",
   },
   optionContainer: {
     flexDirection: "row",

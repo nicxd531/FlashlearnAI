@@ -31,9 +31,10 @@ const styles = StyleSheet.create({
     height: 60,
     paddingHorizontal: 10,
     paddingVertical: 15,
+    opacity:0.7
   },
   title: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
   },
 });

@@ -7,11 +7,13 @@ import { useFetchFeeds } from "@/hooks/query";
 import PaginatedList from "../reuseables/PaginatedList";
 import EmptyRecords from "../library/components/EmptyRecords";
 import { useQueryClient } from "react-query";
+import FeedsLoadingUi from "./reuseables/FeedsLoadingUi";
 
 interface Props {
   onOpen: (event: GestureResponderEvent) => void;
 }
 const DiscoverScreen: React.FC<Props> = (props) => {
+  const { data, isLoading, isFetching } = useFetchFeeds();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   let pageNo = 0;
@@ -24,6 +26,7 @@ const DiscoverScreen: React.FC<Props> = (props) => {
       queryKey: ["feeds"],
     });
   };
+  if(isLoading)return <FeedsLoadingUi/>
   const renderItem = ({ item }: { item: (typeof data)[0] }) => (
     <Feeds
       onOpen={onOpen}
@@ -38,7 +41,6 @@ const DiscoverScreen: React.FC<Props> = (props) => {
       CollectionData={item}
     />
   );
-  const { data, isLoading, isFetching } = useFetchFeeds();
 
   return (
     <View style={styles.container}>

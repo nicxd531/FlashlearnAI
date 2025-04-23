@@ -24,6 +24,7 @@ import {
 import OptionsModal from "./OptionsModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PlaylistModal from "./PlaylistModal";
+import EmptyRecords from "@/components/library/components/EmptyRecords";
 
 interface Props {}
 
@@ -49,10 +50,11 @@ const RecommendedCollection: FC<Props> = (props) => {
     setModalVisible(true);
     setCollectionId(userId);
   };
-
+  
   const getPoster = (poster?: { url: string; publicId: string }) => {
-    return poster?.url
-      ? { uri: poster.url }
+    
+    return poster
+      ? { uri: poster }
       : require("../../../assets/images/placeholder.png");
   };
   const dummyData = new Array(6).fill("");
@@ -76,12 +78,13 @@ const RecommendedCollection: FC<Props> = (props) => {
 
   return (
     <View style={styles.container}>
-      {/* {!data && <ErrorMessage message="Failed to fetch" />} */}
       <Text style={styles.title}>Recommended Collection</Text>
+      {!data && <EmptyRecords title="Failed to fetch" />}
       <GridView
         col={3}
         data={data || []}
         renderItem={(item: CollectionData) => {
+          
           return (
             <Pressable
               onPress={() => onPress(item.id)}
@@ -178,7 +181,7 @@ const RecommendedCollection: FC<Props> = (props) => {
         visible={modalVisible}
         onRequestClose={closePlayerModal}
       >
-        {collectionId && <CollectionModal userId={collectionId} />}
+        {collectionId && <CollectionModal CollectionId={collectionId} />}
       </AppModal>
     </View>
   );

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Image } from "react-native-elements";
 import { ActivityIndicator, Chip, IconButton, Text } from "react-native-paper";
-import { formatRelativeTime, getSource } from "../api/request";
+
 import tw from "twrnc";
 import { CollectionData } from "@/@types/collection";
 import { useNavigation } from "expo-router";
@@ -18,22 +18,23 @@ import {
   AuthStackParamList,
   libraryNavigatorStackParamList,
 } from "@/@types/navigation";
-import { useFetchCollectionData } from "./hooks/query";
-import PulseAnimationContainer from "../home/reuseables/PulseAnimationContainer";
-import EmptyRecords from "./components/EmptyRecords";
+
 import { useDispatch } from "react-redux";
 import {
   updateCollectionData,
   updateCollectionId,
 } from "@/utils/store/Collection";
+import PulseAnimationContainer from "@/components/home/reuseables/PulseAnimationContainer";
+import EmptyRecords from "./EmptyRecords";
+import { formatRelativeTime } from "@/components/api/request";
 interface Props {
-  CollectionId: string;
+  playlistId: string;
 }
-
-const CollectionModal: FC<Props> = (props) => {
+const data:any =[]
+const PlaylistPreview: FC<Props> = (props) => {
   const dispatch = useDispatch();
-  const { CollectionId } = props;
-  const { data, isLoading } = useFetchCollectionData(CollectionId);
+  const { playlistId } = props;
+
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
@@ -43,7 +44,7 @@ const CollectionModal: FC<Props> = (props) => {
     dispatch(updateCollectionId(id));
     navigation.navigate("collectionPreview");
   };
-  if (isLoading)
+  if (true)
     return (
       <PulseAnimationContainer>
         <View style={styles.container}>
@@ -208,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CollectionModal;
+export default PlaylistPreview;

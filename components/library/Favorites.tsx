@@ -1,10 +1,8 @@
 import {
   CollectionData,
-  Playlist,
-  RecentlyPlayedData,
 } from "@/@types/collection";
 import { FC, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import CollectionListItem from "./components/CollectionListItem";
 import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
 import { useFavorites, useFetchPlaylist } from "@/hooks/query";
@@ -13,8 +11,8 @@ import PlaylistForm from "../home/reuseables/PlaylistForm";
 import AppModal from "../reuseables/AppModal";
 import CollectionModal from "./CollectionModal";
 import {
-  HandleOnFavoritePress,
   HandleOnPlaylistPress,
+  HandleOnRemoveFav,
   handlePlaylistSubmit,
   updatePlaylist,
 } from "../home/hook/request";
@@ -32,6 +30,8 @@ const Favorites: FC<Props> = (props) => {
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
   const [showPlayListForm, setShowPlayListForm] = useState(false);
   const [collectionId, setCollectionId] = useState<string>();
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+      const [hasMore, setHasMore] = useState(true);
   const [selectedCollection, setSelectedCollection] =
     useState<CollectionData>();
   const queryClient = useQueryClient();
@@ -44,13 +44,21 @@ const Favorites: FC<Props> = (props) => {
     setModalVisible(false);
   };
   const onLongPress = (mainData: CollectionData) => {
-    console.log("here there");
     setShowOptions(true);
     setSelectedCollection(mainData);
   };
   const handlePress = (userId: string) => {
     setModalVisible(true);
     setCollectionId(userId);
+  };
+  let pageNo
+  const handleOnRefresh = () => {
+    pageNo = 0;
+    setHasMore(true);
+    queryClient.invalidateQueries({
+      queryKey: ["favorites"],
+    });
+    
   };
 
   return (
@@ -70,6 +78,8 @@ const Favorites: FC<Props> = (props) => {
       ListEmptyComponent={() => (
         <EmptyRecords title="No favorites found! 😔" />
       )}
+      onRefresh={handleOnRefresh}
+      numColumns={true}
       />
         <OptionsModal
           visible={showOptions}
@@ -82,10 +92,10 @@ const Favorites: FC<Props> = (props) => {
                 HandleOnPlaylistPress(setShowOptions, setShowPlaylistModal),
             },
             {
-              title: "Add to favorite",
-              icon: "cards-heart",
+              title: "remove from favorite",
+              icon: "close",
               onPress: () =>
-                HandleOnFavoritePress(
+                HandleOnRemoveFav(
                   selectedCollection,
                   setShowOptions,
                   setSelectedCollection,
@@ -147,7 +157,7 @@ const Favorites: FC<Props> = (props) => {
           visible={modalVisible}
           onRequestClose={closePlayerModal}
         >
-          {collectionId && <CollectionModal userId={collectionId} />}
+          {collectionId && <CollectionModal CollectionId={collectionId} />}
         </AppModal>
     </View>
   );

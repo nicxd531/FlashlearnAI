@@ -12,12 +12,33 @@ export const HandleOnFavoritePress = async (
 ) => {
   try {
     if (!selectedCollection) return;
-    console.log(selectedCollection.id);
     const client = await getClient();
+    
     const { data } = await client.post(
       "/favorite?collectionId=" + selectedCollection?.id
     );
     toast.success("added to favorite list  ", { icon: "🎉" });
+    if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
+  } catch (e) {
+    handleError(e);
+  }
+  setShowOptions(false);
+  setSelectedCollection(undefined);
+};
+export const HandleOnRemoveFav = async (
+  selectedCollection: any,
+  setShowOptions: (value: boolean) => void,
+  setSelectedCollection: (value: any) => void,
+  queryClient?: any
+) => {
+  try {
+    if (!selectedCollection) return;
+    
+    const client = await getClient();
+    const { data } = await client.post(
+      "/favorite?collectionId=" + selectedCollection?.id
+    );
+    toast.success("removed from favorites  ", { icon: "✔️" });
     if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
     console.log(e);
@@ -55,6 +76,7 @@ export const handlePlaylistSubmit = async (
       visibility: value.private ? "private" : "public",
       resId: selectedCollection?.id,
     });
+    toast.success("collection added to playlist", { icon: "🎉" }) ;
     if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
     handleError(e);
