@@ -27,7 +27,7 @@ const CategoriesPreviewPage: FC<Props> = (props) => {
   const [collectionId, setCollectionId] = useState<string>("");
   const route = useRoute();
   const { category } = route.params as { category: string };
-  console.log(category); // Type assertion
+  // Type assertion
   const updateSearch: (text: string) => void = (text) => {
     setSearch(text);
   };
@@ -39,7 +39,7 @@ const CategoriesPreviewPage: FC<Props> = (props) => {
 
   if (!category) navigation.navigate("HomeMain");
   const { data, isLoading, refetch } = useFetchSearchedCategories(category);
-  console.log(data);
+
   // Filter categories dynamically whenever searchText changes
   const handlePress = async (id: string) => {
     try {
@@ -97,10 +97,11 @@ const CategoriesPreviewPage: FC<Props> = (props) => {
         showLoading={false}
       />
       <ScrollView contentContainerStyle={styles.containerScroll}>
-        {filteredCategories?.map((item: CollectionData) => {
+        {filteredCategories?.map((item: CollectionData, index) => {
+
           return (
             <CollectionListItem
-              key={item.id}
+              key={item._id + index}
               collection={item}
               onPress={() => handlePress(item._id)}
             />
@@ -111,7 +112,7 @@ const CategoriesPreviewPage: FC<Props> = (props) => {
           visible={modalVisible}
           onRequestClose={closePlayerModal}
         >
-          {collectionId && <CollectionModal userId={collectionId} />}
+          {collectionId && <CollectionModal CollectionId={collectionId} />}
         </AppModal>
       </ScrollView>
     </View>

@@ -160,9 +160,10 @@ const CreateCollectionPage: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    paddingTop: 20,
     paddingHorizontal: 10,
     width: "100%",
+    backgroundColor: "#fff",
   },
   heading: {
     width: "100%",

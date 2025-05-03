@@ -1,6 +1,13 @@
 import { useFetchPlaylist } from "@/hooks/query";
 import { FC, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import PlaylistItem from "./components/PlaylistItem";
 import CollectionPreviewModal from "../reuseables/CollectionPreviewModal";
 import EmptyRecords from "./components/EmptyRecords";
@@ -16,44 +23,44 @@ import { getClient } from "../api/client";
 import { handleCreateErrors } from "../create/hooks/request";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { Playlist as playlistT } from "@/@types/collection";
+import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
 
 interface Props {}
 
 const Playlist: FC<Props> = (props) => {
   const { data, isLoading } = useFetchPlaylist();
+  if (isLoading) return <CollectionListLoadingUi />;
   const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [playlistId, setPlaylistId] = useState<string>("");
-   const onLongPress = (mainData: playlistT) => {
-      setShowOptions(true);
-      setPlaylistId(mainData.id);
-    };
+  const onLongPress = (mainData: playlistT) => {
+    setShowOptions(true);
+    setPlaylistId(mainData.id);
+  };
   const closePlayerModal = () => {
     setModalVisible(false);
   };
   const queryClient = useQueryClient();
   const handleDelete = async () => {
-      const client = await getClient();
-      try {
-        // const { data } = await client.delete(`/collection/${playlistId}`);
-        // queryClient.invalidateQueries({ queryKey: ["uploads-by-profile"] });
-        setShowOptions(false);
-        toast.success("Playlist deleted successfully!");
-      } catch (err) {
-        handleCreateErrors(err);
-      }
-    };
-     const handleEdit = (id: string) => {
-       
-      };
+    const client = await getClient();
+    try {
+      // const { data } = await client.delete(`/collection/${playlistId}`);
+      // queryClient.invalidateQueries({ queryKey: ["uploads-by-profile"] });
+      setShowOptions(false);
+      toast.success("Playlist deleted successfully!");
+    } catch (err) {
+      handleCreateErrors(err);
+    }
+  };
+  const handleEdit = (id: string) => {};
   return (
-    <View style={{ backgroundColor: "#fff", flex: 1, }}>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <PaginatedList
         data={data}
         renderItem={({ item }: { item: any }) => {
           return (
             <PlaylistItem
-            onLongPress={() => onLongPress(item)}
+              onLongPress={() => onLongPress(item)}
               onPress={() => {
                 setPlaylistId(item.id);
                 setModalVisible(true);
@@ -112,15 +119,12 @@ const Playlist: FC<Props> = (props) => {
       >
         {playlistId && <PlaylistPreview playlistId={playlistId} />}
       </AppModal>
-      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    
-  },
+  container: {},
   optionContainer: {
     flexDirection: "row",
     alignItems: "center",

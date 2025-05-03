@@ -217,7 +217,7 @@ const RecentlyPlayed: React.FC<Props> = (props) => {
         visible={modalVisible}
         onRequestClose={closePlayerModal}
       >
-        {collectionId && <CollectionModal userId={collectionId} />}
+        {collectionId && <CollectionModal CollectionId={collectionId} />}
       </AppModal>
     </View>
   );

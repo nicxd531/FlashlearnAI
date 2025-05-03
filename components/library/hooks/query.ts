@@ -1,4 +1,4 @@
-import { HistoryT } from "@/@types/collection";
+import { HistoryT, Playlist } from "@/@types/collection";
 import client, { getClient } from "@/components/api/client";
 import { UserProfile } from "@/utils/store/auth";
 import { useQuery } from "react-query";
@@ -12,7 +12,7 @@ export const fetchUserPublicProfile = async (userId: string) => {
 };
 
 export const useFetchUserPublicProfile = (id: string) => {
-  const { data, isLoading, error, isSuccess,isFetching } = useQuery(
+  const { data, isLoading, error, isSuccess, isFetching } = useQuery(
     ["UserPublicProfile"],
     {
       queryFn: () => fetchUserPublicProfile(id),
@@ -180,6 +180,31 @@ export const useFetchLogInUser = () => {
     {
       queryFn: () => fetchLogInUser(),
       onError: (err) => console.error("useFetchLogInUser"),
+    }
+  );
+  return {
+    data,
+    isLoading,
+    error,
+    isSuccess,
+    isFetching,
+  };
+};
+
+// FETch playlist
+export const fetchPlaylistPreview = async (id: string): Promise<Playlist> => {
+  const client = await getClient();
+  const { data } = await client("/playlist/" + id);
+  return data;
+};
+
+export const useFetchPlaylistPreview = (id: string) => {
+  const { data, isLoading, error, isSuccess, isFetching } = useQuery(
+    ["playlist", id],
+    {
+      queryFn: () => fetchPlaylistPreview(id),
+      onError: (err) => console.error("playlist ", err),
+      enabled: id ? true : false,
     }
   );
   return {

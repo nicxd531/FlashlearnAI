@@ -27,105 +27,32 @@ import {
 import PulseAnimationContainer from "@/components/home/reuseables/PulseAnimationContainer";
 import EmptyRecords from "./EmptyRecords";
 import { formatRelativeTime } from "@/components/api/request";
+import { useFetchPlaylistPreview } from "../hooks/query";
+import PlaylistLoading from "./PlaylistLoading";
 interface Props {
   playlistId: string;
 }
-const data:any =[]
+const data: any = [];
 const PlaylistPreview: FC<Props> = (props) => {
   const dispatch = useDispatch();
   const { playlistId } = props;
-
+  const { data, isLoading } = useFetchPlaylistPreview(playlistId);
+  console.log("playlist data", playlistId);
+  console.log("data", data);
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
-  const createdAt = formatRelativeTime(data?.createdAt ?? "");
-  const dummyData = new Array(4).fill("");
+  // const createdAt = formatRelativeTime(data?.createdAt ?? "");
+  const dummyData = new Array(6).fill("");
   const handlePlay = (data: CollectionData, id: string) => {
     dispatch(updateCollectionData(data));
     dispatch(updateCollectionId(id));
     navigation.navigate("collectionPreview");
   };
-  if (true)
-    return (
-      <PulseAnimationContainer>
-        <View style={styles.container}>
-          <View style={styles.dummyImage} />
-          <View style={{ width: "100%", padding: 10 }}>
-            <View style={styles.dummyTitleView} />
-            <View style={styles.dummyTitleView2} />
-            <View style={styles.dummyTopViewContainer}>
-              {dummyData.map((_, index) => {
-                return <View key={index} style={styles.dummyTopView} />;
-              })}
-            </View>
-          </View>
-        </View>
-      </PulseAnimationContainer>
-    );
+  if (isLoading) return <PlaylistLoading dummyData={dummyData} />;
+
   if (!data || data == undefined)
     return <EmptyRecords title={"Collection Not Found!"} />;
-  return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={{
-          width: 390,
-          height: 250,
-          borderRadius: 15,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        source={
-          data?.poster ? { uri: data?.poster?.url } : flashcardPlaceholder
-        }
-        imageStyle={{ borderRadius: 15 }}
-      >
-        {!data && (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            style={{ position: "absolute" }}
-          />
-        )}
-      </ImageBackground>
-      <View style={styles.semiContainer}>
-        <Text style={[tw`font-bold mt-4`]} variant="headlineLarge">
-          {data?.title ?? "Untitled"}
-        </Text>
-        <View style={[tw`justify-between flex-row mt-2 `]}>
-          <Chip style={tw`self-start`} textStyle={styles.chipContent}>
-            {data?.category}
-          </Chip>
-          <TouchableOpacity onPress={() => handlePlay(data, data.id)}>
-            <IconButton
-              icon={() => (
-                <MaterialIcons
-                  name="play-circle-outline"
-                  size={35}
-                  color="#00000"
-                />
-              )}
-              iconColor={"#0000"}
-              size={20}
-            />
-          </TouchableOpacity>
-        </View>
-        <Text>{createdAt}</Text>
-        <Text style={[tw`mt-4`]}>{data?.description}</Text>
-
-        <View style={[tw`  flex-row mt-4`]}>
-          <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
-            Number of Cards:
-          </Text>
-          <Text variant="titleMedium">{data?.cards?.length}</Text>
-        </View>
-        <View style={[tw`  flex-row mt-4`]}>
-          <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
-            Author:
-          </Text>
-          <Text variant="titleMedium">{data?.owner?.name ?? "Unknown"}</Text>
-        </View>
-      </View>
-    </View>
-  );
+  return <View style={styles.container}></View>;
 };
 
 const styles = StyleSheet.create({
@@ -176,9 +103,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 16,
   },
+  dummyTitleView3: {
+    height: 30,
+    width: 30,
+    backgroundColor: "#ccc",
+    marginBottom: 10,
+    borderRadius: 30,
+  },
   dummyTopView: {
     height: 30,
-    width: 350,
+    width: 380,
     backgroundColor: "#ccc",
     marginRight: 10,
     borderRadius: 16,
