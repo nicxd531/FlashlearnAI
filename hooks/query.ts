@@ -177,3 +177,29 @@ export const useFetchPlaylist = () => {
     isSuccess,
   };
 };
+
+
+// FETch following
+export const fetchSinglePlaylist = async (id: string): Promise<boolean[]> => {
+  const client = await getClient();
+  const { data } = await client("/playlist/" + id);
+  return data.list;
+};
+
+export const useFetchSinglePlaylist = (id: string) => {
+  const { data, isLoading, error, isSuccess, isFetching } = useQuery(
+    ["single-Playlist", id],
+    {
+      queryFn: () => fetchSinglePlaylist(id),
+      onError: (err) => console.error("single playlist ", err),
+      enabled: id ? true : false,
+    }
+  );
+  return {
+    data,
+    isLoading,
+    error,
+    isSuccess,
+    isFetching,
+  };
+};

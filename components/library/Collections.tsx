@@ -22,7 +22,7 @@ import AppModal from "../reuseables/AppModal";
 import CollectionModal from "./CollectionModal";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import OptionsModal from "../home/reuseables/OptionsModal";
-import { HandleOnPlaylistPress } from "../home/hook/request";
+import { HandleOnFavoritePress, HandleOnPlaylistPress, updatePlaylist } from "../home/hook/request";
 import {
   useFetchDeleteCollection,
   useFetchUploadsByProfile,
@@ -38,16 +38,20 @@ import {
   updateCreatedCollectionId,
 } from "@/utils/store/Collection";
 import { toast } from "@backpackapp-io/react-native-toast";
+import PlaylistModal from "../home/reuseables/PlaylistModal";
+import { useFetchPlaylist } from "@/hooks/query";
 
 interface Props {}
 
 const Collections: FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+   const [showPlayListForm, setShowPlayListForm] = useState(false);
   const [collectionId, setCollectionId] = useState<string>("");
   const [selectedCollection, setSelectedCollection] =
     useState<RecentlyPlayedData>();
   const dispatch = useDispatch();
+  const { data: data3, isLoading: loading3 } = useFetchPlaylist();
   const navigation = useNavigation<NavigationProp<any>>();
   const queryClient = useQueryClient();
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
@@ -55,7 +59,7 @@ const Collections: FC<Props> = (props) => {
     setModalVisible(false);
   };
   const { data, isLoading } = useFetchUploadsByProfile();
-  if (isLoading) return <CollectionListLoadingUi />;
+  if (isLoading || loading3) return <CollectionListLoadingUi />;
 
   const handlePress = async (id: string) => {
     try {
@@ -105,6 +109,10 @@ const Collections: FC<Props> = (props) => {
           <EmptyRecords title="There is no Collection! 😔" />
         )}
         numColumns={true}
+        onRefresh={() => {
+          queryClient.invalidateQueries({ queryKey: ["uploads-by-profile"] });
+          queryClient.invalidateQueries({ queryKey: ["useFetchLogInUser"] });
+        }}
       />
 
       {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
@@ -123,15 +131,36 @@ const Collections: FC<Props> = (props) => {
             icon: "edit-3",
             onPress: () => handleEdit(collectionId),
           },
+           {
+                      title: "Add to playlist",
+                      icon: "playlist-music",
+                      onPress: () =>
+                        HandleOnPlaylistPress(setShowOptions, setShowPlaylistModal),
+                    },
+                    {
+                      title: "Add to favorite",
+                      icon: "cards-heart",
+                      onPress: () =>
+                        HandleOnFavoritePress(
+                          selectedCollection,
+                          setShowOptions,
+                          setSelectedCollection,
+                          queryClient
+                        ),
+                    },
         ]}
         renderItem={(item) => {
           return (
             <Pressable onPress={item.onPress} style={styles.optionContainer}>
-              <Feather
+             {item.icon == "trash"|| item.icon == "edit-3" ? <Feather
                 name={item.icon as any}
                 size={24}
                 color={item.title == "Delete" ? "red" : "black"}
-              />
+              />: <MaterialCommunityIcons
+                              name={item.icon as any}
+                              size={24}
+                              color="black"
+                            />}
               <Text
                 style={[
                   styles.optionLabel,
@@ -144,6 +173,25 @@ const Collections: FC<Props> = (props) => {
           );
         }}
       />
+       <PlaylistModal
+              list={data3 || []}
+              onCreateNewPress={() => {
+                setShowPlaylistModal(false);
+                setShowPlayListForm(true);
+              }}
+              visible={showPlaylistModal}
+              onRequestClose={() => setShowPlaylistModal(false)}
+              onPlaylistPress={(item) =>
+                updatePlaylist(
+                  item,
+                  selectedCollection,
+                  setShowPlayListForm,
+                  setShowPlaylistModal,
+                  setShowOptions,
+                  setSelectedCollection
+                )
+              }
+            />
       <AppModal
         animation
         visible={modalVisible}

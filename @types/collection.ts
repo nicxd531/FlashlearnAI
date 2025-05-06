@@ -137,8 +137,11 @@ export interface FavoritesData {
 export interface Playlist {
   id: string;
   title: string;
+  main: string;
   itemsCount: number;
   visibility: "public" | "private";
+  createdAt?: string;
+  collection?: CollectionData[];
 }
 export interface HistoryT {
   date: string;

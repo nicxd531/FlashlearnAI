@@ -75,6 +75,10 @@ const Playlist: FC<Props> = (props) => {
           <EmptyRecords title="No playlist found! 😔" />
         )}
         numColumns={true}
+        onRefresh={() => {
+          queryClient.invalidateQueries({ queryKey: ["playlist-by-profile"] });
+          queryClient.invalidateQueries({ queryKey: ["useFetchLogInUser"] });
+        }}
       />
       {data?.length % 2 !== 0 && <View style={{ width: "48%" }} />}
       <OptionsModal
@@ -91,6 +95,7 @@ const Playlist: FC<Props> = (props) => {
             icon: "edit-3",
             onPress: () => handleEdit(playlistId),
           },
+          
         ]}
         renderItem={(item) => {
           return (
