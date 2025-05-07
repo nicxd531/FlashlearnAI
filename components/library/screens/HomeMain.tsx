@@ -8,14 +8,17 @@ import { Toasts } from "@backpackapp-io/react-native-toast";
 import { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { FC, useEffect, useRef, useState } from "react";
-import { BackHandler, GestureResponderEvent, ScrollView } from "react-native";
+import { BackHandler, FlatList, GestureResponderEvent, RefreshControl, ScrollView } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { Modalize } from "react-native-modalize";
+import { useQueryClient } from "react-query";
 
 interface Props {}
 
 const HomeMain: FC<Props> = (props) => {
+  const [refresh,setRefresh]=useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
+  const queryClient = useQueryClient()
   const modalizeRef = useRef<Modalize>(null);
   const onOpen = (event: GestureResponderEvent) => {
     modalizeRef.current?.open();
@@ -23,7 +26,11 @@ const HomeMain: FC<Props> = (props) => {
   const [activeScreen, setActiveScreen] = useState<"Explore" | "Discover">(
     "Explore"
   );
-
+const handleOnRefresh=()=>{
+  setRefresh(true)
+  queryClient.invalidateQueries({ queryKey: ["favorites"] });
+  setRefresh(false)
+}
   useEffect(() => {
     const backAction = () => {
       if (navigation.isFocused()) {
@@ -50,7 +57,26 @@ const HomeMain: FC<Props> = (props) => {
           stiffness: 50,
         }}
       />
-      <ScrollView>
+      <FlatList
+      ListHeaderComponent={<>
+      <TopAppBar />
+        <TopCreators />
+        <PillToggleButton
+          activeScreen={activeScreen}
+          setActiveScreen={setActiveScreen}
+        /></>}
+      data={[""]}
+      renderItem={()=>{return <> {activeScreen === "Explore" ? (
+        <ExploreScreen onOpen={onOpen} />
+      ) : (
+        <DiscoverScreen onOpen={onOpen} />
+      )}</>}}
+      showsHorizontalScrollIndicator={false} 
+      refreshControl={
+              <RefreshControl refreshing={refresh} onRefresh={handleOnRefresh} />
+            }
+      />
+      {/* <ScrollView showsHorizontalScrollIndicator={false}>
         <TopAppBar />
         <TopCreators />
         <PillToggleButton
@@ -62,7 +88,7 @@ const HomeMain: FC<Props> = (props) => {
         ) : (
           <DiscoverScreen onOpen={onOpen} />
         )}
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 };
