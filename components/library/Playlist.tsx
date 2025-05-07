@@ -44,8 +44,6 @@ const Playlist: FC<Props> = (props) => {
   const handleDelete = async () => {
     const client = await getClient();
     try {
-      // const { data } = await client.delete(`/collection/${playlistId}`);
-      // queryClient.invalidateQueries({ queryKey: ["uploads-by-profile"] });
       setShowOptions(false);
       toast.success("Playlist deleted successfully!");
     } catch (err) {
@@ -67,7 +65,6 @@ const Playlist: FC<Props> = (props) => {
               }}
               playlist={item}
               key={item.id}
-              //  onLongPress={handleOnLongPress(item)}
             />
           );
         }}
@@ -95,7 +92,6 @@ const Playlist: FC<Props> = (props) => {
             icon: "edit-3",
             onPress: () => handleEdit(playlistId),
           },
-          
         ]}
         renderItem={(item) => {
           return (

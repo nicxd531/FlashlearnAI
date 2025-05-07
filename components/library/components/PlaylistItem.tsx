@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import { Image } from "react-native-elements";
+import PlaylistPreview from "./PlaylistPreview";
 
 interface Props {
   playlist: Playlist;

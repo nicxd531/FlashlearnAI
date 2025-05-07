@@ -68,6 +68,7 @@ export type categoriesTypes =
 
 export interface CollectionData {
   _id: string;
+  id?: string;
   title: string;
   description: string;
   category: categoriesTypes;

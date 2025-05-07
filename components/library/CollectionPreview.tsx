@@ -79,7 +79,7 @@ const CollectionPreview: FC<Props> = (props) => {
               visibility: {collectionData?.visibility}
             </Text>
             <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              Number of Cards: {collectionData?.cards.length}
+              Number of Cards: {collectionData?.cards?.length}
             </Text>
             <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
               Number of likes:{" "}

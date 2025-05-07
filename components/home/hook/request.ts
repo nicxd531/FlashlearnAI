@@ -8,15 +8,15 @@ export const HandleOnFavoritePress = async (
   selectedCollection: any,
   setShowOptions: (value: boolean) => void,
   setSelectedCollection: (value: any) => void,
-  queryClient?: any
+  queryClient?: any,
+  id?: string
 ) => {
   try {
     if (!selectedCollection) return;
     const client = await getClient();
-    
-    const { data } = await client.post(
-      "/favorite?collectionId=" + selectedCollection?.id
-    );
+    const mainId = id ? id : selectedCollection?.id;
+
+    const { data } = await client.post("/favorite?collectionId=" + mainId);
     toast.success("added to favorite list  ", { icon: "🎉" });
     if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
@@ -33,7 +33,7 @@ export const HandleOnRemoveFav = async (
 ) => {
   try {
     if (!selectedCollection) return;
-    
+
     const client = await getClient();
     const { data } = await client.post(
       "/favorite?collectionId=" + selectedCollection?.id
@@ -76,7 +76,7 @@ export const handlePlaylistSubmit = async (
       visibility: value.private ? "private" : "public",
       resId: selectedCollection?.id,
     });
-    toast.success("collection added to playlist", { icon: "🎉" }) ;
+    toast.success("collection added to playlist", { icon: "🎉" });
     if (queryClient) queryClient.invalidateQueries({ queryKey: ["favorites"] });
   } catch (e) {
     handleError(e);
@@ -93,13 +93,15 @@ export const updatePlaylist = async (
   setShowPlayListForm: (value: boolean) => void,
   setShowPlaylistModal: (value: boolean) => void,
   setShowOptions: (value: boolean) => void,
-  setSelectedCollection: (value: any) => void
+  setSelectedCollection: (value: any) => void,
+  id?: string
 ) => {
   try {
     const client = await getClient();
+    const mainId = id ? id : selectedCollection?.id;
     const { data } = await client.patch("/playlist", {
       id: item.id,
-      item: selectedCollection?.id,
+      item: mainId,
       title: item.title,
       visibility: item.visibility,
     });

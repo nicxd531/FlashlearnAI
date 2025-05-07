@@ -35,12 +35,14 @@ import PlaylistImage from "./PlaylistImage";
 interface Props {
   playlistId: string;
 }
-const data:any =[]
+const data: any = [];
 const PlaylistPreview: FC<Props> = (props) => {
   const dispatch = useDispatch();
   const { playlistId } = props;
-  const {data, isLoading, } = useFetchSinglePlaylist(playlistId) as { data: Playlist | undefined, isLoading: boolean }
-  console.log("data", data?.collection)
+  const { data, isLoading } = useFetchSinglePlaylist(playlistId) as {
+    data: Playlist | undefined;
+    isLoading: boolean;
+  };
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
@@ -70,56 +72,66 @@ const PlaylistPreview: FC<Props> = (props) => {
     );
   if (!data || data == undefined)
     return <EmptyRecords title={"Collection Not Found!"} />;
-const Header =<>
-<PlaylistImage id={data?.main} />
-<View style={[styles.semiContainer,tw`ml-4`]}>
-  <Text variant="titleLarge">List of collections </Text>
-</View></>
- 
+  const Header = (
+    <>
+      <PlaylistImage id={data?.main} />
+      <View style={[styles.semiContainer, tw`ml-4`]}>
+        <Text variant="titleLarge">List of collections </Text>
+      </View>
+    </>
+  );
   return (
     <View style={styles.container}>
       <FlatList
-      ListHeaderComponent={Header}
-      data={data?.collection}
-      renderItem={({ item,index }) => (
-   
+        ListHeaderComponent={Header}
+        keyExtractor={(item, index) => index.toString()}
+        data={data?.collection}
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index}
-            onPress={() => handlePlay(item, item._id)}
+            onPress={() => handlePlay(item, item?.id as string)}
             style={[
               styles.item,
               {
                 flexDirection: "row",
-               
+
                 justifyContent: "flex-start",
                 padding: 10,
-                width:"60%",
-                marginLeft:5
-          
+                width: "60%",
+                marginLeft: 5,
               },
             ]}
           >
-              <Text  variant="titleLarge">{index +1}</Text>
+            <Text variant="titleLarge">{index + 1}</Text>
             <View style={styles.chipContent}>
               <Image
-                source={item.poster ? { uri: item.poster } : flashcardPlaceholder}
-                style={{ width: 50, height: 50,marginLeft: 40 }}
+                source={
+                  item.poster
+                    ? { uri: item.poster as any }
+                    : flashcardPlaceholder
+                }
+                style={{ width: 50, height: 50, marginLeft: 40 }}
               />
               <View>
-                
-              <Text numberOfLines={1}  variant="titleLarge" style={{ marginLeft: 40 }}>
-                {item?.title}
-              </Text>
-              <Text numberOfLines={1}  variant="titleMedium" style={{ marginLeft: 40 }}>
-                {item?.cards?.length ?item?.cards?.length:0} Cards
-              </Text>
+                <Text
+                  numberOfLines={1}
+                  variant="titleLarge"
+                  style={{ marginLeft: 40 }}
+                >
+                  {item?.title}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  variant="titleMedium"
+                  style={{ marginLeft: 40 }}
+                >
+                  {item?.cards?.length ? item?.cards?.length : 0} Cards
+                </Text>
               </View>
             </View>
           </TouchableOpacity>
-        
-      )}
+        )}
       />
-      
     </View>
   );
 };
@@ -128,13 +140,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    
   },
   semiContainer: {
-   justifyContent:"flex-start",
-   alignItems:"flex-start",
-   width:"100%",
-   marginTop: 20,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    marginTop: 20,
   },
   modalOverlay: {
     flex: 1,
