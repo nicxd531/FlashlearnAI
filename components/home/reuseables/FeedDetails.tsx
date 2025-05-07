@@ -36,11 +36,13 @@ const FeedDetails: FC<Props> = (props) => {
       <View>
         <Text variant="titleMedium">
           {formattedLikes}
-          {""}
           {newLikes > 1 ? " likes" : " like"}
         </Text>
       </View>
-      <View style={[tw`flex-row`]}>
+      <View style={[tw`flex-column`, { marginTop: 10 }]}>
+        <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+          {collectionData.title}
+        </Text>
         <Text variant="titleMedium">{description}</Text>
       </View>
     </View>

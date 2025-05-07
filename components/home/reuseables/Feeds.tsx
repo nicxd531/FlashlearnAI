@@ -37,7 +37,6 @@ const Feeds: FC<{
   likes: number;
   onOpen: (event: GestureResponderEvent) => void;
   CollectionData: CollectionData;
- 
 }> = ({
   image,
   avatar,
@@ -49,9 +48,7 @@ const Feeds: FC<{
   likes,
   collectionId,
   CollectionData,
-
 }) => {
- 
   return (
     <View
       style={[
@@ -64,7 +61,12 @@ const Feeds: FC<{
         },
       ]}
     >
-      <TopNavFeeds avatar={avatar} name={name} time={time} userId={CollectionData?.owner?.id}/>
+      <TopNavFeeds
+        avatar={avatar}
+        name={name}
+        time={time}
+        userId={CollectionData?.owner?.id}
+      />
       <View style={styles.item}>
         <Image
           style={{ width: 350, height: 200, borderRadius: 8 }}
