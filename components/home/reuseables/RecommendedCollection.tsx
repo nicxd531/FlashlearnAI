@@ -50,9 +50,8 @@ const RecommendedCollection: FC<Props> = (props) => {
     setModalVisible(true);
     setCollectionId(userId);
   };
-  
+
   const getPoster = (poster?: { url: string; publicId: string }) => {
-    
     return poster
       ? { uri: poster }
       : require("../../../assets/images/placeholder.png");
@@ -84,11 +83,10 @@ const RecommendedCollection: FC<Props> = (props) => {
         col={3}
         data={data || []}
         renderItem={(item: CollectionData) => {
-          
           return (
             <Pressable
-              onPress={() => onPress(item.id)}
-              onLongPress={() => onLongPress(item)}
+              onPress={() => onPress(item.id as any)}
+              onLongPress={() => onLongPress(item as any)}
             >
               <Image
                 PlaceholderContent={<ActivityIndicator />}
