@@ -1,18 +1,22 @@
-import { View, Platform, StyleSheet, LayoutChangeEvent } from "react-native";
-import { useLinkBuilder, useTheme } from "@react-navigation/native";
-import { Text, PlatformPressable } from "@react-navigation/elements";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  LayoutChangeEvent,
+} from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Feather } from "@expo/vector-icons";
 import colors from "@/constants/Colors";
-import { create } from "twrnc";
 import TabBarButton from "./TabBarButton";
-import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  interpolate,
+  Extrapolate,
+  Easing,
 } from "react-native-reanimated";
+import useTabBarStore from "@/utils/store/zustand/useTabBarStore";
+ // Import the Zustand store
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ width: 100, height: 20 });
@@ -30,8 +34,26 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     };
   });
 
+  const scrollY = useTabBarStore((state) => state.scrollY); // Get scrollY from Zustand
+
+  const tabBarHeight = 80; // Adjust to your tab bar height
+  const tabBarAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY,
+      [-1, tabBarHeight],
+      [0, tabBarHeight * 2],
+      { extrapolateRight: Extrapolate.CLAMP }
+    );
+    return {
+      transform: [{ translateY: translateY }],
+    };
+  });
+
   return (
-    <View onLayout={onTabbarLayout} style={styles.tabBar}>
+    <Animated.View
+      onLayout={onTabbarLayout}
+      style={[styles.tabBar, tabBarAnimatedStyle]}
+    >
       <Animated.View
         style={[
           {
@@ -91,7 +113,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           />
         );
       })}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -102,6 +124,8 @@ const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
     bottom: 50,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -109,11 +133,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 85,
     paddingVertical: 15,
     borderRadius: 35,
-
     shadowColor: "#000", // Black shadow for visibility
     shadowOffset: { width: 0, height: 4 }, // Spread downward
-    // Adjust visibility
-    // Blur effect
     elevation: 5, // Shadow for Android
     shadowRadius: 10,
     shadowOpacity: 0.1,

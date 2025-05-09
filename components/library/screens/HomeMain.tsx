@@ -4,6 +4,7 @@ import ExploreScreen from "@/components/home/ExploreScreen";
 import TopCreators from "@/components/home/reuseables/TopCreators";
 import PillToggleButton from "@/components/reuseables/PillToggleButton";
 import TopAppBar from "@/components/reuseables/TopAppBar";
+import useTabBarStore from "@/utils/store/zustand/useTabBarStore";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
@@ -16,6 +17,11 @@ import { useQueryClient } from "react-query";
 interface Props {}
 
 const HomeMain: FC<Props> = (props) => {
+  const setScrollY = useTabBarStore((state) => state.setScrollY);
+
+  const handleScroll = (event) => {
+    setScrollY(event.nativeEvent.contentOffset.y);
+  };
   const [refresh,setRefresh]=useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const queryClient = useQueryClient()
@@ -75,6 +81,8 @@ const handleOnRefresh=()=>{
       refreshControl={
               <RefreshControl refreshing={refresh} onRefresh={handleOnRefresh} />
             }
+            onScroll={handleScroll}
+        scrollEventThrottle={16}
       />
       {/* <ScrollView showsHorizontalScrollIndicator={false}>
         <TopAppBar />
