@@ -32,6 +32,9 @@ import { formatRelativeTime } from "@/components/api/request";
 import { useFetchSinglePlaylist } from "@/hooks/query";
 import { useFetchCollectionData } from "../hooks/query";
 import PlaylistImage from "./PlaylistImage";
+import PlaylistCollection from "./PlaylistCollection";
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+
 interface Props {
   playlistId: string;
 }
@@ -80,57 +83,33 @@ const PlaylistPreview: FC<Props> = (props) => {
       </View>
     </>
   );
+  const renderItem =({ item, index }: { item: CollectionData; index: number }) => (
+<Swipeable
+renderRightActions={(progress,dragX) => {
+  //  dragX.interpolate({
+  //     inputRange: [-150, 0],
+  //     outputRange: [1, 0],
+  //     extrapolate: "clamp",
+  //   })
+return<View style={{flex:1}}>
+  <Text>Removing..</Text>
+</View>
+}}
+>
+  <PlaylistCollection
+    index={index}
+    handlePlay={handlePlay}
+    item={item}
+    key={index}/>
+</Swipeable>
+  )
   return (
     <View style={styles.container}>
       <FlatList
         ListHeaderComponent={Header}
         keyExtractor={(item, index) => index.toString()}
         data={data?.collection}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handlePlay(item, item?.id as string)}
-            style={[
-              styles.item,
-              {
-                flexDirection: "row",
-
-                justifyContent: "flex-start",
-                padding: 10,
-                width: "60%",
-                marginLeft: 5,
-              },
-            ]}
-          >
-            <Text variant="titleLarge">{index + 1}</Text>
-            <View style={styles.chipContent}>
-              <Image
-                source={
-                  item.poster
-                    ? { uri: item.poster as any }
-                    : flashcardPlaceholder
-                }
-                style={{ width: 50, height: 50, marginLeft: 40 }}
-              />
-              <View>
-                <Text
-                  numberOfLines={1}
-                  variant="titleLarge"
-                  style={{ marginLeft: 40 }}
-                >
-                  {item?.title}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  variant="titleMedium"
-                  style={{ marginLeft: 40 }}
-                >
-                  {item?.cards?.length ? item?.cards?.length : 0} Cards
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
+        renderItem={renderItem}
       />
     </View>
   );
