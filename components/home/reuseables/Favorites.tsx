@@ -180,7 +180,7 @@ const Favorites = () => {
         visible={modalVisible}
         onRequestClose={closePlayerModal}
       >
-        {collectionId && <CollectionModal userId={collectionId} />}
+        {collectionId && <CollectionModal CollectionId={collectionId} />}
       </AppModal>
     </View>
   );

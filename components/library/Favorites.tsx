@@ -45,9 +45,9 @@ const Favorites: FC<Props> = (props) => {
     setShowOptions(true);
     setSelectedCollection(mainData);
   };
-  const handlePress = (userId: string) => {
+  const handlePress = (id: string) => {
     setModalVisible(true);
-    setCollectionId(userId);
+    setCollectionId(id);
   };
   let pageNo;
   const handleOnRefresh = () => {
@@ -57,6 +57,7 @@ const Favorites: FC<Props> = (props) => {
       queryKey: ["favorites"],
     });
   };
+ 
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>

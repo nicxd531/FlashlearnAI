@@ -8,7 +8,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { fetchHistories, useFetchHistories } from "./hooks/query";
+import {
+  fetchHistories,
+  useFetchCollectionData,
+  useFetchHistories,
+} from "./hooks/query";
 import CollectionListLoadingUi from "./components/CollectionListLoadingUi";
 import EmptyRecords from "./components/EmptyRecords";
 import { ScrollView } from "react-native";
@@ -21,16 +25,30 @@ import { useNavigation } from "expo-router";
 import { fetchFavorites } from "@/hooks/query";
 import PulseAnimationContainer from "../home/reuseables/PulseAnimationContainer";
 import PaginatedList from "../reuseables/PaginatedList";
+import historyState from "@/utils/store/zustand/useHistory";
+import { useDispatch } from "react-redux";
+import {
+  updateCollectionData,
+  updateCollectionId,
+} from "@/utils/store/Collection";
+import { libraryNavigatorStackParamList } from "@/@types/navigation";
+import { NavigationProp } from "@react-navigation/native";
 
 interface Props {}
 
 const History: FC<Props> = (props) => {
   const { data, isLoading, isFetching } = useFetchHistories();
+  const setCollectionId = historyState((state) => state.setCollectionId);
+  const setHistoryId = historyState((state) => state.setHistoryId);
+  const historyId = historyState((state) => state.historyId);
+  const collectionId = historyState((state) => state.collectionId);
+
   const [selectedHistories, setSelectedHistories] = useState<string[]>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const navigation = useNavigation();
-
+  const navigation =
+    useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const removeMutate = useMutation({
     mutationFn: async (histories) => removeHistories(histories),
@@ -74,7 +92,17 @@ const History: FC<Props> = (props) => {
     setSelectedHistories([history.id]);
   };
   const handleOnPress = async (history: historyCollection) => {
-    if (selectedHistories.length == 0) return;
+    if (selectedHistories.length == 0) {
+      setCollectionId(history.cardsCollectionId);
+      setHistoryId(history.id);
+
+      if (!isLoading) {
+        dispatch(updateCollectionId(history.cardsCollectionId));
+
+        navigation.navigate("collectionPreview");
+      }
+      return;
+    }
     setSelectedHistories((old) => {
       if (old.includes(history.id)) {
         return old.filter((item) => item !== history.id);
@@ -100,7 +128,6 @@ const History: FC<Props> = (props) => {
       queryKey: ["recentlyPlayed"],
     });
   };
-  if (isLoading) return <CollectionListLoadingUi />;
   let pageNo = 0;
 
   const HandleOnEndReached = async () => {
@@ -128,12 +155,13 @@ const History: FC<Props> = (props) => {
     queryClient.setQueriesData(["histories"], mergedData);
     setIsFetchingMore(false);
   };
-  // useEffect(() => {
-  //   navigation.addListener("blur", unSelectHistories);
-  //   return () => {
-  //     navigation.removeListener("blur", unSelectHistories);
-  //   };
-  // }, [navigation, unSelectHistories]);
+  useEffect(() => {
+    navigation.addListener("blur", unSelectHistories);
+    return () => {
+      navigation.removeListener("blur", unSelectHistories);
+    };
+  }, [navigation, unSelectHistories]);
+  if (isLoading) return <CollectionListLoadingUi />;
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       {selectedHistories.length ? (
@@ -152,6 +180,7 @@ const History: FC<Props> = (props) => {
               <Text style={styles.date}>{item.date}</Text>
               <View style={styles.listContainer}>
                 {item.cardsCollection.map((collection, index) => {
+                 
                   return (
                     <Pressable
                       onLongPress={() => handleOnLongPress(collection)}

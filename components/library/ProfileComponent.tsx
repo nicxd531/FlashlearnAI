@@ -24,7 +24,7 @@ const ProfileComponent: FC<Props> = (props) => {
   if (!profile) return null;
   return (
     <View style={styles.container}>
-      <AvatarField source={profile.avatar} />
+      <AvatarField source={profile.avatar} id={profile?.id} />
 
       <View style={styles.profileInfoConatiner}>
         <Text style={styles.profileName}>{profile.name}</Text>

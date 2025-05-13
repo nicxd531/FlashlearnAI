@@ -9,6 +9,7 @@
         "Pressable",
         "reuseables",
         "springify",
+        "Swipeable",
         "twrnc"
     ]
 }

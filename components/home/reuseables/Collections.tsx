@@ -58,8 +58,7 @@ const Collections: FC<Props> = (props) => {
     setModalVisible(false);
   };
 
-  if (isLoading) return <CollectionListLoadingUi />;
-
+  
   if (!data?.length) return <EmptyRecords title="There is no Collection! 😔" />;
   const dispatch = useDispatch();
   const handlePress = async (id: string) => {
@@ -75,6 +74,7 @@ const Collections: FC<Props> = (props) => {
     setSelectedCollection(mainData);
     setCollectionId(mainData.id);
   };
+  if (isLoading) return <CollectionListLoadingUi />;
   return (
     <View style={styles.container}>
       {data?.map((item: CollectionData) => {

@@ -1,7 +1,8 @@
 import { flashcardPlaceholder } from "@/constants/Styles";
 import { MaterialIcons } from "@expo/vector-icons";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import {
+  Animated,
   FlatList,
   ImageBackground,
   ScrollView,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SharedValue } from "react-native-reanimated";
 import { Image } from "react-native-elements";
 import { ActivityIndicator, Chip, IconButton, Text } from "react-native-paper";
 
@@ -33,13 +35,15 @@ import { useFetchSinglePlaylist } from "@/hooks/query";
 import { useFetchCollectionData } from "../hooks/query";
 import PlaylistImage from "./PlaylistImage";
 import PlaylistCollection from "./PlaylistCollection";
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { RectButton } from "react-native-gesture-handler";
 
 interface Props {
   playlistId: string;
 }
 const data: any = [];
 const PlaylistPreview: FC<Props> = (props) => {
+  const [removing, setRemoving] = useState(false);
   const dispatch = useDispatch();
   const { playlistId } = props;
   const { data, isLoading } = useFetchSinglePlaylist(playlistId) as {
@@ -83,26 +87,34 @@ const PlaylistPreview: FC<Props> = (props) => {
       </View>
     </>
   );
-  const renderItem =({ item, index }: { item: CollectionData; index: number }) => (
-<Swipeable
-renderRightActions={(progress,dragX) => {
-  //  dragX.interpolate({
+  // const renderRightActions = (
+  //   progressAnimatedValue: SharedValue<number>,
+  //   dragAnimatedValue: SharedValue<number>
+  // ) => {
+  //   const scale = dragAnimatedValue.interpolate({
   //     inputRange: [-150, 0],
   //     outputRange: [1, 0],
   //     extrapolate: "clamp",
-  //   })
-return<View style={{flex:1}}>
-  <Text>Removing..</Text>
-</View>
-}}
->
-  <PlaylistCollection
-    index={index}
-    handlePlay={handlePlay}
-    item={item}
-    key={index}/>
-</Swipeable>
-  )
+  //   });
+  //   return (
+  //     <View style={styles.swipeableContainer}>
+  //       <Animated.View style={{ transform: [{ scale }] }}>
+  //         <Text>{removing ? "removing" : "removed"}</Text>
+  //       </Animated.View>
+  //     </View>
+  //   );
+  // };
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: CollectionData;
+    index: number;
+  }) => (
+    <RectButton onPress={() => handlePlay(item, item?.id as string)}>
+      <PlaylistCollection index={index} item={item} key={index} />
+    </RectButton>
+  );
   return (
     <View style={styles.container}>
       <FlatList
@@ -193,6 +205,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
     marginBottom: 10,
     borderRadius: 16,
+  },
+  swipeableContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    height: 50,
   },
 });
 

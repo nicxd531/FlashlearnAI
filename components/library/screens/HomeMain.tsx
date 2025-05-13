@@ -43,7 +43,7 @@ const HomeMain: FC<Props> = (props) => {
     setRefresh(false);
   };
   const setScrollY = useTabBarStore((state) => state.setScrollY);
-  const handleScroll = (event:any) => {
+  const handleScroll = (event: any) => {
     setScrollY(event.nativeEvent.contentOffset.y);
   };
   useEffect(() => {
@@ -99,8 +99,6 @@ const HomeMain: FC<Props> = (props) => {
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={handleOnRefresh} />
         }
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
       />
       {/* <ScrollView showsHorizontalScrollIndicator={false}>
         <TopAppBar />

@@ -7,15 +7,15 @@ import { Text } from 'react-native-paper';
 
 interface Props {
     index:number;
-    handlePlay: (data: CollectionData , id: string) => void;
+    // handlePlay: (data: CollectionData , id: string) => void;
     item: CollectionData;
 }
 
 const PlaylistCollection: FC<Props> = (props) => {
-    const {index,handlePlay,item  } = props;
+    const {index,item  } = props;
   return    <TouchableOpacity
               key={index}
-              onPress={() => handlePlay(item, item?.id as string)}
+              // onPress={() => handlePlay(item, item?.id as string)}
               style={[
                 styles.item,
                 {

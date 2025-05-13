@@ -30,7 +30,6 @@ interface Props {
 
 const CardsPreviewList: FC<Props> = (props) => {
   const { cards = [] } = props;
-  console.log("cards", cards);
   const dispatch = useDispatch();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [mainCards, setMainCards] = useState<Card[]>(cards);

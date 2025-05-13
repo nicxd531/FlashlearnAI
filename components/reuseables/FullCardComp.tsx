@@ -16,6 +16,7 @@ interface Props {
 
 const FullCardComp: FC<Props> = (props) => {
   const { stackStyle, currentIndex, setCurrentIndex, data, progress } = props;
+  console.log(progress)
   return data ? (
     <>
       <CardsSlider

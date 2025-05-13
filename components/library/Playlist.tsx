@@ -29,7 +29,6 @@ interface Props {}
 
 const Playlist: FC<Props> = (props) => {
   const { data, isLoading } = useFetchPlaylist();
-  if (isLoading) return <CollectionListLoadingUi />;
   const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [playlistId, setPlaylistId] = useState<string>("");
@@ -51,6 +50,7 @@ const Playlist: FC<Props> = (props) => {
     }
   };
   const handleEdit = (id: string) => {};
+  if (isLoading) return <CollectionListLoadingUi />;
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <PaginatedList

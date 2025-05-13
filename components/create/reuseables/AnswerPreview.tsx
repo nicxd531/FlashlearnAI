@@ -9,7 +9,7 @@ import tw from "twrnc";
 
 interface Props {
   data: questionSection[];
-  setImages: (images: { url: string }[]) => { url: string }[];
+  setImages: React.Dispatch<React.SetStateAction<{ url: string }[]>>;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

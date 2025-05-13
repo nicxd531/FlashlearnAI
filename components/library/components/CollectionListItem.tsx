@@ -20,6 +20,7 @@ const CollectionListItem: FC<Props> = (props) => {
     typeof collection?.poster === "string"
       ? collection?.poster
       : collection?.poster?.url;
+
   return (
     <Pressable
       onPress={() => onPress(collection.id)}

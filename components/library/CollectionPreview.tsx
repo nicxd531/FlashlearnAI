@@ -12,20 +12,22 @@ import FullCardComp from "../reuseables/FullCardComp";
 import EmptyRecords from "./components/EmptyRecords";
 import CreateModal from "../reuseables/CreateModal";
 import { updateCollectionData } from "@/utils/store/Collection";
+import { useFetchCollectionData } from "./hooks/query";
 
 interface Props {}
 
 const CollectionPreview: FC<Props> = (props) => {
-  const { collectionData, collectionId, busyAQuestion } = useSelector(
+  const { collectionId, busyAQuestion } = useSelector(
     (state: {
       collection: {
-        collectionData: CollectionData;
         collectionId: string;
         busyAQuestion: boolean;
       };
     }) => state.collection
   );
-  // console.log({ collectionData });
+  const { data: collectionData, isLoading } =
+    useFetchCollectionData(collectionId);
+
   const createdAt = formatRelativeTime(collectionData?.createdAt);
   const updatedAt = formatRelativeTime(collectionData?.updatedAt);
   const [stackStyle, setStackStyle] = useState("default");

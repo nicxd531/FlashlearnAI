@@ -18,6 +18,7 @@ import QuestionPreview from "../create/reuseables/QuestionPreview";
 import { cards } from "@/@types/collection";
 import ImagePreview from "./ImagePreview";
 import AnswerPreview from "../create/reuseables/AnswerPreview";
+import deepEqual from "deep-equal";
 
 interface Props {
   stackStyle: string;
@@ -38,6 +39,7 @@ const CardsSlider: FC<Props> = (props) => {
   const [typingComplete, setTypingComplete] = useState<boolean[]>(
     new Array(data.length).fill(false)
   );
+
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState([]);
   const handleReveal = (id: string) => {
@@ -51,6 +53,7 @@ const CardsSlider: FC<Props> = (props) => {
   // Function to handle card click
   const handleCardClick = (index: number) => {
     setSelectedIndex(index); // Update selected index
+    setCurrentIndex(index);
 
     // Clear any existing timer
     if (timer) {
@@ -81,12 +84,15 @@ const CardsSlider: FC<Props> = (props) => {
       queryClient.invalidateQueries({
         queryKey: ["recentlyPlayed"],
       });
-      console.log(data1);
     } catch (error) {
       console.error("❌ Network error:", error);
     }
   };
 
+  const isCurrentSlide = (index: number): boolean => {
+    console.log("index", index, "currentIndex", selectedIndex);
+    return index + 1 === selectedIndex ? true : false;
+  };
   // Cleanup on unmount to avoid memory leaks
   useEffect(() => {
     return () => {
@@ -114,7 +120,7 @@ const CardsSlider: FC<Props> = (props) => {
             >
               <QuestionPreview
                 setVisible={setVisible}
-                setImages={setImages}
+                setImages={setImages as any}
                 data={question}
               />
             </View>
@@ -131,7 +137,7 @@ const CardsSlider: FC<Props> = (props) => {
               {isFlipped ? (
                 <AnswerPreview
                   setVisible={setVisible}
-                  setImages={setImages}
+                  setImages={setImages as any}
                   data={answer}
                 />
               ) : (
@@ -141,15 +147,15 @@ const CardsSlider: FC<Props> = (props) => {
             </View>
           </View>
         </FlipCard>
-        {index == selectedIndex + 1 ? (
-          <Button
-            mode="contained"
-            onPress={() => handleReveal(item._id)}
-            style={tw`mt-4`}
-          >
-            Reveal
-          </Button>
-        ) : null}
+
+        <Button
+          mode="contained"
+          onPress={() => handleReveal(item._id)}
+          style={[tw`mt-4 `]}
+        >
+          Reveal
+        </Button>
+
         <ImagePreview
           images={images}
           visible={visible}

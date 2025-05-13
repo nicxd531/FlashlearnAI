@@ -46,7 +46,6 @@ const CardComponent: FC<Props> = (props) => {
     newPosts[index].text = event.nativeEvent.text;
 
     setData(newPosts);
-    console.log(data);
   };
   const handleImageSelect = async () => {
     try {
@@ -63,7 +62,6 @@ const CardComponent: FC<Props> = (props) => {
         if (result.assets[0].uri) {
           newPosts[index].image = result.assets[0].uri;
           setData(newPosts);
-          console.log(data);
         }
         // setUserInfo({ ...userInfo, avatar: result.assets[0].uri });
       }
