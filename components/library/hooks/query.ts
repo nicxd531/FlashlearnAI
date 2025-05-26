@@ -215,3 +215,26 @@ export const useFetchPlaylistPreview = (id: string) => {
     isFetching,
   };
 };
+// fetch cards data
+export const fetchCardsData = async (historyId: string, collectionId: string) => {
+  const { data } = await client(`/cardData/${historyId}/${collectionId}`);
+  return data;
+};
+
+
+export const useFetchCardsData = (historyId: string, collectionId: string) => {
+  const { data, isLoading, error, isSuccess, isFetching } = useQuery(
+    ["playlist", historyId, collectionId],
+    {
+      queryFn: () => fetchCardsData(historyId,collectionId),
+      onError: (err) => console.error("playlist ", err),
+    }
+  );
+  return {
+    data,
+    isLoading,
+    error,
+    isSuccess,
+    isFetching,
+  };
+};

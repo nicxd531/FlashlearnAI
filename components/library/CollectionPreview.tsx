@@ -13,8 +13,11 @@ import EmptyRecords from "./components/EmptyRecords";
 import CreateModal from "../reuseables/CreateModal";
 import { updateCollectionData } from "@/utils/store/Collection";
 import { useFetchCollectionData } from "./hooks/query";
+import CollectionPreviewDetails from "./components/CollectionPreviewDetails";
+import PreviousCardsData from "./components/PreviousCardsData";
+import Time from "./components/Time";
 
-interface Props {}
+interface Props { }
 
 const CollectionPreview: FC<Props> = (props) => {
   const { collectionId, busyAQuestion } = useSelector(
@@ -51,7 +54,11 @@ const CollectionPreview: FC<Props> = (props) => {
           FlashCards
         </Text>
       </View>
-      <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
+      <View style={tw`flex-row flex-1 justify-between  items-center  p-10`}>
+
+        <Time isActive />
+        <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
+      </View>
       {(collectionData?.cards?.length ?? 0) > 0 ? (
         <FullCardComp
           stackStyle={stackStyle}
@@ -65,36 +72,10 @@ const CollectionPreview: FC<Props> = (props) => {
       ) : (
         <EmptyRecords title={"no card available for display 😔"} />
       )}
+      <PreviousCardsData />
       {collectionData && (
-        <View>
-          <View style={tw`p-4 bg-white shadow-md rounded-md mb-4`}>
-            <Text style={tw`text-xl font-bold capitalize`}>
-              {collectionData?.title}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              description: {collectionData?.description}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              category: {collectionData?.category}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              visibility: {collectionData?.visibility}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              Number of Cards: {collectionData?.cards?.length}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              Number of likes:{" "}
-              {collectionData?.likes > 0 ? collectionData?.likes : 0}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              Created Time: {createdAt}
-            </Text>
-            <Text variant={"labelLarge"} style={tw`text-base text-gray-600`}>
-              updated Time: {updatedAt}
-            </Text>
-          </View>
-        </View>
+        <CollectionPreviewDetails collectionData={collectionData} />
+
       )}
       <View style={{ marginBottom: 100 }} />
     </ScrollView>

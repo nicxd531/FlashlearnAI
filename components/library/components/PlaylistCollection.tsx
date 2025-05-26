@@ -7,7 +7,7 @@ import { Text } from 'react-native-paper';
 
 interface Props {
     index:number;
-    // handlePlay: (data: CollectionData , id: string) => void;
+    handlePlay: (data: CollectionData , id: string) => void;
     item: CollectionData;
 }
 
