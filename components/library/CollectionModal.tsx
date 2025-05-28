@@ -1,6 +1,6 @@
 import { flashcardPlaceholder } from "@/constants/Styles";
 import { MaterialIcons } from "@expo/vector-icons";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -26,23 +26,40 @@ import {
   updateCollectionData,
   updateCollectionId,
 } from "@/utils/store/Collection";
+import { useQueryClient } from "react-query";
+import historyState from "@/utils/store/zustand/useHistory";
+import { getClient } from "../api/client";
 interface Props {
   CollectionId: string;
 }
 
 const CollectionModal: FC<Props> = (props) => {
-  const dispatch = useDispatch();
+  const setHistoryId = historyState((state) => state.setHistoryId);
+  const historyId = historyState((state) => state.historyId);
   const { CollectionId } = props;
-  const { data, isLoading } = useFetchCollectionData(CollectionId);
+  const { data, isLoading, refetch } = useFetchCollectionData(CollectionId);
+  const dispatch = useDispatch();
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
+  const queryClient = useQueryClient();
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
   const dummyData = new Array(4).fill("");
-  const handlePlay = (data: CollectionData, id: string) => {
+  const handlePlay = async (data: CollectionData, id: string) => {
+
+
     dispatch(updateCollectionData(data));
     dispatch(updateCollectionId(id));
     navigation.navigate("collectionPreview");
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      refetch();
+      const client = getClient();
+      const lastHisttory = await (await client).get(`/history/lastHistory/${CollectionId}`);
+      console.log("lastHisttory", lastHisttory.data);
+    };
+    fetchData();
+  }, [CollectionId, refetch]);
   if (isLoading)
     return (
       <PulseAnimationContainer>
@@ -109,7 +126,6 @@ const CollectionModal: FC<Props> = (props) => {
         </View>
         <Text>{createdAt}</Text>
         <Text style={[tw`mt-4`]}>{data?.description}</Text>
-
         <View style={[tw`  flex-row mt-4`]}>
           <Text style={[tw`font-bold  mr-7`]} variant="titleMedium">
             Number of Cards:
@@ -130,7 +146,6 @@ const CollectionModal: FC<Props> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
     padding: 5,
   },

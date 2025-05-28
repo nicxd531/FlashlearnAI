@@ -15,10 +15,12 @@ import { getClient } from "../api/client";
 import { useQueryClient } from "react-query";
 import CorrectBtn from "./CorrectBtn";
 import QuestionPreview from "../create/reuseables/QuestionPreview";
-import { cards } from "@/@types/collection";
+import { cards, CardsData } from "@/@types/collection";
 import ImagePreview from "./ImagePreview";
 import AnswerPreview from "../create/reuseables/AnswerPreview";
 import deepEqual from "deep-equal";
+import historyState from "@/utils/store/zustand/useHistory";
+import { sendProgressToBackend } from "./request";
 
 interface Props {
   stackStyle: string;
@@ -27,12 +29,35 @@ interface Props {
   data: cards[];
 }
 const CardsSlider: FC<Props> = (props) => {
+  const historyId = historyState((state) => state.historyId);
+  const collectionId = historyState((state) => state.collectionId);
+  const correctCards = historyState((state) => state.correctCards);
+  const progress = historyState((state) => state.progress);
+  const owner = historyState((state) => state.owner);
+  const points = historyState((state) => state.points);
+  const durationInSeconds = historyState((state) => state.durationInSeconds);
+
   const queryClient = useQueryClient();
   const advert1 = require("../../assets/images/cardCover.jpg");
   const advert2 = require("../../assets/images/cardCover2.jpg");
 
   const { stackStyle, currentIndex, setCurrentIndex, data } = props;
+  const extractCardIds = (cards: any[]): string[] => {
+    return cards.map((card) => String(card._id));
+  };
+  const cardsIds = extractCardIds(data);
 
+  const mainData = {
+    index: 0,
+    historyId: historyId,
+    collectionId: collectionId,
+    cards: cardsIds,
+    correctCards: correctCards,
+    progress: progress,
+    owner: owner,
+    points: points,
+    durationInSeconds: durationInSeconds,
+  }
   const [isFlipped, setIsFlipped] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -51,7 +76,8 @@ const CardsSlider: FC<Props> = (props) => {
   };
 
   // Function to handle card click
-  const handleCardClick = (index: number) => {
+  const handleCardClick = (index: number, mainData: CardsData) => {
+    mainData.index = index; // Update the index in mainData
     setSelectedIndex(index); // Update selected index
     setCurrentIndex(index);
 
@@ -62,35 +88,16 @@ const CardsSlider: FC<Props> = (props) => {
 
     // Set a new timer to send progress after 5 seconds
     const newTimer = setTimeout(() => {
-      sendProgressToBackend(index);
+      sendProgressToBackend(mainData, queryClient);
     }, 6000);
 
     setTimer(newTimer);
   };
 
-  // Function to send progress to the backend
-  const sendProgressToBackend = async (index: number) => {
-    try {
-      const client = await getClient();
-      const { data: data1 } = await client.post("/history", {
-        cardsCollection: data[0].collectionId,
-        progress: index,
-        date: new Date(Date.now()),
-        points: 0,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["histories"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["recentlyPlayed"],
-      });
-    } catch (error) {
-      console.error("❌ Network error:", error);
-    }
-  };
+
+
 
   const isCurrentSlide = (index: number): boolean => {
-    console.log("index", index, "currentIndex", selectedIndex);
     return index + 1 === selectedIndex ? true : false;
   };
   // Cleanup on unmount to avoid memory leaks
@@ -175,7 +182,7 @@ const CardsSlider: FC<Props> = (props) => {
         itemWidth={350}
         loop={true}
         autoplayInterval={3000}
-        onSnapToItem={(index) => handleCardClick(index)}
+        onSnapToItem={(index) => handleCardClick(index, mainData)}
       />
     </View>
   );

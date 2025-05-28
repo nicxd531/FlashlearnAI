@@ -4,12 +4,16 @@ import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { Text } from "react-native-paper";
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import tw from "twrnc";
+import { string } from "yup";
 
 interface BtnRNPIconProps {
   handleSubmit: () => void;
   busy: boolean;
   title?: string;
   iconName?: keyof typeof MaterialCommunityIcons.glyphMap;
+  text?: any;
+  btn?: any;
 }
 
 const Btn: React.FC<BtnRNPIconProps> = ({
@@ -17,16 +21,18 @@ const Btn: React.FC<BtnRNPIconProps> = ({
   busy,
   title,
   iconName,
+  text,
+  btn
 }) => {
   return (
     <TouchableOpacity
       disabled={busy}
       onPress={handleSubmit}
-      style={[styles.container, styles.pillButton]}
+      style={[btn, styles.container, styles.pillButton,]}
     >
       {!busy ? (
         <>
-          <Text variant="headlineLarge" style={styles.title}>
+          <Text variant="headlineLarge" style={[text, styles.title]}>
             {title ? title : "Submit"}
           </Text>
           {iconName && (

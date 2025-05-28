@@ -1,40 +1,38 @@
 import { AntDesign } from "@expo/vector-icons";
 import { FC, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Divider, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
 import tw from "twrnc";
-import { formatRelativeTime } from "../api/request";
-import colors from "@/constants/Colors";
-import { CollectionData } from "@/@types/collection";
 import ToggleBtn from "../reuseables/ToggleBtn";
 import FullCardComp from "../reuseables/FullCardComp";
 import EmptyRecords from "./components/EmptyRecords";
-import CreateModal from "../reuseables/CreateModal";
-import { updateCollectionData } from "@/utils/store/Collection";
-import { useFetchCollectionData } from "./hooks/query";
+import { fetchCardsData, useFetchCollectionData } from "./hooks/query";
 import CollectionPreviewDetails from "./components/CollectionPreviewDetails";
 import PreviousCardsData from "./components/PreviousCardsData";
 import Time from "./components/Time";
+import historyState from "@/utils/store/zustand/useHistory";
 
 interface Props { }
 
 const CollectionPreview: FC<Props> = (props) => {
-  const { collectionId, busyAQuestion } = useSelector(
+  const historyId = historyState((state) => state.historyId);
+  const setCollectionId = historyState((state) => state.setCollectionId);
+  const { collectionId } = useSelector(
     (state: {
       collection: {
         collectionId: string;
-        busyAQuestion: boolean;
+        history: string;
       };
     }) => state.collection
   );
+  if (!collectionId) {
+    setCollectionId(collectionId)
+  }
   const { data: collectionData, isLoading } =
     useFetchCollectionData(collectionId);
-
-  const createdAt = formatRelativeTime(collectionData?.createdAt);
-  const updatedAt = formatRelativeTime(collectionData?.updatedAt);
+  console.log("collectionData", collectionData);
   const [stackStyle, setStackStyle] = useState("default");
-  const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const calculateProgress = (
     currentCardIndex: number,
@@ -47,6 +45,7 @@ const CollectionPreview: FC<Props> = (props) => {
     currentIndex + 1,
     collectionData?.cards?.length ?? 0
   );
+  console.log("historyId", historyId);
   return (
     <ScrollView style={styles.container}>
       <View style={[styles.heading]}>
@@ -72,7 +71,8 @@ const CollectionPreview: FC<Props> = (props) => {
       ) : (
         <EmptyRecords title={"no card available for display 😔"} />
       )}
-      <PreviousCardsData />
+      <Divider horizontalInset />
+      {historyId !== "" && historyId && <PreviousCardsData />}
       {collectionData && (
         <CollectionPreviewDetails collectionData={collectionData} />
 

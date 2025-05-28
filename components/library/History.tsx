@@ -34,7 +34,8 @@ import {
 import { libraryNavigatorStackParamList } from "@/@types/navigation";
 import { NavigationProp } from "@react-navigation/native";
 
-interface Props {}
+
+interface Props { }
 
 const History: FC<Props> = (props) => {
   const { data, isLoading, isFetching } = useFetchHistories();
@@ -93,12 +94,12 @@ const History: FC<Props> = (props) => {
   };
   const handleOnPress = async (history: historyCollection) => {
     if (selectedHistories.length == 0) {
-      setCollectionId(history.cardsCollectionId);
       setHistoryId(history.id);
+      setCollectionId(history.cardsCollectionId);
+      console.log("history", historyId);
 
       if (!isLoading) {
         dispatch(updateCollectionId(history.cardsCollectionId));
-
         navigation.navigate("collectionPreview");
       }
       return;
@@ -180,7 +181,7 @@ const History: FC<Props> = (props) => {
               <Text style={styles.date}>{item.date}</Text>
               <View style={styles.listContainer}>
                 {item.cardsCollection.map((collection, index) => {
-                 
+
                   return (
                     <Pressable
                       onLongPress={() => handleOnLongPress(collection)}
@@ -229,7 +230,6 @@ const styles = StyleSheet.create({
     color: colors.SECONDARY,
   },
   historyTitle: {
-    // color: colors.CONTRAST,
     paddingHorizontal: 5,
     fontWeight: "700",
     flex: 1,

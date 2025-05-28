@@ -2,9 +2,10 @@ import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import tw from "twrnc";
 import colors from "@/constants/Colors";
-import { Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import * as Progress from "react-native-progress";
 import CardsSlider from "./CardsSlider";
+import Btn from "../create/reuseables/Btn";
 
 interface Props {
   stackStyle: any;
@@ -16,7 +17,8 @@ interface Props {
 
 const FullCardComp: FC<Props> = (props) => {
   const { stackStyle, currentIndex, setCurrentIndex, data, progress } = props;
- 
+
+
   return data ? (
     <>
       <CardsSlider
@@ -34,6 +36,16 @@ const FullCardComp: FC<Props> = (props) => {
         <Text style={[styles.counter, tw`mt-2`]}>
           {currentIndex + 1} / {data.length}
         </Text>
+        <View style={tw`flex-row justify-center items-center w-full`}>
+          <Btn
+            handleSubmit={() => { console.log("Save Card") }}
+            busy={false}
+            title="Submit"
+            iconName="send"
+            text={tw`text-white text-lg`}
+            btn={tw`h-12 mt-15 mb-12`}
+          />
+        </View>
       </View>
     </>
   ) : (

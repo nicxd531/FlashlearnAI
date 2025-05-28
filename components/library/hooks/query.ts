@@ -36,7 +36,7 @@ export const fetchCollectionData = async (userId: string) => {
 };
 
 export const useFetchCollectionData = (id: string) => {
-  const { data, isLoading, error, isSuccess } = useQuery(
+  const { data, isLoading, error, isSuccess, refetch } = useQuery(
     ["fetchCollectionData"],
     {
       queryFn: () => fetchCollectionData(id),
@@ -48,6 +48,7 @@ export const useFetchCollectionData = (id: string) => {
     isLoading,
     error,
     isSuccess,
+    refetch 
   };
 };
 export const fetchSearchedCategories = async (category: string) => {
@@ -224,7 +225,7 @@ export const fetchCardsData = async (historyId: string, collectionId: string) =>
 
 export const useFetchCardsData = (historyId: string, collectionId: string) => {
   const { data, isLoading, error, isSuccess, isFetching } = useQuery(
-    ["playlist", historyId, collectionId],
+    ["cardsData", historyId, collectionId],
     {
       queryFn: () => fetchCardsData(historyId,collectionId),
       onError: (err) => console.error("playlist ", err),

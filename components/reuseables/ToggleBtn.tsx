@@ -15,7 +15,7 @@ const ToggleBtn: FC<Props> = (props) => {
   const { setStackStyle, stackStyle, timer } = props;
   return (
     <Surface
-      style={tw`flex-row justify-between items-center w-25 p-2 rounded-2xl ${timer ? "m-auto" : ""}  mb-6 `}
+      style={tw`flex-row justify-between items-center w-25 p-2 rounded-2xl+ ${timer ? "m-auto" : ""}  mb-6 `}
     >
       <ToggleButton.Group
         onValueChange={(stackStyle) => setStackStyle(stackStyle)}

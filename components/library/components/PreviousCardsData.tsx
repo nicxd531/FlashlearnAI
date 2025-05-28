@@ -17,8 +17,10 @@ const PreviousCardsData: FC<Props> = (props) => {
         return `${minutes}:${formattedSeconds}`;
     };
     return <View style={styles.container}>
+
         <View style={styles.previousProgressContainer}>
-            <Text variant='titleLarge' style={[tw`mb-5`]}>Previous Progress</Text>
+            <Text variant='headlineLarge' style={[tw`mb-5 font-bold`]}>Previous Session Stats</Text>
+            <Text variant='titleMedium' style={[tw`mb-7 `]}>Previous Progress</Text>
             <CircularProgress
                 radius={90}
                 value={85}

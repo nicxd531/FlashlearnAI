@@ -248,3 +248,22 @@ export interface cards {
   question: questionSection[];
   collectionId: string;
 }
+
+export interface CardsData {
+
+  index: number
+  historyId: string
+  collectionId: string
+  cards:string[]
+  correctCards:String[]
+  progress:number
+  owner:String
+  points:number
+  durationInSeconds:number
+  previous?:{
+correctCards:string[]
+  progress:number
+  points:number
+  durationInSeconds:number
+  }
+}

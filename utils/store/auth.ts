@@ -15,12 +15,14 @@ interface AuthState {
   loggedIn: boolean;
   busy: boolean;
   busyACollection: boolean;
+ 
 }
 const initialState: AuthState = {
   profile: null,
   loggedIn: false,
   busy: false,
   busyACollection: false,
+
 };
 
 const slice = createSlice({
@@ -36,6 +38,7 @@ const slice = createSlice({
     updateBusyState(authState, { payload }) {
       authState.busy = payload;
     },
+   
   },
 });
 export const { updateLoggedInState, updateProfile, updateBusyState } =
