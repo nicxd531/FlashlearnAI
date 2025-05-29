@@ -250,8 +250,6 @@ export interface cards {
 }
 
 export interface CardsData {
-
-  index: number
   historyId: string
   collectionId: string
   cards:string[]

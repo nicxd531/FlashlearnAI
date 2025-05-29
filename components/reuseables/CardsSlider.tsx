@@ -2,9 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import {
   View,
   Image,
-  ActivityIndicator,
   StyleSheet,
-  TouchableOpacity,
 } from "react-native";
 import FlipCard from "react-native-flip-card";
 import { Text, Button } from "react-native-paper";
@@ -29,6 +27,7 @@ interface Props {
   data: cards[];
 }
 const CardsSlider: FC<Props> = (props) => {
+  const { stackStyle, currentIndex, setCurrentIndex, data } = props;
   const historyId = historyState((state) => state.historyId);
   const collectionId = historyState((state) => state.collectionId);
   const correctCards = historyState((state) => state.correctCards);
@@ -36,19 +35,16 @@ const CardsSlider: FC<Props> = (props) => {
   const owner = historyState((state) => state.owner);
   const points = historyState((state) => state.points);
   const durationInSeconds = historyState((state) => state.durationInSeconds);
-
   const queryClient = useQueryClient();
   const advert1 = require("../../assets/images/cardCover.jpg");
   const advert2 = require("../../assets/images/cardCover2.jpg");
 
-  const { stackStyle, currentIndex, setCurrentIndex, data } = props;
   const extractCardIds = (cards: any[]): string[] => {
     return cards.map((card) => String(card._id));
   };
   const cardsIds = extractCardIds(data);
-
-  const mainData = {
-    index: 0,
+  console.log("collectionId", collectionId);
+  const cardsData = {
     historyId: historyId,
     collectionId: collectionId,
     cards: cardsIds,
@@ -76,8 +72,9 @@ const CardsSlider: FC<Props> = (props) => {
   };
 
   // Function to handle card click
-  const handleCardClick = (index: number, mainData: CardsData) => {
-    mainData.index = index; // Update the index in mainData
+  const handleCardClick = (index: number, data: cards[], cardsData: CardsData,) => {
+    cardsData.collectionId = data[0].collectionId; // Update collectionId in cardsData
+    cardsData.progress = index; // Update the index in mainData
     setSelectedIndex(index); // Update selected index
     setCurrentIndex(index);
 
@@ -88,7 +85,7 @@ const CardsSlider: FC<Props> = (props) => {
 
     // Set a new timer to send progress after 5 seconds
     const newTimer = setTimeout(() => {
-      sendProgressToBackend(mainData, queryClient);
+      sendProgressToBackend(data, queryClient, index, cardsData);
     }, 6000);
 
     setTimer(newTimer);
@@ -182,7 +179,7 @@ const CardsSlider: FC<Props> = (props) => {
         itemWidth={350}
         loop={true}
         autoplayInterval={3000}
-        onSnapToItem={(index) => handleCardClick(index, mainData)}
+        onSnapToItem={(index) => handleCardClick(index, data, cardsData)}
       />
     </View>
   );

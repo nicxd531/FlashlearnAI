@@ -18,6 +18,9 @@ interface Props { }
 const CollectionPreview: FC<Props> = (props) => {
   const historyId = historyState((state) => state.historyId);
   const setCollectionId = historyState((state) => state.setCollectionId);
+
+
+
   const { collectionId } = useSelector(
     (state: {
       collection: {
@@ -29,9 +32,14 @@ const CollectionPreview: FC<Props> = (props) => {
   if (!collectionId) {
     setCollectionId(collectionId)
   }
+  console.log("collectionId", collectionId);
+  if (collectionId && historyId) {
+    fetchCardsData(collectionId, historyId).then(({ data }) => {
+      console.log("data", data);
+    });
+  }
   const { data: collectionData, isLoading } =
     useFetchCollectionData(collectionId);
-  console.log("collectionData", collectionData);
   const [stackStyle, setStackStyle] = useState("default");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const calculateProgress = (
@@ -45,7 +53,7 @@ const CollectionPreview: FC<Props> = (props) => {
     currentIndex + 1,
     collectionData?.cards?.length ?? 0
   );
-  console.log("historyId", historyId);
+
   return (
     <ScrollView style={styles.container}>
       <View style={[styles.heading]}>
