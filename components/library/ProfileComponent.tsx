@@ -15,7 +15,7 @@ import {
 import { formatFollowers } from "../api/request";
 import { useFetchLogInUser } from "./hooks/query";
 
-interface Props {}
+interface Props { }
 const ProfileComponent: FC<Props> = (props) => {
   const { data: profile } = useFetchLogInUser();
 

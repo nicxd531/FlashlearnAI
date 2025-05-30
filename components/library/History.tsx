@@ -42,8 +42,6 @@ const History: FC<Props> = (props) => {
   const setCollectionId = historyState((state) => state.setCollectionId);
   const setHistoryId = historyState((state) => state.setHistoryId);
   const historyId = historyState((state) => state.historyId);
-  const collectionId = historyState((state) => state.collectionId);
-
   const [selectedHistories, setSelectedHistories] = useState<string[]>([]);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -96,7 +94,7 @@ const History: FC<Props> = (props) => {
     if (selectedHistories.length == 0) {
       setHistoryId(history.id);
       setCollectionId(history.cardsCollectionId);
-      console.log("history", historyId);
+
 
       if (!isLoading) {
         dispatch(updateCollectionId(history.cardsCollectionId));

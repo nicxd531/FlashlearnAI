@@ -20,7 +20,7 @@ import { useNavigation } from "expo-router";
 import { NavigationProp } from "@react-navigation/native";
 import { createNavigatorStackParamList } from "@/@types/navigation";
 
-interface Props {}
+interface Props { }
 
 const AddCards: FC<Props> = (props) => {
   const navigation =
@@ -93,6 +93,9 @@ const AddCards: FC<Props> = (props) => {
         toast.success("Card Created ", { icon: "🎉🎊" });
         setQuestion([{ text: "", image: null }]);
         setAnswer([{ text: "", image: null }]);
+        queryClient.invalidateQueries({
+          queryKey: ["fetchCollectionData"],
+        });
         navigation.goBack();
       }
     } catch (err) {

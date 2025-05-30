@@ -218,16 +218,16 @@ export const useFetchPlaylistPreview = (id: string) => {
 };
 // fetch cards data
 export const fetchCardsData = async (historyId: string, collectionId: string) => {
-  const { data } = await client(`/cardData/${historyId}/${collectionId}`);
+  const { data } = await client.get(`/cardData/${historyId}/${collectionId}`);
   return data;
 };
 
 
-export const useFetchCardsData = (historyId: string, collectionId: string) => {
+export const useFetchCardsData = async (historyId: string, collectionId: string) => {
   const { data, isLoading, error, isSuccess, isFetching } = useQuery(
     ["cardsData", historyId, collectionId],
     {
-      queryFn: () => fetchCardsData(historyId,collectionId),
+      queryFn:  () =>  fetchCardsData(historyId,collectionId),
       onError: (err) => console.error("playlist ", err),
     }
   );

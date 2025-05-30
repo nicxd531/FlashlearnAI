@@ -23,10 +23,6 @@ const CreatePage: FC<Props> = (props) => {
         />
         <Stack.Screen name="AiCardsCreator" component={AiCardsCreator} />
         <Stack.Screen name="AddCards" component={AddCards} />
-        <Stack.Screen
-          name="ManualCardsCreation"
-          component={ManualCardsCreation}
-        />
         <Stack.Screen name="CardsPreview" component={CardsPreview} />
       </Stack.Navigator>
     </View>

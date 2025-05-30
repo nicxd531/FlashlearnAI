@@ -25,7 +25,7 @@ import { createNavigatorStackParamList } from "@/@types/navigation";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import PosterImageUpload from "../reuseables/PosterImageUpload";
 
-interface Props {}
+interface Props { }
 
 const CreateCollectionPage: FC<Props> = (props) => {
   const [checked, setChecked] = React.useState(false);
@@ -105,6 +105,7 @@ const CreateCollectionPage: FC<Props> = (props) => {
           style={{
             backgroundColor: "transparent",
             textAlignVertical: "top",
+            marginBottom: 20,
           }}
           multiline
           textAlignVertical="top"
@@ -130,21 +131,21 @@ const CreateCollectionPage: FC<Props> = (props) => {
             handleSubmit={
               createdCollectionId
                 ? () =>
-                    handleUpdateCollection(
-                      visibility,
-                      collectionInfo,
-                      createdCollectionId,
-                      dispatch,
-                      navigation
-                    )
+                  handleUpdateCollection(
+                    visibility,
+                    collectionInfo,
+                    createdCollectionId,
+                    dispatch,
+                    navigation
+                  )
                 : () =>
-                    handleSubmitCollection(
-                      visibility,
-                      collectionInfo,
-                      createdCollectionId,
-                      dispatch,
-                      navigation
-                    )
+                  handleSubmitCollection(
+                    visibility,
+                    collectionInfo,
+                    createdCollectionId,
+                    dispatch,
+                    navigation
+                  )
             }
             title={
               createdCollectionId ? "update collection" : "Save Collection"

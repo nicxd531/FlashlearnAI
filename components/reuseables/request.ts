@@ -26,6 +26,7 @@ const res ={
       }
      
       const { data: data2 } = await client.patch("/cardData/", res)
+     
    
       queryClient.invalidateQueries({
         queryKey: ["histories"],
@@ -38,3 +39,32 @@ const res ={
       console.error("❌ Error sending progress to backend:", error);
     }
   };
+
+
+
+
+ export  const calculatePerformance = (
+  correctCardsLength: number,
+  cardsLength: number,
+  timeUsed: number,
+  totalAvailableTime: number,
+  points: number,
+  totalPossiblePoints: number
+): number => {
+  // Calculate the percentage of correct cards
+  const correctCardsPercentage = (correctCardsLength / cardsLength) * 100;
+
+  // Calculate the percentage of time used
+  const timeUsedPercentage = (timeUsed / totalAvailableTime) * 100;
+
+  // Calculate the percentage of points gained
+  const pointsPercentage = (points / totalPossiblePoints) * 100;
+
+  // Calculate an overall performance score by averaging the individual percentages
+  const overallPerformance =
+    (correctCardsPercentage + (100 - timeUsedPercentage) + pointsPercentage) /
+    3;
+if(correctCardsLength === 0 && cardsLength === 0) return 0;
+if(correctCardsLength === 0)return 0 // Avoid division by zero
+  return overallPerformance;
+};

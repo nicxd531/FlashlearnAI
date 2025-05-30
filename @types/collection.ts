@@ -265,3 +265,16 @@ correctCards:string[]
   durationInSeconds:number
   }
 }
+
+export interface owner {
+   _id: string;
+        name: string;
+        email: string;
+        avatar?: {
+            url: string;
+            id: string;
+        };
+        verified?: boolean;
+        followers: string[];
+        followings: string[];
+}

@@ -39,6 +39,10 @@ const AiCardsCreator: FC<Props> = ({ route }) => {
       toast.error("AI is not available yet", {
         icon: <AntDesign name="exclamationcircleo" size={24} color="red" />,
       });
+
+      navigation.navigate("CardsPreview", {
+        collectionInfo: collectionInfo,
+      })
     }, 3000);
   };
 

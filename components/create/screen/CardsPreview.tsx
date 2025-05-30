@@ -25,7 +25,7 @@ import { createNavigatorStackParamList } from "@/@types/navigation";
 import { useNavigation } from "expo-router";
 import { useFetchCardsCreate } from "../hooks/query";
 
-interface Props {}
+interface Props { }
 
 const CardsPreview: FC<Props> = (props) => {
   const { createdCollectionId, busyAQuestion } = useSelector(
@@ -37,9 +37,9 @@ const CardsPreview: FC<Props> = (props) => {
       };
     }) => state.collection
   );
+  const { data, isLoading } = useFetchCollectionData(createdCollectionId);
   const navigation =
     useNavigation<NavigationProp<createNavigatorStackParamList>>();
-  const { data, isLoading } = useFetchCollectionData(createdCollectionId);
   const { data: cards, isLoading: loadCards } =
     useFetchCardsCreate(createdCollectionId);
   const createdAt = formatRelativeTime(data?.createdAt);
@@ -55,28 +55,30 @@ const CardsPreview: FC<Props> = (props) => {
     return currentCardIndex / totalCards;
   };
   const progress = calculateProgress(currentIndex + 1, data?.cards?.length);
-  // console.log(collectionData.cards.length);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={[styles.heading]}>
-        <Text style={[tw`font-bold `]} variant="titleLarge">
-          Add cards
-        </Text>
-        <TouchableOpacity
-          style={{
-            borderRadius: 50,
-            backgroundColor: colors.PRIMARY,
-            padding: 3,
-            marginLeft: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={() => navigation.navigate("AddCards")}
-        >
-          <AntDesign name="plus" color={"#fff"} size={20} />
-        </TouchableOpacity>
+      <View style={tw`flex-row items-center justify-between mb-4 mt-5 pt-10 b`}>
+        <View style={[styles.heading]}>
+          <Text style={[tw`font-bold `]} variant="titleLarge">
+            Add cards
+          </Text>
+          <TouchableOpacity
+            style={{
+              borderRadius: 50,
+              backgroundColor: colors.PRIMARY,
+              padding: 3,
+              marginLeft: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => navigation.navigate("AddCards")}
+          >
+            <AntDesign name="plus" color={"#fff"} size={20} />
+          </TouchableOpacity>
+        </View>
+        <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
       </View>
-      <ToggleBtn setStackStyle={setStackStyle} stackStyle={stackStyle} />
       {(data?.cards?.length ?? 0) > 0 ? (
         <FullCardComp
           stackStyle={stackStyle}
@@ -134,8 +136,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
-    marginTop: 20,
+
     flexDirection: "row",
+
   },
   counter: {
     fontSize: 18,

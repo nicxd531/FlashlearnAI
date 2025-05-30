@@ -37,6 +37,9 @@ const CollectionModal: FC<Props> = (props) => {
   const setHistoryId = historyState((state) => state.setHistoryId);
   const historyId = historyState((state) => state.historyId);
   const { CollectionId } = props;
+
+  const setCollectionId = historyState((state) => state.setCollectionId);
+  setCollectionId(CollectionId);
   const { data, isLoading, refetch } = useFetchCollectionData(CollectionId);
   const dispatch = useDispatch();
   const navigation =
@@ -45,8 +48,6 @@ const CollectionModal: FC<Props> = (props) => {
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
   const dummyData = new Array(4).fill("");
   const handlePlay = async (data: CollectionData, id: string) => {
-
-
     dispatch(updateCollectionData(data));
     dispatch(updateCollectionId(id));
     navigation.navigate("collectionPreview");

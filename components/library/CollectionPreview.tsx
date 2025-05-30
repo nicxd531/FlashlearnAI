@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -12,32 +12,16 @@ import CollectionPreviewDetails from "./components/CollectionPreviewDetails";
 import PreviousCardsData from "./components/PreviousCardsData";
 import Time from "./components/Time";
 import historyState from "@/utils/store/zustand/useHistory";
+import { getClient } from "../api/client";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { handleError } from "../api/request";
 
 interface Props { }
 
 const CollectionPreview: FC<Props> = (props) => {
   const historyId = historyState((state) => state.historyId);
-  const setCollectionId = historyState((state) => state.setCollectionId);
-
-
-
-  const { collectionId } = useSelector(
-    (state: {
-      collection: {
-        collectionId: string;
-        history: string;
-      };
-    }) => state.collection
-  );
-  if (!collectionId) {
-    setCollectionId(collectionId)
-  }
-  console.log("collectionId", collectionId);
-  if (collectionId && historyId) {
-    fetchCardsData(collectionId, historyId).then(({ data }) => {
-      console.log("data", data);
-    });
-  }
+  const collectionId = historyState((state) => state.collectionId);
+  const [cardsData, setCardsData] = useState(null);
   const { data: collectionData, isLoading } =
     useFetchCollectionData(collectionId);
   const [stackStyle, setStackStyle] = useState("default");
@@ -53,6 +37,24 @@ const CollectionPreview: FC<Props> = (props) => {
     currentIndex + 1,
     collectionData?.cards?.length ?? 0
   );
+
+  useEffect(() => {
+    const fetchCardsData = async () => {
+      if (collectionId && historyId) {
+        try {
+          const client = getClient();
+          const response = await (await client).get(`/cardData/${historyId}/${collectionId}`);
+
+          setCardsData(response.data);
+        } catch (error) {
+          handleError(error);
+          console.error("Error fetching cards data:", error);
+        }
+      }
+    };
+
+    fetchCardsData();
+  }, [collectionId, historyId]);
 
   return (
     <ScrollView style={styles.container}>
@@ -80,7 +82,8 @@ const CollectionPreview: FC<Props> = (props) => {
         <EmptyRecords title={"no card available for display 😔"} />
       )}
       <Divider horizontalInset />
-      {historyId !== "" && historyId && <PreviousCardsData />}
+      {cardsData && <PreviousCardsData cardsData={cardsData} />}
+      <Divider horizontalInset />
       {collectionData && (
         <CollectionPreviewDetails collectionData={collectionData} />
 
