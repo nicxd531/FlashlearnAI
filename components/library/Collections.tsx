@@ -40,6 +40,7 @@ import {
 import { toast } from "@backpackapp-io/react-native-toast";
 import PlaylistModal from "../home/reuseables/PlaylistModal";
 import { useFetchPlaylist } from "@/hooks/query";
+import historyState from "@/utils/store/zustand/useHistory";
 
 interface Props { }
 
@@ -47,7 +48,8 @@ const Collections: FC<Props> = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showPlayListForm, setShowPlayListForm] = useState(false);
-  const [collectionId, setCollectionId] = useState<string>("");
+  const setCollectionId = historyState((state) => state.setCollectionId);
+  const collectionId = historyState((state) => state.collectionId);
   const [selectedCollection, setSelectedCollection] =
     useState<RecentlyPlayedData>();
   const dispatch = useDispatch();
@@ -62,7 +64,7 @@ const Collections: FC<Props> = (props) => {
   if (isLoading || loading3) return <CollectionListLoadingUi />;
 
   const handlePress = async (id: string) => {
-    queryClient.invalidateQueries({ queryKey: ["fetchCollectionData"] });
+
     try {
       setCollectionId(id);
       setModalVisible(true);

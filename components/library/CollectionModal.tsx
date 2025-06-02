@@ -58,6 +58,7 @@ const CollectionModal: FC<Props> = (props) => {
       const client = getClient();
       const lastHisttory = await (await client).get(`/history/lastHistory/${CollectionId}`);
       setHistoryId(lastHisttory.data.historyId);
+      console.log("Last History ID:", lastHisttory.data.historyId);
 
     };
     fetchData();
