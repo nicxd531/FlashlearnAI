@@ -37,7 +37,7 @@ const CollectionPreview: FC<Props> = (props) => {
     currentIndex + 1,
     collectionData?.cards?.length ?? 0
   );
-
+  console.log("collectionData", historyId, collectionId);
   useEffect(() => {
     const fetchCardsData = async () => {
       if (collectionId && historyId) {

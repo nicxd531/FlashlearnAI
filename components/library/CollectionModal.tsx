@@ -34,8 +34,6 @@ interface Props {
 }
 
 const CollectionModal: FC<Props> = (props) => {
-  const setHistoryId = historyState((state) => state.setHistoryId);
-  const historyId = historyState((state) => state.historyId);
   const { CollectionId } = props;
 
   const setCollectionId = historyState((state) => state.setCollectionId);
@@ -44,7 +42,6 @@ const CollectionModal: FC<Props> = (props) => {
   const dispatch = useDispatch();
   const navigation =
     useNavigation<NavigationProp<libraryNavigatorStackParamList>>();
-  const queryClient = useQueryClient();
   const createdAt = formatRelativeTime(data?.createdAt ?? "");
   const dummyData = new Array(4).fill("");
   const handlePlay = async (data: CollectionData, id: string) => {
@@ -52,17 +49,7 @@ const CollectionModal: FC<Props> = (props) => {
     dispatch(updateCollectionId(id));
     navigation.navigate("collectionPreview");
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      refetch();
-      const client = getClient();
-      const lastHisttory = await (await client).get(`/history/lastHistory/${CollectionId}`);
-      setHistoryId(lastHisttory.data.historyId);
-      console.log("Last History ID:", lastHisttory.data.historyId);
 
-    };
-    fetchData();
-  }, [CollectionId, refetch]);
   if (isLoading)
     return (
       <PulseAnimationContainer>

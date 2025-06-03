@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -45,6 +45,7 @@ import historyState from "@/utils/store/zustand/useHistory";
 interface Props { }
 
 const Collections: FC<Props> = (props) => {
+  const setHistoryId = historyState((state) => state.setHistoryId);
   const [modalVisible, setModalVisible] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showPlayListForm, setShowPlayListForm] = useState(false);
@@ -93,6 +94,17 @@ const Collections: FC<Props> = (props) => {
     dispatch(updateCreatedCollectionData(selectedCollection));
     navigation.navigate("CreatePage");
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("Fetching last history for collectionId:", collectionId);
+      const client = getClient();
+      const lastHisttory = await (await client).get(`/history/lastHistory/${collectionId}`);
+      setHistoryId(lastHisttory.data.historyId);
+      console.log("Last History ID:", lastHisttory.data.historyId);
+
+    };
+    fetchData();
+  }, [collectionId]);
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>

@@ -96,12 +96,7 @@ const CardsSlider: FC<Props> = (props) => {
   const isCurrentSlide = (index: number): boolean => {
     return index + 1 === selectedIndex ? true : false;
   };
-  // Cleanup on unmount to avoid memory leaks
-  useEffect(() => {
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [timer]);
+
   const renderItem = ({ item, index }: { item: cards; index: number }) => {
     const { answer, question } = item;
 
@@ -167,7 +162,12 @@ const CardsSlider: FC<Props> = (props) => {
       </View>
     );
   };
-
+  // Cleanup on unmount to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timer]);
   return (
     <View style={styles.container}>
       <Carousel
