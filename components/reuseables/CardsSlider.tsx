@@ -42,6 +42,7 @@ const CardsSlider: FC<Props> = (props) => {
   const extractCardIds = (cards: any[]): string[] => {
     return cards.map((card) => String(card._id));
   };
+
   const cardsIds = extractCardIds(data);
   const cardsData = {
     historyId: historyId,

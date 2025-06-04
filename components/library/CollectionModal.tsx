@@ -35,7 +35,7 @@ interface Props {
 
 const CollectionModal: FC<Props> = (props) => {
   const { CollectionId } = props;
-
+  const setHistoryId = historyState((state) => state.setHistoryId);
   const setCollectionId = historyState((state) => state.setCollectionId);
   setCollectionId(CollectionId);
   const { data, isLoading, refetch } = useFetchCollectionData(CollectionId);
@@ -50,6 +50,14 @@ const CollectionModal: FC<Props> = (props) => {
     navigation.navigate("collectionPreview");
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const client = getClient();
+      const lastHisttory = await (await client).get(`/history/lastHistory/${CollectionId}`);
+      setHistoryId(lastHisttory.data.historyId);
+    };
+    fetchData();
+  }, [CollectionId]);
   if (isLoading)
     return (
       <PulseAnimationContainer>
@@ -67,8 +75,8 @@ const CollectionModal: FC<Props> = (props) => {
         </View>
       </PulseAnimationContainer>
     );
-  if (!data || data == undefined)
-    return <EmptyRecords title={"Collection Not Found!"} />;
+  if (!data || data == undefined) return <EmptyRecords title={"Collection Not Found!"} />;
+
   return (
     <View style={styles.container}>
       <ImageBackground

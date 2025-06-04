@@ -10,12 +10,12 @@ export const sendProgressToBackend = async ( data:cards[], queryClient:any,index
         cardsCollection:data[0].collectionId,
         progress: index,
         date: new Date(Date.now()),
-        points: 0,
+      points: cardsData.points
       });
 
       
-      const { data: lastHistory } = await client.get(`/history/lastHistory/681f6be60b23ba3ac377bd58`)
-
+      const { data: lastHistory } = await client.get(`/history/lastHistory/${data[0].collectionId}`)
+console.log("durationInSeconds", cardsData.durationInSeconds)
 const res ={
         historyId: lastHistory.historyId,
         collectionId:data[0].collectionId,
@@ -23,10 +23,12 @@ const res ={
         correctCards:cardsData.correctCards,
         progress: cardsData.progress,
         owner:cardsData.owner,
+        durationInSeconds: cardsData.durationInSeconds,
+        points: cardsData.points,
       }
      
       const { data: data2 } = await client.patch("/cardData/", res)
-     
+     console.log(data2)
    
       queryClient.invalidateQueries({
         queryKey: ["histories"],

@@ -94,17 +94,7 @@ const Collections: FC<Props> = (props) => {
     dispatch(updateCreatedCollectionData(selectedCollection));
     navigation.navigate("CreatePage");
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching last history for collectionId:", collectionId);
-      const client = getClient();
-      const lastHisttory = await (await client).get(`/history/lastHistory/${collectionId}`);
-      setHistoryId(lastHisttory.data.historyId);
-      console.log("Last History ID:", lastHisttory.data.historyId);
 
-    };
-    fetchData();
-  }, [collectionId]);
 
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>

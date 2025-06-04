@@ -12,6 +12,7 @@ const Time: FC<Props> = ({ isActive }) => {
     const [seconds, setSeconds] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const setDurationInSeconds = historyState((state) => state.setDurationInSeconds);
+    const durationInSeconds = historyState((state) => state.durationInSeconds);
     // Format the time to be displayed
     const formattedMinutes = String(minutes).padStart(2, '0');
     const formattedSeconds = String(seconds).padStart(2, '0');
